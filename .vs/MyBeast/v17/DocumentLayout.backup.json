@@ -1,0 +1,122 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Admin\\source\\repos\\MyBeast\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|c:\\users\\admin\\source\\repos\\mybeast\\mybeast\\services\\iapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|solutionrelative:mybeast\\services\\iapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|c:\\users\\admin\\source\\repos\\mybeast\\mybeast\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|solutionrelative:mybeast\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|c:\\users\\admin\\source\\repos\\mybeast\\mybeast\\services\\ilocaldbservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|solutionrelative:mybeast\\services\\ilocaldbservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|c:\\users\\admin\\source\\repos\\mybeast\\mybeast\\services\\inavigationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|solutionrelative:mybeast\\services\\inavigationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|c:\\users\\admin\\source\\repos\\mybeast\\mybeast\\models\\workouttemplate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|solutionrelative:mybeast\\models\\workouttemplate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|c:\\users\\admin\\source\\repos\\mybeast\\mybeast\\mybeast.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{65F2B31A-91F4-4F98-B3C6-F046A81A0812}|MyBeast\\MyBeast.csproj|solutionrelative:mybeast\\mybeast.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "IApiService.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\IApiService.cs",
+              "RelativeDocumentMoniker": "MyBeast\\Services\\IApiService.cs",
+              "ToolTip": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\IApiService.cs",
+              "RelativeToolTip": "MyBeast\\Services\\IApiService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T18:49:17.518Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\IAuthService.cs",
+              "RelativeDocumentMoniker": "MyBeast\\Services\\IAuthService.cs",
+              "ToolTip": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\IAuthService.cs",
+              "RelativeToolTip": "MyBeast\\Services\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T18:49:17.486Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ILocalDbService.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\ILocalDbService.cs",
+              "RelativeDocumentMoniker": "MyBeast\\Services\\ILocalDbService.cs",
+              "ToolTip": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\ILocalDbService.cs",
+              "RelativeToolTip": "MyBeast\\Services\\ILocalDbService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T18:49:17.455Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "INavigationService.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\INavigationService.cs",
+              "RelativeDocumentMoniker": "MyBeast\\Services\\INavigationService.cs",
+              "ToolTip": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Services\\INavigationService.cs",
+              "RelativeToolTip": "MyBeast\\Services\\INavigationService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T18:49:17.392Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "WorkoutTemplate.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Models\\WorkoutTemplate.cs",
+              "RelativeDocumentMoniker": "MyBeast\\Models\\WorkoutTemplate.cs",
+              "ToolTip": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\Models\\WorkoutTemplate.cs",
+              "RelativeToolTip": "MyBeast\\Models\\WorkoutTemplate.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T18:49:15.871Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MyBeast",
+              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\MyBeast.csproj",
+              "RelativeDocumentMoniker": "MyBeast\\MyBeast.csproj",
+              "ToolTip": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\MyBeast.csproj",
+              "RelativeToolTip": "MyBeast\\MyBeast.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-12T18:49:14.473Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
