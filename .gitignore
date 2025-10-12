@@ -1,0 +1,18 @@
+# Ignore Visual Studio cache folders
+.vs/
+
+# Ignore bin e obj (build)
+bin/
+obj/
+
+# Ignore arquivos temporários do usuário
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Node/npm (se houver)
+node_modules/
+
+# Outros arquivos temporários
+*.log

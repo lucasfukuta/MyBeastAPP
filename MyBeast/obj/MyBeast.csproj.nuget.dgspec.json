@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\MyBeast.csproj": {}
+    "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast\\MyBeast.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\MyBeast.csproj": {
+    "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast\\MyBeast.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\MyBeast.csproj",
+        "projectUniqueName": "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast\\MyBeast.csproj",
         "projectName": "MyBeast",
-        "projectPath": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\MyBeast.csproj",
+        "projectPath": "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast\\MyBeast.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast\\obj\\",
+        "outputPath": "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast\\obj\\",
         "projectStyle": "PackageReference",
         "crossTargeting": true,
         "fallbackFolders": [
