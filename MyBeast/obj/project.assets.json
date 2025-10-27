@@ -3344,6 +3344,16 @@
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-android34.0/android-arm": {
@@ -6682,6 +6692,16 @@
         },
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -10022,6 +10042,16 @@
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-android34.0/android-x64": {
@@ -13360,6 +13390,16 @@
         },
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -16700,6 +16740,16 @@
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-android34.0/iossimulator-x64": {
@@ -20038,6 +20088,16 @@
         },
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -23378,6 +23438,16 @@
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-android34.0/win10-x64": {
@@ -26717,6 +26787,16 @@
         "build": {
           "buildTransitive/net6.0-android31.0/Xamarin.KotlinX.Coroutines.Core.Jvm.targets": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-ios18.0": {
@@ -28270,6 +28350,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-ios18.0/android-arm": {
@@ -29816,6 +29906,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -31364,6 +31464,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-ios18.0/android-x64": {
@@ -32910,6 +33020,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -34458,6 +34578,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-ios18.0/iossimulator-x64": {
@@ -36004,6 +36134,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -37552,6 +37692,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-ios18.0/win10-x64": {
@@ -39098,6 +39248,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -40726,6 +40886,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-maccatalyst18.0/android-arm": {
@@ -42263,6 +42433,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -43802,6 +43982,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-maccatalyst18.0/android-x64": {
@@ -45339,6 +45529,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -46878,6 +47078,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-maccatalyst18.0/iossimulator-x64": {
@@ -48412,6 +48622,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -49951,6 +50171,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-maccatalyst18.0/win10-x64": {
@@ -51485,6 +51715,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -53301,6 +53541,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-windows10.0.19041/android-arm": {
@@ -54980,6 +55230,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -56661,6 +56921,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-windows10.0.19041/android-x64": {
@@ -58340,6 +58610,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -60021,6 +60301,16 @@
         "build": {
           "buildTransitive/net6.0/_._": {}
         }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        }
       }
     },
     "net8.0-windows10.0.19041/iossimulator-x64": {
@@ -61697,6 +61987,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -63377,6 +63677,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     },
@@ -65063,6 +65373,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "MyBeast.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyBeast.Domain.dll": {}
         }
       }
     }
@@ -71491,6 +71811,11 @@
         "xamarin.kotlinx.coroutines.core.jvm.1.7.2.1.nupkg.sha512",
         "xamarin.kotlinx.coroutines.core.jvm.nuspec"
       ]
+    },
+    "MyBeast.Domain/1.0.0": {
+      "type": "project",
+      "path": "../MyBeast.Domain/MyBeast.Domain.csproj",
+      "msbuildProject": "../MyBeast.Domain/MyBeast.Domain.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -71503,6 +71828,7 @@
       "Microsoft.Maui.Controls >= 8.0.82",
       "Microsoft.Maui.Controls.Compatibility >= 8.0.82",
       "Microsoft.NET.ILLink.Tasks >= 8.0.10",
+      "MyBeast.Domain >= 1.0.0",
       "Newtonsoft.Json >= 13.0.4",
       "Refit.HttpClientFactory >= 8.0.0"
     ],
@@ -71515,6 +71841,7 @@
       "Microsoft.Maui.Controls >= 8.0.82",
       "Microsoft.Maui.Controls.Compatibility >= 8.0.82",
       "Microsoft.NET.ILLink.Tasks >= 8.0.10",
+      "MyBeast.Domain >= 1.0.0",
       "Newtonsoft.Json >= 13.0.4",
       "Refit.HttpClientFactory >= 8.0.0"
     ],
@@ -71527,6 +71854,7 @@
       "Microsoft.Maui.Controls >= 8.0.82",
       "Microsoft.Maui.Controls.Compatibility >= 8.0.82",
       "Microsoft.NET.ILLink.Tasks >= 8.0.10",
+      "MyBeast.Domain >= 1.0.0",
       "Newtonsoft.Json >= 13.0.4",
       "Refit.HttpClientFactory >= 8.0.0"
     ],
@@ -71538,6 +71866,7 @@
       "Microsoft.Extensions.Logging.Debug >= 8.0.0",
       "Microsoft.Maui.Controls >= 8.0.82",
       "Microsoft.Maui.Controls.Compatibility >= 8.0.82",
+      "MyBeast.Domain >= 1.0.0",
       "Newtonsoft.Json >= 13.0.4",
       "Refit.HttpClientFactory >= 8.0.0"
     ]
@@ -71578,19 +71907,35 @@
       "frameworks": {
         "net8.0-android34.0": {
           "targetAlias": "net8.0-android",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+              "projectPath": "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj"
+            }
+          }
         },
         "net8.0-ios18.0": {
           "targetAlias": "net8.0-ios",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+              "projectPath": "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj"
+            }
+          }
         },
         "net8.0-maccatalyst18.0": {
           "targetAlias": "net8.0-maccatalyst",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+              "projectPath": "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj"
+            }
+          }
         },
         "net8.0-windows10.0.19041": {
           "targetAlias": "net8.0-windows10.0.19041.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+              "projectPath": "C:\\Users\\Admin\\OneDrive\\Documentos\\Projetos Faculdade\\CEUB\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
