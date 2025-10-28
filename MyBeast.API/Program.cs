@@ -13,10 +13,44 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // --- 2. Registrar Dependências (Serviços e Repositórios) ---
+// Exercise 
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
-// (Adicione os outros aqui: IFoodItemService, IFoodItemRepository, etc.)
 
+// Food 
+builder.Services.AddScoped<IFoodItemService, FoodItemService>();
+builder.Services.AddScoped<IFoodItemRepository, FoodItemRepository>();
+
+// WorkoutTemplate
+builder.Services.AddScoped<IWorkoutTemplateService, WorkoutTemplateService>();
+builder.Services.AddScoped<IWorkoutTemplateRepository, WorkoutTemplateRepository>();
+
+// User
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Pet
+builder.Services.AddScoped<IPetService, PetService>();
+builder.Services.AddScoped<IPetRepository, PetRepository>();
+
+// WorkoutSessionService
+builder.Services.AddScoped<IWorkoutSessionService, WorkoutSessionService>();
+builder.Services.AddScoped<IWorkoutSessionRepository, WorkoutSessionRepository>();
+builder.Services.AddScoped<ISetLogRepository, SetLogRepository>();
+
+// MealLog
+builder.Services.AddScoped<IMealLogService, MealLogService>();
+builder.Services.AddScoped<IMealLogRepository, MealLogRepository>();
+builder.Services.AddScoped<IMealLogItemRepository, MealLogItemRepository>();
+
+// Community
+builder.Services.AddScoped<ICommunityPostService, CommunityPostService>();
+builder.Services.AddScoped<ICommunityPostRepository, CommunityPostRepository>();
+builder.Services.AddScoped<IPostReactionRepository, PostReactionRepository>();
+
+// Achievement
+builder.Services.AddScoped<IAchievementService, AchievementService>();
+builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
 
 // --- 3. Adicionar serviços padrão da API ---
 builder.Services.AddControllers();

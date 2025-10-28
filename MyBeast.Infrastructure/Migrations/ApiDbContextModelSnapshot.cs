@@ -127,7 +127,6 @@ namespace MyBeast.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExerciseId"));
 
                     b.Property<string>("Instructions")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsCustom")
@@ -143,7 +142,12 @@ namespace MyBeast.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("ExerciseId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Exercise");
                 });
@@ -176,7 +180,12 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Property<decimal>("Protein")
                         .HasColumnType("decimal(10, 2)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("FoodId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("FoodItem");
                 });
@@ -469,6 +478,26 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MyBeast.Domain.Models.Exercise", b =>
+                {
+                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                        .WithMany("Exercises")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyBeast.Domain.Models.FoodItem", b =>
+                {
+                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                        .WithMany("FoodItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MyBeast.Domain.Models.MealLog", b =>
                 {
                     b.HasOne("MyBeast.Domain.Models.User", "User")
@@ -616,6 +645,10 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("Achievements");
 
                     b.Navigation("CommunityPosts");
+
+                    b.Navigation("Exercises");
+
+                    b.Navigation("FoodItems");
 
                     b.Navigation("MealLogs");
 

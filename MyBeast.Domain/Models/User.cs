@@ -37,5 +37,7 @@ namespace MyBeast.Domain.Models
         public virtual ICollection<CommunityPost> CommunityPosts { get; set; } = new List<CommunityPost>();
         public virtual ICollection<AISuggestion> AISuggestions { get; set; } = new List<AISuggestion>();
         public virtual ICollection<PostReaction> PostReactions { get; set; } = new List<PostReaction>();
+        public virtual ICollection<Exercise> Exercises { get; set; } = new List<Exercise>();
+        public virtual ICollection<FoodItem> FoodItems { get; set; } = new List<FoodItem>();
     }
 }

@@ -74,6 +74,18 @@ namespace MyBeast.Infrastructure.Data
             modelBuilder.Entity<MealLogItem>()
                 .HasKey(mli => new { mli.MealLogId, mli.FoodId });
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Exercises) 
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<User>()
+            .HasMany(u => u.FoodItems) // Assumindo ICollection<FoodItem> FoodItems no Model User
+            .WithOne(f => f.User)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
             // --- 2. CORREÇÃO DO CAMINHO EM CASCATA ---
             // (Este é o código da etapa anterior, para garantir que continue correto)
             modelBuilder.Entity<PostReaction>()
