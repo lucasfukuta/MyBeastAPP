@@ -1,6 +1,6 @@
-﻿using System; // Adicionar se ainda não existir
+﻿using System;
 
-namespace MyBeast.API.Dtos.WorkoutSession // Verifique/Ajuste o namespace
+namespace MyBeast.API.DTOs.WorkoutSessions.Input // Verifique/Ajuste o namespace
 {
     public class StartSessionDto
     {

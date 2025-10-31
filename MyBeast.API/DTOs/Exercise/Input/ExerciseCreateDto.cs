@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.Exercise
+namespace MyBeast.API.DTOs.Exercise.Input
 {
     public class ExerciseCreateDto
     {

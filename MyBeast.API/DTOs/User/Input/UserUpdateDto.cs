@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.User
+namespace MyBeast.API.DTOs.User.Input
 {
     // DTO para receber dados na atualização do perfil
     public class UserUpdateDto

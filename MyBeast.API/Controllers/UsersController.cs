@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Models;
-using MyBeast.API.Dtos.User; // Importa DTOs
 using System;
 using System.Collections.Generic;
 using System.Linq; // Para Select
 using System.Threading.Tasks;
+using MyBeast.API.DTOs.User.Input;
+using MyBeast.API.DTOs.User.Output;
 
 namespace MyBeast.API.Controllers
 {

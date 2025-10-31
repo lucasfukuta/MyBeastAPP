@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.FoodItem
+namespace MyBeast.API.DTOs.FoodItem.Input
 {
     public class FoodItemUpdateDto
     {

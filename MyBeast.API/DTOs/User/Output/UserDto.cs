@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyBeast.API.Dtos.User
+namespace MyBeast.API.DTOs.User.Output
 {
     // DTO para retornar dados do usuário (sem senha)
     public class UserDto

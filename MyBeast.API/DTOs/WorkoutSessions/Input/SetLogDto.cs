@@ -1,5 +1,6 @@
-﻿namespace MyBeast.API.Dtos.WorkoutSession // Verifique/Ajuste o namespace
+﻿namespace MyBeast.API.DTOs.WorkoutSessions.Input // Verifique/Ajuste o namespace
 {
+    //Representa um único set realizado, com ExerciseId, Weight, Reps, etc
     public class SetLogDto // DTO para receber os dados de um set
     {
         public int ExerciseId { get; set; }

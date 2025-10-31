@@ -31,22 +31,24 @@ namespace MyBeast.Infrastructure.Repositories
         {
             // Implementa paginação básica
             return await _context.CommunityPosts
-                       .Include(p => p.User) // Inclui dados do autor
-                       .OrderByDescending(p => p.CreatedAt)
-                       .Skip((pageNumber - 1) * pageSize)
-                       .Take(pageSize)
-                       .AsNoTracking()
-                       .ToListAsync();
+                           .Include(p => p.User) // Inclui dados do autor
+                           .Include(p => p.PostReactions) // <-- ADICIONE ESTA LINHA
+                           .OrderByDescending(p => p.CreatedAt)
+                           .Skip((pageNumber - 1) * pageSize)
+                           .Take(pageSize)
+                           .AsNoTracking()
+                           .ToListAsync();
         }
 
         public async Task<IEnumerable<CommunityPost>> GetByUserIdAsync(int userId)
         {
             return await _context.CommunityPosts
-                      .Where(p => p.UserId == userId)
-                      .Include(p => p.User)
-                      .OrderByDescending(p => p.CreatedAt)
-                      .AsNoTracking()
-                      .ToListAsync();
+                           .Where(p => p.UserId == userId)
+                           .Include(p => p.User)          // Incluir se necessário
+                           .Include(p => p.PostReactions) // <-- ADICIONE ESTA LINHA
+                           .OrderByDescending(p => p.CreatedAt)
+                           .AsNoTracking()
+                           .ToListAsync();
         }
 
         public async Task<CommunityPost> AddAsync(CommunityPost post)

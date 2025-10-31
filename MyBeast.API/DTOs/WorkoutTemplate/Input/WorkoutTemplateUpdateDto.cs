@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.WorkoutTemplate
+namespace MyBeast.API.DTOs.WorkoutTemplate.Input
 {
+    //atualizar um template
     public class WorkoutTemplateUpdateDto
     {
         // Campos que podem ser atualizados

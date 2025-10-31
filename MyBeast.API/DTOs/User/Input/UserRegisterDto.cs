@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.User
+namespace MyBeast.API.DTOs.User.Input
 {
     // DTO para receber dados no registro
+    //Cria um novo usuário
     public class UserRegisterDto
     {
         [Required]

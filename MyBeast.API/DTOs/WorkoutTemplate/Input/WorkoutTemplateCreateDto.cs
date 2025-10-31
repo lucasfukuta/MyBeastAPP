@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.WorkoutTemplate
+namespace MyBeast.API.DTOs.WorkoutTemplate.Input
 {
+    //criar um template de treino completo
     public class WorkoutTemplateCreateDto
     {
         [Required]

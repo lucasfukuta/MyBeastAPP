@@ -1,4 +1,4 @@
-﻿namespace MyBeast.API.Dtos.Pet // Verifique/Ajuste o namespace
+﻿namespace MyBeast.API.DTOs.Pets.Input // Verifique/Ajuste o namespace
 {
     public class PetStatusUpdateDto
     {

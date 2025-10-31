@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.Pet
+namespace MyBeast.API.DTOs.Pets.Input
 {
     // DTO para atualização geral do Pet
     public class PetUpdateDto

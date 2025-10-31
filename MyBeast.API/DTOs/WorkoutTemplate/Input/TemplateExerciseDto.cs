@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.WorkoutTemplate
+namespace MyBeast.API.DTOs.WorkoutTemplate.Input
 {
     // DTO para representar um exercício dentro de um template
     public class TemplateExerciseDto

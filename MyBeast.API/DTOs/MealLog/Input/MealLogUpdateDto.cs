@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using MyBeast.API.Dtos.MealLog.Input;
 
-namespace MyBeast.API.Dtos.MealLog
+namespace MyBeast.API.DTOs.MealLog.Input
 {
     // DTO para receber dados ao atualizar uma refeição
     public class MealLogUpdateDto

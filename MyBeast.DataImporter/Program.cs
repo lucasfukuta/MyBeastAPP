@@ -187,7 +187,7 @@ try
         var existingNames = new HashSet<string>();
 
         using var client = new HttpClient();
-
+        bool hasPrintedNutrients = false;
         // Vamos buscar as primeiras 20 páginas (50 itens por página = 1000 alimentos)
         for (int page = 1; page <= 20; page++)
         {
@@ -218,14 +218,15 @@ try
                 {
                     Name = name,
                     IsCustom = false,
-                    Calories = GetNutrientValue(item, 1087),
-                    Protein = GetNutrientValue(item, 1003),
-                    Fat = GetNutrientValue(item, 1004),
-                    Carbs = GetNutrientValue(item, 1005)
+                    // --- CHAMADAS CORRIGIDAS ---
+                    Calories = GetNutrientValue(item, "208"), // "Energy" (KCAL)
+                    Protein = GetNutrientValue(item, "203"), // "Protein"
+                    Fat = GetNutrientValue(item, "204"), // "Total lipid (fat)"
+                    Carbs = GetNutrientValue(item, "205")  // "Carbohydrate, by difference"
                 };
 
                 foodsToImport.Add(foodItem);
-                existingNames.Add(name); // Adiciona o nome ao nosso rastreador
+                existingNames.Add(name);
             }
         }
 
@@ -259,7 +260,8 @@ catch (Exception ex)
 }
 
 // Função auxiliar para o USDA 
-static decimal GetNutrientValue(JToken foodItem, int nutrientId)
+// Função auxiliar para o USDA (VERSÃO FINAL CORRIGIDA)
+static decimal GetNutrientValue(JToken foodItem, string nutrientNumber) // ID agora é string
 {
     // 1. Verifica se a lista de nutrientes existe
     if (foodItem["foodNutrients"] == null || !foodItem["foodNutrients"].HasValues)
@@ -267,18 +269,18 @@ static decimal GetNutrientValue(JToken foodItem, int nutrientId)
         return 0;
     }
 
-    // 2. Procura pelo nutriente, verificando se 'nutrientId' não é nulo
+    // 2. Procura pelo nutriente usando a chave "number" e comparando como string
     var nutrient = foodItem["foodNutrients"]
-        .FirstOrDefault(n => n["nutrientId"] != null && (int)n["nutrientId"] == nutrientId);
+        .FirstOrDefault(n => n["number"] != null && n["number"].ToString() == nutrientNumber);
 
-    // 3. Verifica se encontrou o nutriente e se ele tem um valor
-    if (nutrient == null || nutrient["value"] == null)
+    // 3. Verifica se encontrou o nutriente e se ele tem um valor em "amount"
+    if (nutrient == null || nutrient["amount"] == null)
     {
         return 0;
     }
 
-    // 4. Converte o valor para decimal com segurança
-    decimal.TryParse(nutrient["value"].ToString(), out decimal result);
+    // 4. Converte o valor de "amount" para decimal com segurança
+    decimal.TryParse(nutrient["amount"].ToString(), out decimal result);
     return result;
 }
 

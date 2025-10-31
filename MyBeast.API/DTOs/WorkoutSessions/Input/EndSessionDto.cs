@@ -1,7 +1,7 @@
 ﻿using System; // Adicionar
-using System.Collections.Generic; // Adicionar
+using System.Collections.Generic;
 
-namespace MyBeast.API.Dtos.WorkoutSession // Verifique/Ajuste o namespace
+namespace MyBeast.API.DTOs.WorkoutSessions.Input // Verifique/Ajuste o namespace
 {
     public class EndSessionDto
     {

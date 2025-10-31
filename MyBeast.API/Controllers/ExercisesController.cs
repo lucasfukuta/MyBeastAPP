@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Models;
-using MyBeast.API.Dtos.Exercise; // Importa DTOs
-using System; // Para Exception
+using System;
 using System.Collections.Generic;
-using System.Linq; // Para Select
 using System.Threading.Tasks;
+using System.Linq;
+using MyBeast.API.DTOs.Exercise.Input;
+using MyBeast.API.DTOs.Exercise.Output; // Adicionado para Select
 
 namespace MyBeast.API.Controllers
 {
@@ -20,26 +21,32 @@ namespace MyBeast.API.Controllers
             _exerciseService = exerciseService;
         }
 
-        // GET /api/Exercises (Pode filtrar por usuário ou retornar só templates)
+        // GET /api/Exercises - Retorna Lista de ExerciseDto
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Exercise>>> GetExercises([FromQuery] int? userId = null)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExerciseDto>))] // Atualizado
+        public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetExercises([FromQuery] int? userId = null)
         {
-            // TODO: Se userId != null, verificar permissão do usuário logado
+            // TODO: Se userId != null, verificar permissão
             var exercises = await _exerciseService.GetAllExercisesAsync(userId);
-            // TODO: Mapear para ExerciseDto se necessário (para omitir UserId?)
-            return Ok(exercises);
+
+            // Mapear Model para Dto
+            var exerciseDtos = exercises.Select(MapToDto); // Usa método auxiliar
+
+            return Ok(exerciseDtos);
         }
 
-        // GET /api/Exercises/user/{userId} (Busca customizados de um usuário)
+        // GET /api/Exercises/user/{userId} - Retorna Lista de ExerciseDto
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Exercise>>> GetUserExercises(int userId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExerciseDto>))] // Atualizado
+        public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetUserExercises(int userId)
         {
-            // TODO: Verificar permissão do usuário logado
+            // TODO: Verificar permissão
             try
             {
                 var exercises = await _exerciseService.GetCustomExercisesByUserIdAsync(userId);
-                // TODO: Mapear para ExerciseDto
-                return Ok(exercises);
+                // Mapear Model para Dto
+                var exerciseDtos = exercises.Select(MapToDto);
+                return Ok(exerciseDtos);
             }
             catch (Exception ex) when (ex.Message.Contains("não encontrado"))
             {
@@ -51,27 +58,30 @@ namespace MyBeast.API.Controllers
             }
         }
 
-        // GET /api/Exercises/{id}
+        // GET /api/Exercises/{id} - Retorna ExerciseDto
         [HttpGet("{id}")]
-        public async Task<ActionResult<Exercise>> GetExercise(int id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExerciseDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ExerciseDto>> GetExercise(int id)
         {
-            // TODO: Verificar permissão se for customizado de outro usuário
+            // TODO: Verificar permissão se for custom de outro user
             var exercise = await _exerciseService.GetExerciseByIdAsync(id);
             if (exercise == null) return NotFound();
-            // TODO: Mapear para ExerciseDto
-            return Ok(exercise);
+
+            // Mapear Model para Dto
+            var exerciseDto = MapToDto(exercise);
+            return Ok(exerciseDto);
         }
 
-        // POST /api/Exercises (Criar exercício customizado)
+        // POST /api/Exercises - Retorna ExerciseDto
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Exercise))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ExerciseDto))] // Atualizado
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Exercise>> CreateCustomExercise([FromBody] ExerciseCreateDto createDto)
+        public async Task<ActionResult<ExerciseDto>> CreateCustomExercise([FromBody] ExerciseCreateDto createDto) // DTO de Entrada
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            // TODO: Obter userId do usuário logado (autenticação) em vez de confiar no DTO
-            int requestingUserId = createDto.UserId; // Substituir pela ID do usuário autenticado
+            // TODO: Obter userId autenticado
+            int requestingUserId = createDto.UserId;
 
             try
             {
@@ -80,60 +90,52 @@ namespace MyBeast.API.Controllers
                     Name = createDto.Name,
                     MuscleGroup = createDto.MuscleGroup,
                     Instructions = createDto.Instructions
-                    // UserId e IsCustom serão definidos pelo serviço
                 };
 
                 var newExercise = await _exerciseService.CreateCustomExerciseAsync(exerciseToCreate, requestingUserId);
-                // TODO: Mapear para ExerciseDto
-                return CreatedAtAction(nameof(GetExercise), new { id = newExercise.ExerciseId }, newExercise);
+                // Mapear Model para Dto
+                var newExerciseDto = MapToDto(newExercise);
+                return CreatedAtAction(nameof(GetExercise), new { id = newExerciseDto.ExerciseId }, newExerciseDto);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message); // Ex: Nome duplicado, Usuário não encontrado
+                return BadRequest(ex.Message);
             }
         }
 
-        // PUT /api/Exercises/{id} (Atualizar exercício customizado)
+        // PUT /api/Exercises/{id} - Retorna ExerciseDto
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Exercise))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExerciseDto))] // Atualizado
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Exercise>> UpdateCustomExercise(int id, [FromBody] ExerciseUpdateDto updateDto, [FromQuery] int userId) // Temporário userId
+        public async Task<ActionResult<ExerciseDto>> UpdateCustomExercise(int id, [FromBody] ExerciseUpdateDto updateDto, [FromQuery] int userId) // DTO de Entrada
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            // TODO: Obter userId do usuário logado (autenticação)
-            int requestingUserId = userId; // Substituir
+            // TODO: Obter userId autenticado
+            int requestingUserId = userId;
 
             try
             {
                 var exerciseUpdateData = new Exercise
                 {
-                    Name = updateDto.Name ?? "", // Serviço ignora se vazio
-                    MuscleGroup = updateDto.MuscleGroup ?? "", // Serviço ignora se vazio
-                    Instructions = updateDto.Instructions // Serviço atualiza
+                    Name = updateDto.Name ?? "",
+                    MuscleGroup = updateDto.MuscleGroup ?? "",
+                    Instructions = updateDto.Instructions
                 };
 
                 var updatedExercise = await _exerciseService.UpdateCustomExerciseAsync(id, exerciseUpdateData, requestingUserId);
-                // TODO: Mapear para ExerciseDto
-                return Ok(updatedExercise);
+                // Mapear Model para Dto
+                var updatedExerciseDto = MapToDto(updatedExercise);
+                return Ok(updatedExerciseDto);
             }
-            catch (Exception ex) when (ex.Message.Contains("não encontrado"))
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex) when (ex.Message.Contains("permissão") || ex.Message.Contains("template"))
-            {
-                return Forbid(ex.Message); // 403 Forbidden
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message); // Ex: Nome duplicado
-            }
+            // ... (catch blocks como antes) ...
+            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
+            catch (Exception ex) when (ex.Message.Contains("permissão") || ex.Message.Contains("template")) { return Forbid(ex.Message); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
         }
 
-        // DELETE /api/Exercises/{id} (Deletar exercício customizado)
+        // DELETE /api/Exercises/{id} - Sem mudança, retorna NoContent
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -141,27 +143,34 @@ namespace MyBeast.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteCustomExercise(int id, [FromQuery] int userId) // Temporário userId
         {
-            // TODO: Obter userId do usuário logado (autenticação)
-            int requestingUserId = userId; // Substituir
+            // TODO: Obter userId autenticado
+            int requestingUserId = userId;
 
             try
             {
                 await _exerciseService.DeleteCustomExerciseAsync(id, requestingUserId);
                 return NoContent();
             }
-            catch (Exception ex) when (ex.Message.Contains("não encontrado"))
+            // ... (catch blocks como antes) ...
+            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
+            catch (Exception ex) when (ex.Message.Contains("permissão") || ex.Message.Contains("template")) { return Forbid(ex.Message); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+        // --- MÉTODO AUXILIAR DE MAPEAMENTO ---
+        private ExerciseDto MapToDto(Exercise exercise)
+        {
+            if (exercise == null) return null; // Segurança
+
+            return new ExerciseDto
             {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex) when (ex.Message.Contains("permissão") || ex.Message.Contains("template"))
-            {
-                return Forbid(ex.Message); // 403 Forbidden
-            }
-            catch (Exception ex)
-            {
-                // Pode ser erro 500 se o exercício estiver em uso e a FK impedir
-                return BadRequest(ex.Message);
-            }
+                ExerciseId = exercise.ExerciseId,
+                Name = exercise.Name,
+                MuscleGroup = exercise.MuscleGroup,
+                Instructions = exercise.Instructions,
+                IsCustom = exercise.IsCustom,
+                UserId = exercise.UserId
+            };
         }
     }
 }
