@@ -10,6 +10,7 @@ namespace MyBeast.Domain.Interfaces
         Task<Achievement?> GetByIdAsync(int achievementId);
         Task<IEnumerable<Achievement>> GetByUserIdAsync(int userId);
         Task<Achievement> AddAsync(Achievement achievement);
+        Task<Achievement?> GetByNameAndUserIdAsync(string name, int userId);
         // Não teremos Update/Delete por enquanto, conquistas são geralmente apenas adicionadas
     }
 }

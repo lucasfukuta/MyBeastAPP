@@ -14,17 +14,20 @@ namespace MyBeast.Application.Services
         private readonly IMealLogItemRepository _mealLogItemRepository;
         private readonly IUserRepository _userRepository; // Para verificar o usuário
         private readonly IFoodItemRepository _foodItemRepository; // Para verificar os alimentos
+        private readonly IPetService _petService;
 
         public MealLogService(
             IMealLogRepository mealLogRepository,
             IMealLogItemRepository mealLogItemRepository,
             IUserRepository userRepository,
-            IFoodItemRepository foodItemRepository) // Adiciona IFoodItemRepository
+            IFoodItemRepository foodItemRepository, // Adiciona IFoodItemRepository
+            IPetService petService) 
         {
             _mealLogRepository = mealLogRepository;
             _mealLogItemRepository = mealLogItemRepository;
             _userRepository = userRepository;
             _foodItemRepository = foodItemRepository;
+            _petService = petService;
         }
 
         public async Task<MealLog?> GetMealLogByIdAsync(int mealLogId)
@@ -78,7 +81,32 @@ namespace MyBeast.Application.Services
             {
                 item.MealLogId = savedMealLog.MealLogId; // Define a FK
             }
+            try
+            {
+                // 1. Define a lógica de mudança de status
+                int healthChange = 0; // Dieta não afeta saúde diretamente?
+                int energyChange = +10; // Ganha energia
+                int hungerChange = -30; // Sacia a fome
 
+                // 2. Busca o pet atual
+                var pet = await _petService.GetPetByUserIdAsync(userId);
+                if (pet != null)
+                {
+                    // 3. Calcula os novos valores
+                    int newHealth = pet.Health + healthChange;
+                    int newEnergy = pet.Energy + energyChange;
+                    int newHunger = pet.Hunger + hungerChange;
+
+                    // 4. Chama o serviço do Pet
+                    await _petService.UpdatePetStatusAsync(userId, newHealth, newEnergy, newHunger, "Healthy");
+                    await _petService.AddExperienceAsync(userId, 10);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Logar erro do Pet
+                Console.WriteLine($"Erro ao atualizar status do Pet pós-refeição: {ex.Message}");
+            }
             // Salvar os itens
             await _mealLogItemRepository.AddRangeAsync(items);
 

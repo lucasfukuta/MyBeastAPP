@@ -11,6 +11,8 @@
         public int Energy { get; set; }
         public int Hunger { get; set; }
         public string Status { get; set; } = string.Empty;
+        public int Experience { get; set; }
+        public int XpToNextLevel { get; set; }
 
         // Não incluir a propriedade de navegação 'User'
     }

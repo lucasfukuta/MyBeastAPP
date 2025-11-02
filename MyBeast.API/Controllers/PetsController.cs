@@ -168,6 +168,8 @@ namespace MyBeast.API.Controllers
                 UserId = pet.UserId,
                 Name = pet.Name,
                 EvolutionLevel = pet.EvolutionLevel,
+                Experience = pet.Experience,
+                XpToNextLevel = pet.XpToNextLevel,
                 Health = pet.Health,
                 Energy = pet.Energy,
                 Hunger = pet.Hunger,

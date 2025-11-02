@@ -76,6 +76,31 @@ namespace MyBeast.Application.Services
             return await _petRepository.UpdateAsync(pet);
         }
 
+        public async Task AddExperienceAsync(int userId, int experienceGained)
+        {
+            var pet = await _petRepository.GetByUserIdAsync(userId);
+            if (pet == null) return; // Sem pet, sem XP
+
+            pet.Experience += experienceGained;
+
+            // Fórmula simples de XP: Nível 1 -> 100 XP, Nível 2 -> 200 XP, etc.
+            int xpParaProximoNivel = 100 * pet.EvolutionLevel;
+
+            // Loop para caso o usuário ganhe XP o suficiente para vários níveis
+            while (pet.Experience >= xpParaProximoNivel)
+            {
+                // LEVEL UP!
+                pet.Experience -= xpParaProximoNivel; // Zera a barra de XP
+                pet.EvolutionLevel++; // Aumenta o nível
+
+                // Atualiza a meta para o próximo nível
+                xpParaProximoNivel = 100 * pet.EvolutionLevel;
+            }
+
+            pet.XpToNextLevel = xpParaProximoNivel; // Salva a meta atual
+            await _petRepository.UpdateAsync(pet);
+        }
+
         public async Task DeletePetByUserIdAsync(int userId) // async Task
         {
             var pet = await _petRepository.GetByUserIdAsync(userId);

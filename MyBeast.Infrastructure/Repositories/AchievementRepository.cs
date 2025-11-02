@@ -38,5 +38,11 @@ namespace MyBeast.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return achievement;
         }
+        public async Task<Achievement?> GetByNameAndUserIdAsync(string name, int userId)
+        {
+            // Busca por nome exato (ignorando case) e UserId
+            return await _context.Achievements.AsNoTracking()
+                       .FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower() && a.UserId == userId);
+        }
     }
 }

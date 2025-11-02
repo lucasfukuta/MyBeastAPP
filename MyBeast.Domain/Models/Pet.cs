@@ -16,7 +16,9 @@ namespace MyBeast.Domain.Models
         [Required]
         [MaxLength(50)]
         public string Name { get; set; } 
-        public int EvolutionLevel { get; set; } 
+        public int EvolutionLevel { get; set; }
+        public int Experience { get; set; }
+        public int XpToNextLevel { get; set; }
         public int Health { get; set; } 
         public int Energy { get; set; } 
         public int Hunger { get; set; } 
