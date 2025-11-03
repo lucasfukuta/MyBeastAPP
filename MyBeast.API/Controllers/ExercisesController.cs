@@ -1,15 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Models;
+using MyBeast.API.DTOs.Exercise.Input;   // DTOs de Entrada
+using MyBeast.API.DTOs.Exercise.Output;  // DTOs de Saída
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
-using MyBeast.API.DTOs.Exercise.Input;
-using MyBeast.API.DTOs.Exercise.Output; // Adicionado para Select
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization; // Para [Authorize]
+using System.Security.Claims; // Para Claims
+using System.IdentityModel.Tokens.Jwt; // Para JwtRegisteredClaimNames
 
 namespace MyBeast.API.Controllers
 {
+    [Authorize] // REQUER AUTENTICAÇÃO PARA TODOS OS ENDPOINTS
     [ApiController]
     [Route("api/[controller]")]
     public class ExercisesController : ControllerBase
@@ -21,146 +25,126 @@ namespace MyBeast.API.Controllers
             _exerciseService = exerciseService;
         }
 
-        // GET /api/Exercises - Retorna Lista de ExerciseDto
+        // GET /api/Exercises (Busca templates + customizados do usuário logado)
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExerciseDto>))] // Atualizado
-        public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetExercises([FromQuery] int? userId = null)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExerciseDto>))]
+        public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetExercises()
         {
-            // TODO: Se userId != null, verificar permissão
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
             var exercises = await _exerciseService.GetAllExercisesAsync(userId);
-
-            // Mapear Model para Dto
-            var exerciseDtos = exercises.Select(MapToDto); // Usa método auxiliar
-
+            var exerciseDtos = exercises.Select(MapToDto);
             return Ok(exerciseDtos);
         }
 
-        // GET /api/Exercises/user/{userId} - Retorna Lista de ExerciseDto
-        [HttpGet("user/{userId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExerciseDto>))] // Atualizado
-        public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetUserExercises(int userId)
+        // GET /api/Exercises/me (Busca APENAS customizados do usuário logado)
+        [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExerciseDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)] // Middleware cuidará disso
+        public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetMyCustomExercises()
         {
-            // TODO: Verificar permissão
-            try
-            {
-                var exercises = await _exerciseService.GetCustomExercisesByUserIdAsync(userId);
-                // Mapear Model para Dto
-                var exerciseDtos = exercises.Select(MapToDto);
-                return Ok(exerciseDtos);
-            }
-            catch (Exception ex) when (ex.Message.Contains("não encontrado"))
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "Usuário não encontrado" (404) do serviço.
+            var exercises = await _exerciseService.GetCustomExercisesByUserIdAsync(userId);
+            var exerciseDtos = exercises.Select(MapToDto);
+            return Ok(exerciseDtos);
         }
 
-        // GET /api/Exercises/{id} - Retorna ExerciseDto
+        // GET /api/Exercises/{id}
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExerciseDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExerciseDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<ExerciseDto>> GetExercise(int id)
         {
-            // TODO: Verificar permissão se for custom de outro user
             var exercise = await _exerciseService.GetExerciseByIdAsync(id);
             if (exercise == null) return NotFound();
 
-            // Mapear Model para Dto
+            // Verificação de permissão (manual)
+            if (exercise.IsCustom && exercise.UserId != null)
+            {
+                var requestingUserId = GetAuthenticatedUserId();
+                if (exercise.UserId != requestingUserId)
+                {
+                    return Forbid(); // 403 Forbidden
+                }
+            }
+
             var exerciseDto = MapToDto(exercise);
             return Ok(exerciseDto);
         }
 
-        // POST /api/Exercises - Retorna ExerciseDto
+        // POST /api/Exercises (Criar exercício customizado para o usuário logado)
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ExerciseDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ExerciseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ExerciseDto>> CreateCustomExercise([FromBody] ExerciseCreateDto createDto) // DTO de Entrada
+        [ProducesResponseType(StatusCodes.Status404NotFound)] // User não encontrado
+        [ProducesResponseType(StatusCodes.Status409Conflict)] // Nome duplicado
+        public async Task<ActionResult<ExerciseDto>> CreateCustomExercise([FromBody] ExerciseCreateDto createDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            // TODO: Obter userId autenticado
-            int requestingUserId = createDto.UserId;
 
-            try
-            {
-                var exerciseToCreate = new Exercise
-                {
-                    Name = createDto.Name,
-                    MuscleGroup = createDto.MuscleGroup,
-                    Instructions = createDto.Instructions
-                };
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
 
-                var newExercise = await _exerciseService.CreateCustomExerciseAsync(exerciseToCreate, requestingUserId);
-                // Mapear Model para Dto
-                var newExerciseDto = MapToDto(newExercise);
-                return CreatedAtAction(nameof(GetExercise), new { id = newExerciseDto.ExerciseId }, newExerciseDto);
-            }
-            catch (Exception ex)
+            // Bloco try-catch REMOVIDO.
+            var exerciseToCreate = new Exercise
             {
-                return BadRequest(ex.Message);
-            }
+                Name = createDto.Name,
+                MuscleGroup = createDto.MuscleGroup,
+                Instructions = createDto.Instructions
+            };
+
+            var newExercise = await _exerciseService.CreateCustomExerciseAsync(exerciseToCreate, requestingUserId);
+            var newExerciseDto = MapToDto(newExercise);
+            return CreatedAtAction(nameof(GetExercise), new { id = newExerciseDto.ExerciseId }, newExerciseDto);
         }
 
-        // PUT /api/Exercises/{id} - Retorna ExerciseDto
+        // PUT /api/Exercises/{id} (Atualizar exercício customizado do usuário logado)
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExerciseDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ExerciseDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ExerciseDto>> UpdateCustomExercise(int id, [FromBody] ExerciseUpdateDto updateDto, [FromQuery] int userId) // DTO de Entrada
+        [ProducesResponseType(StatusCodes.Status409Conflict)] // Nome duplicado
+        public async Task<ActionResult<ExerciseDto>> UpdateCustomExercise(int id, [FromBody] ExerciseUpdateDto updateDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            // TODO: Obter userId autenticado
-            int requestingUserId = userId;
 
-            try
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            var exerciseUpdateData = new Exercise
             {
-                var exerciseUpdateData = new Exercise
-                {
-                    Name = updateDto.Name ?? "",
-                    MuscleGroup = updateDto.MuscleGroup ?? "",
-                    Instructions = updateDto.Instructions
-                };
+                Name = updateDto.Name ?? "",
+                MuscleGroup = updateDto.MuscleGroup ?? "",
+                Instructions = updateDto.Instructions
+            };
 
-                var updatedExercise = await _exerciseService.UpdateCustomExerciseAsync(id, exerciseUpdateData, requestingUserId);
-                // Mapear Model para Dto
-                var updatedExerciseDto = MapToDto(updatedExercise);
-                return Ok(updatedExerciseDto);
-            }
-            // ... (catch blocks como antes) ...
-            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
-            catch (Exception ex) when (ex.Message.Contains("permissão") || ex.Message.Contains("template")) { return Forbid(ex.Message); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            var updatedExercise = await _exerciseService.UpdateCustomExerciseAsync(id, exerciseUpdateData, requestingUserId);
+            var updatedExerciseDto = MapToDto(updatedExercise);
+            return Ok(updatedExerciseDto);
         }
 
-        // DELETE /api/Exercises/{id} - Sem mudança, retorna NoContent
+        // DELETE /api/Exercises/{id} (Deletar exercício customizado do usuário logado)
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteCustomExercise(int id, [FromQuery] int userId) // Temporário userId
+        public async Task<IActionResult> DeleteCustomExercise(int id)
         {
-            // TODO: Obter userId autenticado
-            int requestingUserId = userId;
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
 
-            try
-            {
-                await _exerciseService.DeleteCustomExerciseAsync(id, requestingUserId);
-                return NoContent();
-            }
-            // ... (catch blocks como antes) ...
-            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
-            catch (Exception ex) when (ex.Message.Contains("permissão") || ex.Message.Contains("template")) { return Forbid(ex.Message); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            // Bloco try-catch REMOVIDO.
+            await _exerciseService.DeleteCustomExerciseAsync(id, requestingUserId);
+            return NoContent();
         }
 
         // --- MÉTODO AUXILIAR DE MAPEAMENTO ---
         private ExerciseDto MapToDto(Exercise exercise)
         {
-            if (exercise == null) return null; // Segurança
+            if (exercise == null) return null;
 
             return new ExerciseDto
             {
@@ -171,6 +155,20 @@ namespace MyBeast.API.Controllers
                 IsCustom = exercise.IsCustom,
                 UserId = exercise.UserId
             };
+        }
+
+        // --- MÉTODO AUXILIAR DE AUTORIZAÇÃO ---
+        private int GetAuthenticatedUserId()
+        {
+            var userIdString = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier ||
+                c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                throw new Exception("ID de usuário não encontrado no token.");
+            }
+            return userId;
         }
     }
 }

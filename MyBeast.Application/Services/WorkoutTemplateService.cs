@@ -1,9 +1,9 @@
 ﻿using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Interfaces;
 using MyBeast.Domain.Models;
-using System; // Para Exception
+using System;
 using System.Collections.Generic;
-using System.Linq; // Para Any()
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyBeast.Application.Services
@@ -11,8 +11,8 @@ namespace MyBeast.Application.Services
     public class WorkoutTemplateService : IWorkoutTemplateService
     {
         private readonly IWorkoutTemplateRepository _templateRepository;
-        private readonly IExerciseRepository _exerciseRepository; // Para validar exercícios no template
-        private readonly IUserRepository _userRepository; // Para validar usuário
+        private readonly IExerciseRepository _exerciseRepository;
+        private readonly IUserRepository _userRepository;
 
         public WorkoutTemplateService(
             IWorkoutTemplateRepository templateRepository,
@@ -26,12 +26,25 @@ namespace MyBeast.Application.Services
 
         public async Task<IEnumerable<WorkoutTemplate>> GetAllWorkoutTemplatesAsync()
         {
+            // Retorna todos (Serviço/Repo deve filtrar ou paginar)
             return await _templateRepository.GetAllAsync();
         }
 
-        public async Task<WorkoutTemplate?> GetWorkoutTemplateByIdAsync(int id, bool includeExercises = false)
+        // --- MÉTODO ATUALIZADO (com requestingUserId) ---
+        public async Task<WorkoutTemplate?> GetWorkoutTemplateByIdAsync(int id, int requestingUserId, bool includeExercises = false)
         {
-            return await _templateRepository.GetByIdAsync(id, includeExercises);
+            var template = await _templateRepository.GetByIdAsync(id, includeExercises);
+            if (template == null) return null;
+
+            // VERIFICAÇÃO DE PERMISSÃO:
+            // Se o template NÃO é padrão (UserId != null) E o dono NÃO é o usuário logado
+            if (template.UserId != null && template.UserId != requestingUserId)
+            {
+                // TODO: Adicionar lógica de Admin/Moderador se necessário
+                throw new Exception("Usuário não tem permissão para ver este template.");
+            }
+            // Se for padrão (UserId == null) ou pertencer ao usuário, retorna
+            return template;
         }
 
         public async Task<IEnumerable<WorkoutTemplate>> GetDefaultWorkoutTemplatesAsync(bool includeExercises = false)
@@ -41,22 +54,25 @@ namespace MyBeast.Application.Services
 
         public async Task<IEnumerable<WorkoutTemplate>> GetWorkoutTemplatesByUserIdAsync(int userId, bool includeExercises = false)
         {
-            // Verificar se o usuário existe (opcional, mas bom)
+            // Verificar se o usuário existe
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null) throw new Exception($"Usuário com ID {userId} não encontrado.");
 
             return await _templateRepository.GetByUserIdAsync(userId, includeExercises);
         }
 
-        public async Task<WorkoutTemplate> CreateWorkoutTemplateAsync(WorkoutTemplate template)
+        // --- MÉTODO ATUALIZADO (com requestingUserId) ---
+        public async Task<WorkoutTemplate> CreateWorkoutTemplateAsync(WorkoutTemplate template, int requestingUserId)
         {
             // Validações
-            if (template.UserId == null || template.UserId <= 0) throw new ArgumentException("UserId é obrigatório para templates de usuário.");
             if (string.IsNullOrWhiteSpace(template.Name)) throw new ArgumentException("Nome do template é obrigatório.");
 
             // Verificar se usuário existe
-            var user = await _userRepository.GetByIdAsync(template.UserId.Value);
-            if (user == null) throw new Exception($"Usuário com ID {template.UserId} não encontrado.");
+            var user = await _userRepository.GetByIdAsync(requestingUserId);
+            if (user == null) throw new Exception($"Usuário com ID {requestingUserId} não encontrado.");
+
+            // Atribui o UserId do token
+            template.UserId = requestingUserId;
 
             // Validar Exercícios (se vierem na criação)
             if (template.TemplateExercises != null && template.TemplateExercises.Any())
@@ -69,51 +85,47 @@ namespace MyBeast.Application.Services
             }
             else
             {
-                // Garante que a coleção não seja nula se não vier nada
                 template.TemplateExercises = new List<TemplateExercise>();
             }
 
             template.IsPremium = false; // Templates de usuário não são premium por padrão
-            // Difficulty pode ser opcional ou validado
-
             return await _templateRepository.AddAsync(template);
         }
 
+        // --- (Este método já estava correto no seu código) ---
         public async Task<WorkoutTemplate> UpdateWorkoutTemplateAsync(int id, WorkoutTemplate templateUpdateData, int requestingUserId)
         {
             var existingTemplate = await _templateRepository.GetByIdAsync(id, true); // Inclui exercícios para atualizar
             if (existingTemplate == null) throw new Exception($"Template com ID {id} não encontrado.");
 
-            // Verificação de Permissão: Usuário só pode editar seus próprios templates
+            // Verificação de Permissão
             if (existingTemplate.UserId != requestingUserId)
             {
                 throw new Exception("Usuário não tem permissão para editar este template.");
             }
-            // Não permitir edição de templates padrão (UserId == null)
             if (existingTemplate.UserId == null)
             {
                 throw new Exception("Não é permitido editar templates padrão do aplicativo.");
             }
 
-
             // Atualizar campos permitidos
             if (!string.IsNullOrWhiteSpace(templateUpdateData.Name)) existingTemplate.Name = templateUpdateData.Name;
             if (!string.IsNullOrWhiteSpace(templateUpdateData.Difficulty)) existingTemplate.Difficulty = templateUpdateData.Difficulty;
 
-            // Atualizar Exercícios (Lógica mais complexa: remover antigos, adicionar novos)
+            // Atualizar Exercícios
             if (templateUpdateData.TemplateExercises != null)
             {
-                // Remover exercícios que não estão mais na lista (simplificado: remove todos e adiciona os novos)
-                existingTemplate.TemplateExercises.Clear(); // Requer que GetByIdAsync inclua os exercícios
+                // Abordagem simples: Remove todos os antigos e adiciona os novos
+                existingTemplate.TemplateExercises.Clear();
 
-                // Validar e adicionar novos exercícios
-                foreach (var te in templateUpdateData.TemplateExercises.OrderBy(t => t.OrderIndex)) // Garante ordem
+                foreach (var te in templateUpdateData.TemplateExercises.OrderBy(t => t.OrderIndex))
                 {
                     var exerciseExists = await _exerciseRepository.GetByIdAsync(te.ExerciseId);
                     if (exerciseExists == null) throw new Exception($"Exercício com ID {te.ExerciseId} não encontrado.");
+
                     existingTemplate.TemplateExercises.Add(new TemplateExercise
                     {
-                        TemplateId = existingTemplate.TemplateId, // Redundante se EF Core gerencia, mas seguro
+                        TemplateId = existingTemplate.TemplateId,
                         ExerciseId = te.ExerciseId,
                         OrderIndex = te.OrderIndex
                     });
@@ -123,9 +135,10 @@ namespace MyBeast.Application.Services
             return await _templateRepository.UpdateAsync(existingTemplate);
         }
 
+        // --- (Este método já estava correto no seu código) ---
         public async Task DeleteWorkoutTemplateAsync(int id, int requestingUserId)
         {
-            var existingTemplate = await _templateRepository.GetByIdAsync(id);
+            var existingTemplate = await _templateRepository.GetByIdAsync(id); // Não precisa de includes para deletar
             if (existingTemplate == null) throw new Exception($"Template com ID {id} não encontrado.");
 
             // Verificação de Permissão

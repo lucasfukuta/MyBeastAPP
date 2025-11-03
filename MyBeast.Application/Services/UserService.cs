@@ -68,7 +68,6 @@ namespace MyBeast.Application.Services
             if (existingUser != null) throw new Exception("Email já cadastrado.");
 
             // --- HASHING DA SENHA (ESSENCIAL!) ---
-            // Substitua isso por uma biblioteca de hashing real (ex: BCrypt.Net)
             // NUNCA salve a senha em texto plano!
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash); // Exemplo com BCrypt
             // ------------------------------------

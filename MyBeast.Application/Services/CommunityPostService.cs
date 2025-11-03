@@ -40,43 +40,53 @@ namespace MyBeast.Application.Services
             return await _postRepository.GetByUserIdAsync(userId);
         }
 
-        public async Task<CommunityPost> CreatePostAsync(CommunityPost post)
+        public async Task<CommunityPost> CreatePostAsync(CommunityPost post, int requestingUserId)
         {
             // Verificar usuário
-            var user = await _userRepository.GetByIdAsync(post.UserId);
-            if (user == null) throw new Exception($"Usuário com ID {post.UserId} não encontrado.");
+            var user = await _userRepository.GetByIdAsync(requestingUserId);
+            if (user == null) throw new Exception($"Usuário com ID {requestingUserId} não encontrado.");
 
-            // Validar dados do post (título, conteúdo, tipo)
+            // Atribui o UserId do token
+            post.UserId = requestingUserId;
+
+            // Validar dados do post
             if (string.IsNullOrWhiteSpace(post.Title)) throw new ArgumentException("Título é obrigatório.");
-            if (string.IsNullOrWhiteSpace(post.Type)) throw new ArgumentException("Tipo de post é obrigatório."); // Ex: 'Photo', 'Discussion'
+            if (string.IsNullOrWhiteSpace(post.Type)) throw new ArgumentException("Tipo de post é obrigatório.");
 
             post.CreatedAt = DateTime.UtcNow;
             return await _postRepository.AddAsync(post);
         }
 
-        public async Task<CommunityPost> UpdatePostAsync(int postId, string title, string content)
+        // MÉTODO ATUALIZADO (recebe requestingUserId)
+        public async Task<CommunityPost> UpdatePostAsync(int postId, string title, string content, int requestingUserId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
             if (post == null) throw new Exception($"Post com ID {postId} não encontrado.");
 
-            // Adicionar verificação de permissão (se o usuário logado é o dono do post)
+            // Verificação de Permissão
+            if (post.UserId != requestingUserId)
+            {
+                // (Poderia adicionar lógica de Admin aqui: "&& !user.IsModerator")
+                throw new Exception("Usuário não tem permissão para editar este post.");
+            }
 
             if (!string.IsNullOrWhiteSpace(title)) post.Title = title;
-            if (content != null) post.Content = content; // Permite conteúdo vazio
+            if (content != null) post.Content = content;
 
             return await _postRepository.UpdateAsync(post);
         }
 
-
-        public async Task DeletePostAsync(int postId, int userId)
+        // MÉTODO ATUALIZADO (recebe requestingUserId)
+        public async Task DeletePostAsync(int postId, int requestingUserId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
             if (post == null) throw new Exception($"Post com ID {postId} não encontrado.");
 
-            // Verificar permissão (usuário é dono do post ou é moderador)
-            var user = await _userRepository.GetByIdAsync(userId); // Assumindo que temos o ID do usuário logado
-            if (user == null) throw new Exception("Usuário não encontrado."); // Segurança
-            if (post.UserId != userId && !user.IsModerator)
+            // Verificar permissão
+            var user = await _userRepository.GetByIdAsync(requestingUserId);
+            if (user == null) throw new Exception("Usuário não encontrado.");
+
+            if (post.UserId != requestingUserId && !user.IsModerator)
             {
                 throw new Exception("Usuário não tem permissão para deletar este post.");
             }
@@ -84,43 +94,38 @@ namespace MyBeast.Application.Services
             await _postRepository.DeleteAsync(postId);
         }
 
-        public async Task ReactToPostAsync(int postId, int userId, string reactionType)
+        // MÉTODO ATUALIZADO (recebe requestingUserId)
+        public async Task ReactToPostAsync(int postId, int requestingUserId, string reactionType)
         {
-            // Validar reactionType (Upvote, Downvote, Report)
             var validTypes = new[] { "Upvote", "Downvote", "Report" };
             if (!validTypes.Contains(reactionType)) throw new ArgumentException("Tipo de reação inválido.");
 
             // Verificar se usuário e post existem
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null) throw new Exception($"Usuário com ID {userId} não encontrado.");
+            var user = await _userRepository.GetByIdAsync(requestingUserId);
+            if (user == null) throw new Exception($"Usuário com ID {requestingUserId} não encontrado.");
             var post = await _postRepository.GetByIdAsync(postId);
             if (post == null) throw new Exception($"Post com ID {postId} não encontrado.");
 
-
-            var existingReaction = await _reactionRepository.GetReactionAsync(postId, userId);
+            var existingReaction = await _reactionRepository.GetReactionAsync(postId, requestingUserId);
 
             if (existingReaction != null)
             {
-                // Usuário já reagiu
                 if (existingReaction.ReactionType == reactionType)
                 {
-                    // Clicou de novo no mesmo botão: remove a reação
-                    await _reactionRepository.DeleteAsync(postId, userId);
+                    await _reactionRepository.DeleteAsync(postId, requestingUserId);
                 }
                 else
                 {
-                    // Mudou a reação (ex: de Upvote para Downvote)
                     existingReaction.ReactionType = reactionType;
                     await _reactionRepository.AddOrUpdateAsync(existingReaction);
                 }
             }
             else
             {
-                // Nova reação
                 var newReaction = new PostReaction
                 {
                     PostId = postId,
-                    UserId = userId,
+                    UserId = requestingUserId, // Usa o ID do token
                     ReactionType = reactionType
                 };
                 await _reactionRepository.AddOrUpdateAsync(newReaction);

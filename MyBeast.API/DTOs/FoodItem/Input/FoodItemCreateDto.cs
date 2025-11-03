@@ -17,7 +17,6 @@ namespace MyBeast.API.DTOs.FoodItem.Input
         [Range(0, double.MaxValue)]
         public decimal Fat { get; set; }
 
-        [Required] // UserId será pego do usuário autenticado no Controller
-        public int UserId { get; set; } // Temporário: Remover quando tiver Auth
+        // A propriedade 'UserId' foi REMOVIDA
     }
 }

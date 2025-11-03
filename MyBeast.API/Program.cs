@@ -4,9 +4,30 @@ using MyBeast.Application.Services; // Importa
 using MyBeast.Domain.Interfaces; // Importa
 using MyBeast.Infrastructure.Data; // Importa
 using MyBeast.Infrastructure.Repositories; // Importa
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using MyBeast.Application.Interfaces;
+using MyBeast.Application.Services;
+using MyBeast.API.Middleware;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          // Para desenvolvimento, permitimos qualquer origem (incluindo o app MAUI)
+                          // Em produção, você deve restringir isso:
+                          // policy.WithOrigins("http://seuapp.com", "https://seuapp.com")
+                          policy.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
 // --- 1. Adicionar o DbContext ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApiDbContext>(options =>
@@ -16,6 +37,7 @@ builder.Services.AddDbContext<ApiDbContext>(options =>
 // Exercise 
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Food 
 builder.Services.AddScoped<IFoodItemService, FoodItemService>();
@@ -58,7 +80,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
+app.UseMiddleware<ErrorHandlingMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -66,7 +88,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

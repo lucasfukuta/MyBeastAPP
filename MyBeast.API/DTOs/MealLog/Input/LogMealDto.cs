@@ -1,21 +1,21 @@
-﻿using System;
+﻿using MyBeast.API.DTOs.MealLog.Input;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using MyBeast.API.Dtos.MealLog.Input;
 
 namespace MyBeast.API.DTOs.MealLog.Input
 {
-    // DTO para receber dados ao registrar uma refeição
     public class LogMealDto
     {
-        [Required]
-        public int UserId { get; set; }
+        // UserId FOI REMOVIDO. O servidor pegará do token.
+        // [Required]
+        // public int UserId { get; set; }
 
         public DateTime Date { get; set; } = DateTime.UtcNow;
 
         [Required]
         [MaxLength(50)]
-        public string MealType { get; set; } = string.Empty; // Ex: 'Breakfast', 'Lunch'
+        public string MealType { get; set; } = string.Empty;
 
         [Required]
         [MinLength(1, ErrorMessage = "Pelo menos um item alimentar é necessário.")]

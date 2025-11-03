@@ -4,12 +4,16 @@ using MyBeast.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-using MyBeast.API.DTOs.WorkoutSessions.Input;
-using MyBeast.API.DTOs.WorkoutSessions.Output; // Adicionado para Select
+using MyBeast.API.DTOs.WorkoutSessions.Input;  // DTOs de Entrada
+using MyBeast.API.DTOs.WorkoutSessions.Output; // DTOs de Saída
+using System.Linq; // Para Select
+using Microsoft.AspNetCore.Authorization; // Para [Authorize]
+using System.Security.Claims; // Para Claims
+using System.IdentityModel.Tokens.Jwt; // Para JwtRegisteredClaimNames
 
 namespace MyBeast.API.Controllers
 {
+    [Authorize] // REQUER AUTENTICAÇÃO PARA TODOS OS ENDPOINTS
     [ApiController]
     [Route("api/[controller]")]
     public class WorkoutSessionsController : ControllerBase
@@ -21,174 +25,153 @@ namespace MyBeast.API.Controllers
             _sessionService = sessionService;
         }
 
-        // GET /api/WorkoutSessions/user/{userId} - Retorna Lista de WorkoutSessionDto
-        [HttpGet("user/{userId}")]
+        // GET /api/WorkoutSessions/me (Busca sessões do usuário logado)
+        [HttpGet("me")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<WorkoutSessionDto>))]
-        public async Task<ActionResult<IEnumerable<WorkoutSessionDto>>> GetSessionsByUser(int userId)
+        public async Task<ActionResult<IEnumerable<WorkoutSessionDto>>> GetMySessions()
         {
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
             var sessions = await _sessionService.GetWorkoutSessionsByUserIdAsync(userId);
+            var sessionDtos = sessions.Select(MapToSummaryDto);
+            return Ok(sessionDtos);
+        }
 
-            // Mapear Model para Dto (resumido)
-            var sessionDtos = sessions.Select(s => new WorkoutSessionDto
+        // GET /api/WorkoutSessions/{id} (Busca uma sessão específica)
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkoutSessionDetailDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<WorkoutSessionDetailDto>> GetSessionById(int id)
+        {
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará a exceção "permissão" (403).
+            var session = await _sessionService.GetWorkoutSessionByIdAsync(id, userId); // Passa ID para verificação de permissão
+
+            // Verificação manual de nulo é mantida
+            if (session == null)
+            {
+                return NotFound();
+            }
+
+            var sessionDetailDto = MapToDetailDto(session);
+            return Ok(sessionDetailDto);
+        }
+
+        // POST /api/WorkoutSessions/start (Inicia sessão para usuário logado)
+        [HttpPost("start")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(WorkoutSessionDetailDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<WorkoutSessionDetailDto>> StartSession([FromBody] StartSessionDto startDto)
+        {
+            if (startDto == null || !ModelState.IsValid) return BadRequest("Dados inválidos.");
+
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "Usuário não encontrado" (404) ou outros erros (400).
+            var newSession = await _sessionService.StartWorkoutSessionAsync(userId, startDto.StartTime); // Passa o ID do token
+            var sessionDetailDto = MapToDetailDto(newSession);
+            return CreatedAtAction(nameof(GetSessionById), new { id = sessionDetailDto.SessionId }, sessionDetailDto);
+        }
+
+        // PUT /api/WorkoutSessions/{id}/end (Finaliza sessão do usuário logado)
+        [HttpPut("{id}/end")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkoutSessionDetailDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<WorkoutSessionDetailDto>> EndSession(int id, [FromBody] EndSessionDto endDto)
+        {
+            if (endDto == null || !ModelState.IsValid) return BadRequest("Dados inválidos.");
+
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "não encontrada" (404), "permissão" (403) ou outros BQ (400).
+            var setLogs = endDto.SetLogs?.Select(dto => new SetLog
+            {
+                ExerciseId = dto.ExerciseId,
+                SetNumber = dto.SetNumber,
+                Weight = dto.Weight,
+                Reps = dto.Reps,
+                RestTimeSeconds = dto.RestTimeSeconds
+            }).ToList() ?? new List<SetLog>();
+
+            var updatedSession = await _sessionService.EndWorkoutSessionAsync(id, userId, endDto.EndTime, endDto.TotalVolume, setLogs); // Passa o ID do token
+
+            var sessionWithDetails = await _sessionService.GetWorkoutSessionByIdAsync(id, userId); // Re-busca com permissão
+            if (sessionWithDetails == null) return NotFound(); // Verificação de segurança
+
+            var sessionDetailDto = MapToDetailDto(sessionWithDetails);
+            return Ok(sessionDetailDto);
+        }
+
+        // DELETE /api/WorkoutSessions/{id} (Deleta sessão do usuário logado)
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> DeleteSession(int id)
+        {
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "não encontrada" (404) ou "permissão" (403).
+            await _sessionService.DeleteWorkoutSessionAsync(id, userId); // Passa o ID do token
+            return NoContent();
+        }
+
+        // --- MÉTODOS AUXILIARES DE MAPEAMENTO ---
+        private WorkoutSessionDto MapToSummaryDto(WorkoutSession s)
+        {
+            return new WorkoutSessionDto
             {
                 SessionId = s.SessionId,
                 UserId = s.UserId,
                 Date = s.Date,
                 DurationMinutes = s.DurationMinutes,
                 TotalVolume = s.TotalVolume,
-                SetCount = s.SetLogs?.Count ?? 0 // Conta os sets (se carregados)
-            });
-
-            return Ok(sessionDtos);
+                SetCount = s.SetLogs?.Count ?? 0
+            };
         }
 
-        // GET /api/WorkoutSessions/{id} - Retorna WorkoutSessionDetailDto
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkoutSessionDetailDto))] // Tipo de resposta atualizado
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<WorkoutSessionDetailDto>> GetSessionById(int id)
+        private WorkoutSessionDetailDto MapToDetailDto(WorkoutSession session)
         {
-            // O serviço/repositório já inclui SetLogs e Exercise
-            var session = await _sessionService.GetWorkoutSessionByIdAsync(id);
-            if (session == null)
-            {
-                return NotFound();
-            }
-
-            // Mapear Model para Dto Detalhado
-            var sessionDetailDto = new WorkoutSessionDetailDto
+            if (session == null) return null; // Segurança
+            return new WorkoutSessionDetailDto
             {
                 SessionId = session.SessionId,
                 UserId = session.UserId,
                 Date = session.Date,
                 DurationMinutes = session.DurationMinutes,
                 TotalVolume = session.TotalVolume,
-                SetLogs = session.SetLogs?.Select(sl => new SetLogResponseDto // Mapeia cada SetLog
+                SetLogs = session.SetLogs?.Select(sl => new SetLogResponseDto
                 {
                     SetLogId = sl.SetLogId,
                     ExerciseId = sl.ExerciseId,
-                    ExerciseName = sl.Exercise?.Name ?? "Exercício não encontrado", // Pega o nome do exercício incluído
+                    ExerciseName = sl.Exercise?.Name ?? "Nome não carregado",
                     SetNumber = sl.SetNumber,
                     Weight = sl.Weight,
                     Reps = sl.Reps,
                     RestTimeSeconds = sl.RestTimeSeconds
-                }).ToList() ?? new List<SetLogResponseDto>() // Garante lista vazia se não houver sets
+                }).ToList() ?? new List<SetLogResponseDto>()
             };
-
-            return Ok(sessionDetailDto);
         }
 
-        // POST /api/WorkoutSessions/start - Retorna WorkoutSessionDetailDto (inicial)
-        [HttpPost("start")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(WorkoutSessionDetailDto))] // Tipo de resposta atualizado
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<WorkoutSessionDetailDto>> StartSession([FromBody] StartSessionDto startDto)
+        // --- MÉTODO AUXILIAR DE AUTORIZAÇÃO ---
+        private int GetAuthenticatedUserId()
         {
-            if (startDto == null || !ModelState.IsValid) return BadRequest("Dados inválidos.");
-            try
-            {
-                var newSession = await _sessionService.StartWorkoutSessionAsync(startDto.UserId, startDto.StartTime);
+            var userIdString = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier ||
+                c.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
-                // Mapear Model para Dto Detalhado (sem sets ainda)
-                var sessionDetailDto = new WorkoutSessionDetailDto
-                {
-                    SessionId = newSession.SessionId,
-                    UserId = newSession.UserId,
-                    Date = newSession.Date,
-                    DurationMinutes = newSession.DurationMinutes,
-                    TotalVolume = newSession.TotalVolume,
-                    SetLogs = new List<SetLogResponseDto>() // Lista vazia inicialmente
-                };
-
-                // Retorna 201 Created com a nova sessão (mapeada para DTO)
-                return CreatedAtAction(nameof(GetSessionById), new { id = sessionDetailDto.SessionId }, sessionDetailDto);
-            }
-            catch (Exception ex)
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
             {
-                return BadRequest(ex.Message);
+                throw new Exception("ID de usuário não encontrado no token.");
             }
-        }
-
-        // PUT /api/WorkoutSessions/{id}/end - Retorna WorkoutSessionDetailDto (final)
-        [HttpPut("{id}/end")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkoutSessionDetailDto))] // Tipo de resposta atualizado
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<WorkoutSessionDetailDto>> EndSession(int id, [FromBody] EndSessionDto endDto)
-        {
-            if (endDto == null || !ModelState.IsValid) return BadRequest("Dados inválidos.");
-            try
-            {
-                // Mapeia DTOs de SetLog de entrada para Modelos SetLog
-                var setLogs = endDto.SetLogs?.Select(dto => new SetLog
-                {
-                    ExerciseId = dto.ExerciseId,
-                    SetNumber = dto.SetNumber,
-                    Weight = dto.Weight,
-                    Reps = dto.Reps,
-                    RestTimeSeconds = dto.RestTimeSeconds
-                    // SessionId será definido pelo serviço
-                }).ToList() ?? new List<SetLog>();
-
-                var updatedSession = await _sessionService.EndWorkoutSessionAsync(id, endDto.EndTime, endDto.TotalVolume, setLogs);
-
-                // Re-buscar a sessão para garantir que os includes (Exercícios nos SetLogs) estejam presentes
-                var sessionWithDetails = await _sessionService.GetWorkoutSessionByIdAsync(id);
-                if (sessionWithDetails == null) return NotFound(); // Segurança extra
-
-                // Mapear Model para Dto Detalhado
-                var sessionDetailDto = new WorkoutSessionDetailDto
-                {
-                    SessionId = sessionWithDetails.SessionId,
-                    UserId = sessionWithDetails.UserId,
-                    Date = sessionWithDetails.Date,
-                    DurationMinutes = sessionWithDetails.DurationMinutes,
-                    TotalVolume = sessionWithDetails.TotalVolume,
-                    SetLogs = sessionWithDetails.SetLogs?.Select(sl => new SetLogResponseDto
-                    {
-                        SetLogId = sl.SetLogId,
-                        ExerciseId = sl.ExerciseId,
-                        ExerciseName = sl.Exercise?.Name ?? "Exercício não encontrado",
-                        SetNumber = sl.SetNumber,
-                        Weight = sl.Weight,
-                        Reps = sl.Reps,
-                        RestTimeSeconds = sl.RestTimeSeconds
-                    }).ToList() ?? new List<SetLogResponseDto>()
-                };
-
-                return Ok(sessionDetailDto);
-            }
-            catch (Exception ex) when (ex.Message.Contains("não encontrada"))
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // DELETE /api/WorkoutSessions/{id} - Sem mudança, retorna NoContent
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Adicionado para outros erros
-        public async Task<IActionResult> DeleteSession(int id)
-        {
-            // TODO: Adicionar verificação de permissão
-            try
-            {
-                await _sessionService.DeleteWorkoutSessionAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex) when (ex.Message.Contains("não encontrada"))
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return userId;
         }
     }
 }

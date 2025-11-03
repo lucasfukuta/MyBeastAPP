@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using MyBeast.API.Dtos.MealLog.Input;
+using MyBeast.API.DTOs.MealLog.Input;
 
 namespace MyBeast.API.DTOs.MealLog.Input
 {

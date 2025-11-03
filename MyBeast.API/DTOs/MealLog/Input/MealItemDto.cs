@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.MealLog.Input
+namespace MyBeast.API.DTOs.MealLog.Input
 {
     // DTO para representar um item alimentar dentro da refeição
     public class MealItemDto

@@ -1,6 +1,7 @@
 ﻿using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Interfaces;
 using MyBeast.Domain.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq; // Para Any()
@@ -15,19 +16,22 @@ namespace MyBeast.Application.Services
         private readonly IUserRepository _userRepository; // Para verificar o usuário
         private readonly IFoodItemRepository _foodItemRepository; // Para verificar os alimentos
         private readonly IPetService _petService;
+        private readonly ILogger<MealLogService> _logger;
 
         public MealLogService(
             IMealLogRepository mealLogRepository,
             IMealLogItemRepository mealLogItemRepository,
             IUserRepository userRepository,
             IFoodItemRepository foodItemRepository, // Adiciona IFoodItemRepository
-            IPetService petService) 
+            IPetService petService,
+            ILogger<MealLogService> logger) 
         {
             _mealLogRepository = mealLogRepository;
             _mealLogItemRepository = mealLogItemRepository;
             _userRepository = userRepository;
             _foodItemRepository = foodItemRepository;
             _petService = petService;
+            _logger = logger;
         }
 
         public async Task<MealLog?> GetMealLogByIdAsync(int mealLogId)
@@ -105,7 +109,7 @@ namespace MyBeast.Application.Services
             catch (Exception ex)
             {
                 // Logar erro do Pet
-                Console.WriteLine($"Erro ao atualizar status do Pet pós-refeição: {ex.Message}");
+                _logger.LogError(ex, "Erro ao atualizar status do Pet pós-refeição para UserId {UserId}", userId);
             }
             // Salvar os itens
             await _mealLogItemRepository.AddRangeAsync(items);
@@ -115,13 +119,18 @@ namespace MyBeast.Application.Services
             return savedMealLog;
         }
 
-        public async Task DeleteMealLogAsync(int mealLogId)
+        public async Task DeleteMealLogAsync(int mealLogId, int requestingUserId)
         {
-            var mealLog = await _mealLogRepository.GetByIdAsync(mealLogId);
+            var mealLog = await _mealLogRepository.GetByIdAsync(mealLogId); // GetByIdAsync deve carregar dados sem AsNoTracking() se precisarmos verificar o dono
             if (mealLog == null) throw new Exception($"Registro de refeição com ID {mealLogId} não encontrado.");
 
-            // A exclusão em cascata deve cuidar dos MealLogItems (se configurado no DbContext)
-            // Se não, teríamos que chamar _mealLogItemRepository.DeleteItemsByMealLogIdAsync(mealLogId); primeiro.
+            // Verificação de Permissão
+            if (mealLog.UserId != requestingUserId)
+            {
+                // TODO: Adicionar lógica de Admin/Moderador se necessário
+                throw new Exception("Usuário não tem permissão para deletar este registro.");
+            }
+
             await _mealLogRepository.DeleteAsync(mealLogId);
         }
 

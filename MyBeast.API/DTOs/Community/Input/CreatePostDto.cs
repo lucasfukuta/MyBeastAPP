@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.Community
+namespace MyBeast.API.DTOs.Community.Input
 {
     public class CreatePostDto
     {
-        [Required]
-        public int UserId { get; set; }
+        // UserId FOI REMOVIDO. O servidor pegará do token.
 
         [Required]
         [MaxLength(200)]

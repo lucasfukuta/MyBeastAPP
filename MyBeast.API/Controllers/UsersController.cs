@@ -1,15 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Models;
+using MyBeast.API.DTOs.User.Input;     // DTOs de Entrada
+using MyBeast.API.DTOs.User.Output;    // DTOs de Saída
 using System;
 using System.Collections.Generic;
-using System.Linq; // Para Select
+using System.Linq;
 using System.Threading.Tasks;
-using MyBeast.API.DTOs.User.Input;
-using MyBeast.API.DTOs.User.Output;
+using Microsoft.AspNetCore.Authorization; // Para [Authorize] e [AllowAnonymous]
+using System.Security.Claims; // Para User.Claims
+using System.IdentityModel.Tokens.Jwt; // Para JwtRegisteredClaimNames
 
 namespace MyBeast.API.Controllers
 {
+    [Authorize] // REQUER AUTENTICAÇÃO PARA A CLASSE INTEIRA
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -21,120 +25,141 @@ namespace MyBeast.API.Controllers
             _userService = userService;
         }
 
-        // GET /api/Users - Mapeia para UserDto
+        // GET /api/Users - Apenas para Administradores
         [HttpGet]
+        [Authorize(Roles = "Admin")] // SÓ ADMINS PODEM VER TODOS OS USUÁRIOS
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserDto>))]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
             var users = await _userService.GetAllUsersAsync();
-            // Mapear Model para Dto para garantir que o hash não vaze
-            var userDtos = users.Select(u => new UserDto { /* Mapeie os campos */ UserId = u.UserId, Username = u.Username, Email = u.Email, PlanType = u.PlanType, IsModerator = u.IsModerator, CreatedAt = u.CreatedAt });
+            var userDtos = users.Select(MapToDto);
             return Ok(userDtos);
         }
 
-        // GET /api/Users/{id} - Mapeia para UserDto
+        // GET /api/Users/me (Busca o perfil do usuário logado)
+        [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<UserDto>> GetMyProfile()
+        {
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            // Verificação manual de nulo é mantida (Serviço retorna nulo, não lança exceção)
+            if (user == null) return NotFound("Usuário não encontrado.");
+
+            var userDto = MapToDto(user);
+            return Ok(userDto);
+        }
+
+
+        // GET /api/Users/{id} - (Para buscar outros usuários, se permitido)
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
-            var user = await _userService.GetUserByIdAsync(id); // Serviço já limpa hash
+            // TODO: Adicionar lógica se um usuário pode ver o perfil de outro
+            var user = await _userService.GetUserByIdAsync(id);
+
+            // Verificação manual de nulo é mantida
             if (user == null) return NotFound();
 
-            // Mapear Model para Dto
-            var userDto = new UserDto { /* Mapeie os campos */ UserId = user.UserId, Username = user.Username, Email = user.Email, PlanType = user.PlanType, IsModerator = user.IsModerator, CreatedAt = user.CreatedAt };
+            var userDto = MapToDto(user);
             return Ok(userDto);
         }
 
-        // POST /api/Users/register - Usa UserRegisterDto
+        // POST /api/Users/register - Aberto ao público
+        [AllowAnonymous] // PERMITE ACESSO PÚBLICO
         [HttpPost("register")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserDto))] // Retorna UserDto
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)] // Middleware cuidará disso
         public async Task<ActionResult<UserDto>> RegisterUser([FromBody] UserRegisterDto registerDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            try
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará a exceção "Email já cadastrado."
+            // e a converterá para 409 Conflict.
+            var userToRegister = new User
             {
-                // Mapear DTO para Modelo
-                var userToRegister = new User
-                {
-                    Username = registerDto.Username,
-                    Email = registerDto.Email,
-                    PasswordHash = registerDto.Password, // Passa a senha pura para o serviço fazer o hash
-                    PlanType = registerDto.PlanType
-                };
+                Username = registerDto.Username,
+                Email = registerDto.Email,
+                PasswordHash = registerDto.Password, // Serviço fará o hash
+                PlanType = registerDto.PlanType
+            };
 
-                var newUser = await _userService.RegisterUserAsync(userToRegister); // Serviço retorna sem hash
+            var newUser = await _userService.RegisterUserAsync(userToRegister);
+            var newUserDto = MapToDto(newUser);
 
-                // Mapear Modelo de resposta para Dto
-                var newUserDto = new UserDto { /* Mapeie os campos */ UserId = newUser.UserId, Username = newUser.Username, Email = newUser.Email, PlanType = newUser.PlanType, IsModerator = newUser.IsModerator, CreatedAt = newUser.CreatedAt };
-
-                return CreatedAtAction(nameof(GetUser), new { id = newUserDto.UserId }, newUserDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return CreatedAtAction(nameof(GetUser), new { id = newUserDto.UserId }, newUserDto);
         }
 
-        // PUT /api/Users/{id} (Novo) - Usa UserUpdateDto
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))] // Retorna UserDto
+        // PUT /api/Users/me (Atualiza o perfil do usuário logado)
+        [HttpPut("me")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<UserDto>> UpdateUser(int id, [FromBody] UserUpdateDto updateDto)
+        [ProducesResponseType(StatusCodes.Status409Conflict)] // Middleware cuidará disso
+        public async Task<ActionResult<UserDto>> UpdateMyProfile([FromBody] UserUpdateDto updateDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            // TODO: Adicionar verificação de permissão (usuário só pode editar a si mesmo, ou admin)
-            // int requestingUserId = ObterUserIdDoToken();
-            // if (id != requestingUserId && !User.IsInRole("Admin")) return Forbid();
+            var userId = GetAuthenticatedUserId(); // Pega o ID do token
 
-            try
-            {
-                var updatedUser = await _userService.UpdateUserProfileAsync(id, updateDto.Username, updateDto.Email); // Serviço retorna sem hash
-
-                // Mapear Modelo de resposta para Dto
-                var updatedUserDto = new UserDto { /* Mapeie os campos */ UserId = updatedUser.UserId, Username = updatedUser.Username, Email = updatedUser.Email, PlanType = updatedUser.PlanType, IsModerator = updatedUser.IsModerator, CreatedAt = updatedUser.CreatedAt };
-                return Ok(updatedUserDto);
-            }
-            catch (Exception ex) when (ex.Message.Contains("não encontrado"))
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "não encontrado" (404) ou
+            // "Este email já está sendo usado" (409).
+            var updatedUser = await _userService.UpdateUserProfileAsync(userId, updateDto.Username, updateDto.Email);
+            var updatedUserDto = MapToDto(updatedUser);
+            return Ok(updatedUserDto);
         }
 
-        // DELETE /api/Users/{id} (Novo)
-        [HttpDelete("{id}")]
+        // DELETE /api/Users/me (Deleta a conta do usuário logado)
+        [HttpDelete("me")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Para erro de permissão
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteMyAccount()
         {
-            // TODO: Adicionar verificação de permissão (usuário só pode deletar a si mesmo, ou admin)
-            // int requestingUserId = ObterUserIdDoToken();
-            // if (id != requestingUserId && !User.IsInRole("Admin")) return Forbid();
+            var userId = GetAuthenticatedUserId(); // Pega o ID do token
 
-            try
-            {
-                await _userService.DeleteUserAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex) when (ex.Message.Contains("não encontrado"))
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                // Poderia ser um erro genérico 500 ou um 400 se a regra de negócio impedir
-                return BadRequest(ex.Message);
-            }
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "não encontrado" (404).
+            await _userService.DeleteUserAsync(userId);
+            return NoContent();
         }
-        // (Adicionaremos Login [HttpPost("login")] depois)
+
+        // --- MÉTODO AUXILIAR DE MAPEAMENTO ---
+        private UserDto MapToDto(User user)
+        {
+            if (user == null) return null;
+
+            return new UserDto
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                Email = user.Email,
+                PlanType = user.PlanType,
+                IsModerator = user.IsModerator,
+                CreatedAt = user.CreatedAt
+            };
+        }
+
+        // --- MÉTODO AUXILIAR DE AUTORIZAÇÃO ---
+        private int GetAuthenticatedUserId()
+        {
+            var userIdString = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier ||
+                c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                // Este erro será capturado pelo Middleware e retornado como 500
+                throw new Exception("ID de usuário não encontrado no token. O endpoint está protegido com [Authorize]?");
+            }
+            return userId;
+        }
     }
 }

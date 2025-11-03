@@ -13,6 +13,6 @@ namespace MyBeast.Application.Interfaces
         Task<IEnumerable<MealLog>> GetMealLogsByUserIdAndDateAsync(int userId, DateTime date);
         Task<MealLog> LogMealAsync(int userId, DateTime date, string mealType, List<MealLogItem> items); // Registrar uma refeição
         Task<MealLog> UpdateMealLogAsync(int mealLogId, int requestingUserId, DateTime? date, string? mealType, List<MealLogItem>? items);
-        Task DeleteMealLogAsync(int mealLogId);
+        Task DeleteMealLogAsync(int mealLogId, int requestingUserId);
     }
 }

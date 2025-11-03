@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.Community
+namespace MyBeast.API.DTOs.Community.Input
 {
     public class ReactToPostDto
     {
-        [Required]
-        public int UserId { get; set; }
+        // UserId FOI REMOVIDO. O servidor pegará do token.
 
         [Required]
         [RegularExpression("^(Upvote|Downvote|Report)$", ErrorMessage = "Tipo inválido. Use 'Upvote', 'Downvote' ou 'Report'.")]

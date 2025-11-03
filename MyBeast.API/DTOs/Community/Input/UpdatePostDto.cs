@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MyBeast.API.Dtos.Community
+namespace MyBeast.API.DTOs.Community
 {
     public class UpdatePostDto
     {

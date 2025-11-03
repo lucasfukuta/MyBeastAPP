@@ -1,15 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Models;
+using MyBeast.API.DTOs.MealLog.Input;   // DTOs de Entrada
+using MyBeast.API.DTOs.MealLog.Output;  // DTOs de Saída
 using System;
 using System.Collections.Generic;
-using System.Linq; // Adicionado para Select
+using System.Linq;
 using System.Threading.Tasks;
-using MyBeast.API.DTOs.MealLog.Output;
-using MyBeast.API.DTOs.MealLog.Input;
+using Microsoft.AspNetCore.Authorization; // Para [Authorize]
+using System.Security.Claims; // Para Claims
+using System.IdentityModel.Tokens.Jwt; // Para JwtRegisteredClaimNames
 
 namespace MyBeast.API.Controllers
 {
+    [Authorize] // REQUER AUTENTICAÇÃO PARA TODOS OS ENDPOINTS
     [ApiController]
     [Route("api/[controller]")]
     public class MealLogsController : ControllerBase
@@ -21,155 +25,134 @@ namespace MyBeast.API.Controllers
             _mealLogService = mealLogService;
         }
 
-        // GET /api/MealLogs/user/{userId} - Retorna Lista de MealLogDto
-        [HttpGet("user/{userId}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MealLogDto>))] // Atualizado
-        public async Task<ActionResult<IEnumerable<MealLogDto>>> GetLogsByUser(int userId)
+        // GET /api/MealLogs/me (Busca logs do usuário logado)
+        [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MealLogDto>))]
+        public async Task<ActionResult<IEnumerable<MealLogDto>>> GetMyLogs()
         {
-            // O serviço/repositório já deve incluir Itens e FoodItem
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
             var logs = await _mealLogService.GetMealLogsByUserIdAsync(userId);
-
-            // Mapear Model para Dto
-            var logDtos = logs.Select(MapToDto); // Usa método auxiliar
-
+            var logDtos = logs.Select(MapToDto);
             return Ok(logDtos);
         }
 
-        // GET /api/MealLogs/user/{userId}/date/{dateString} - Retorna Lista de MealLogDto
-        [HttpGet("user/{userId}/date/{dateString}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MealLogDto>))] // Atualizado
+        // GET /api/MealLogs/me/date/{dateString} (Busca logs do usuário logado por data)
+        [HttpGet("me/date/{dateString}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MealLogDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<MealLogDto>>> GetLogsByUserAndDate(int userId, string dateString)
+        public async Task<ActionResult<IEnumerable<MealLogDto>>> GetMyLogsByDate(string dateString)
         {
             if (!DateOnly.TryParse(dateString, out var date))
             {
                 return BadRequest("Formato de data inválido. Use YYYY-MM-DD.");
             }
-            // Serviço/Repositório já inclui Itens e FoodItem
+
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
             var logs = await _mealLogService.GetMealLogsByUserIdAndDateAsync(userId, date.ToDateTime(TimeOnly.MinValue));
-
-            // Mapear Model para Dto
             var logDtos = logs.Select(MapToDto);
-
             return Ok(logDtos);
         }
 
-
-        // GET /api/MealLogs/{id} - Retorna MealLogDto
+        // GET /api/MealLogs/{id} (Busca um log específico)
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MealLogDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MealLogDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<MealLogDto>> GetLogById(int id)
         {
-            // Serviço/Repositório já inclui Itens e FoodItem
             var log = await _mealLogService.GetMealLogByIdAsync(id);
-            if (log == null)
-            {
-                return NotFound();
-            }
+            if (log == null) return NotFound();
 
-            // Mapear Model para Dto
+            // --- VERIFICAÇÃO DE AUTORIZAÇÃO ---
+            var userId = GetAuthenticatedUserId();
+            if (log.UserId != userId)
+            {
+                return Forbid(); // 403 Forbidden - Este log não é seu
+            }
+            // --- FIM DA VERIFICAÇÃO ---
+
             var logDto = MapToDto(log);
             return Ok(logDto);
         }
 
-        // POST /api/MealLogs - Retorna MealLogDto
+        // POST /api/MealLogs (Registra uma refeição para o usuário logado)
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MealLogDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MealLogDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<MealLogDto>> LogMeal([FromBody] LogMealDto logDto) // DTO de Entrada
+        [ProducesResponseType(StatusCodes.Status404NotFound)] // Se Alimento/User não for encontrado
+        public async Task<ActionResult<MealLogDto>> LogMeal([FromBody] LogMealDto logDto)
         {
             if (logDto == null || !ModelState.IsValid) return BadRequest(ModelState);
 
-            try
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "Usuário não encontrado" (404) ou "Alimento não encontrado" (404).
+            var items = logDto.Items.Select(dto => new MealLogItem
             {
-                var items = logDto.Items.Select(dto => new MealLogItem
+                FoodId = dto.FoodId,
+                Quantity = dto.Quantity
+            }).ToList();
+
+            var newLog = await _mealLogService.LogMealAsync(userId, logDto.Date, logDto.MealType, items); // Passa o ID do token
+
+            var createdLogWithDetails = await _mealLogService.GetMealLogByIdAsync(newLog.MealLogId);
+            if (createdLogWithDetails == null) return BadRequest("Erro ao buscar log criado.");
+
+            var newLogDto = MapToDto(createdLogWithDetails);
+            return CreatedAtAction(nameof(GetLogById), new { id = newLogDto.MealLogId }, newLogDto);
+        }
+
+        // PUT /api/MealLogs/{id} (Atualiza um log do usuário logado)
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MealLogDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<MealLogDto>> UpdateMealLog(int id, [FromBody] MealLogUpdateDto updateDto)
+        {
+            if (updateDto == null || !ModelState.IsValid) return BadRequest(ModelState);
+
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "não encontrado" (404), "permissão" (403) ou "ArgumentException" (400).
+            List<MealLogItem>? itemsToUpdate = null;
+            if (updateDto.Items != null)
+            {
+                itemsToUpdate = updateDto.Items.Select(dto => new MealLogItem
                 {
                     FoodId = dto.FoodId,
                     Quantity = dto.Quantity
                 }).ToList();
-
-                var newLog = await _mealLogService.LogMealAsync(logDto.UserId, logDto.Date, logDto.MealType, items);
-
-                // Re-buscar para garantir includes corretos para o DTO de resposta
-                var createdLogWithDetails = await _mealLogService.GetMealLogByIdAsync(newLog.MealLogId);
-                if (createdLogWithDetails == null) return BadRequest("Erro ao buscar log criado."); // Segurança
-
-                // Mapear para DTO de resposta
-                var newLogDto = MapToDto(createdLogWithDetails);
-
-                return CreatedAtAction(nameof(GetLogById), new { id = newLogDto.MealLogId }, newLogDto);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            var updatedLog = await _mealLogService.UpdateMealLogAsync(
+                id, requestingUserId, updateDto.Date, updateDto.MealType, itemsToUpdate);
+
+            var updatedLogDto = MapToDto(updatedLog);
+            return Ok(updatedLogDto);
         }
 
-        // PUT /api/MealLogs/{id} - Retorna MealLogDto
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MealLogDto))] // Atualizado
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<MealLogDto>> UpdateMealLog(int id, [FromBody] MealLogUpdateDto updateDto, [FromQuery] int userId) // DTO de Entrada
-        {
-            if (updateDto == null || !ModelState.IsValid) return BadRequest(ModelState);
-
-            // TODO: Obter userId autenticado
-            int requestingUserId = userId;
-
-            try
-            {
-                List<MealLogItem>? itemsToUpdate = null;
-                if (updateDto.Items != null)
-                {
-                    itemsToUpdate = updateDto.Items.Select(dto => new MealLogItem
-                    {
-                        FoodId = dto.FoodId,
-                        Quantity = dto.Quantity
-                    }).ToList();
-                }
-
-                var updatedLog = await _mealLogService.UpdateMealLogAsync(
-                    id, requestingUserId, updateDto.Date, updateDto.MealType, itemsToUpdate
-                );
-
-                // Mapear para DTO de resposta
-                var updatedLogDto = MapToDto(updatedLog);
-
-                return Ok(updatedLogDto);
-            }
-            // ... (catch blocks como antes) ...
-            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
-            catch (Exception ex) when (ex.Message.Contains("permissão")) { return Forbid(ex.Message); }
-            catch (ArgumentException ex) { return BadRequest(ex.Message); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
-        }
-
-        // DELETE /api/MealLogs/{id} - Sem mudança, retorna NoContent
+        // DELETE /api/MealLogs/{id} (Deleta um log do usuário logado)
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Adicionado
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteLog(int id)
         {
-            // TODO: Adicionar verificação de permissão
-            try
-            {
-                await _mealLogService.DeleteMealLogAsync(id);
-                return NoContent();
-            }
-            // ... (catch blocks como antes) ...
-            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO.
+            // O Middleware capturará "não encontrado" (404) ou "permissão" (403).
+            await _mealLogService.DeleteMealLogAsync(id, requestingUserId); // Passa o ID do token
+            return NoContent();
         }
 
         // --- MÉTODO AUXILIAR DE MAPEAMENTO ---
         private MealLogDto MapToDto(MealLog log)
         {
-            if (log == null) return null; // Segurança
-
+            if (log == null) return null;
             return new MealLogDto
             {
                 MealLogId = log.MealLogId,
@@ -179,12 +162,24 @@ namespace MyBeast.API.Controllers
                 Items = log.MealLogItems?.Select(item => new MealItemResponseDto
                 {
                     FoodId = item.FoodId,
-                    FoodName = item.FoodItem?.Name ?? "Nome não carregado", // Pega nome do FoodItem incluído
+                    FoodName = item.FoodItem?.Name ?? "Nome não carregado",
                     Quantity = item.Quantity
-                    // Calcular macros aqui se desejar
                 }).ToList() ?? new List<MealItemResponseDto>()
-                // Calcular totais aqui se desejar
             };
+        }
+
+        // --- MÉTODO AUXILIAR DE AUTORIZAÇÃO ---
+        private int GetAuthenticatedUserId()
+        {
+            var userIdString = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier ||
+                c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                throw new Exception("ID de usuário não encontrado no token.");
+            }
+            return userId;
         }
     }
 }

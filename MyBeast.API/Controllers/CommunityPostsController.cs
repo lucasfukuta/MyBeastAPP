@@ -1,16 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Models;
-using MyBeast.API.Dtos.Community; // Namespace dos DTOs de Community
-using MyBeast.API.DTOs.User.Output; // Namespace do UserSummaryDto
+using MyBeast.API.DTOs.Community.Input;  // DTOs de Entrada
+using MyBeast.API.DTOs.Community.Output; // DTOs de Saída
+using MyBeast.API.DTOs.User.Output;    // Para UserSummaryDto
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-using MyBeast.API.DTOs.Community.Output; // Adicionado para Select e Count
+using System.Linq; // Para Select
+using Microsoft.AspNetCore.Authorization; // Para [Authorize]
+using System.Security.Claims; // Para Claims
+using System.IdentityModel.Tokens.Jwt;
+using MyBeast.API.DTOs.Community; // Para JwtRegisteredClaimNames
 
 namespace MyBeast.API.Controllers
 {
+    [Authorize] // REQUER AUTENTICAÇÃO PARA TODOS OS ENDPOINTS
     [ApiController]
     [Route("api/[controller]")]
     public class CommunityPostsController : ControllerBase
@@ -22,157 +27,137 @@ namespace MyBeast.API.Controllers
             _postService = postService;
         }
 
-        // GET /api/CommunityPosts?pageNumber=1&pageSize=10 - Retorna Lista de PostDto
+        // GET /api/CommunityPosts?pageNumber=1&pageSize=10 (Feed Paginado)
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PostDto>))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PostDto>))]
         public async Task<ActionResult<IEnumerable<PostDto>>> GetFeed([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            // O serviço/repositório já deve incluir User e PostReactions
             var posts = await _postService.GetCommunityFeedAsync(pageNumber, pageSize);
-
-            // Mapear Model para Dto
-            var postDtos = posts.Select(MapToDto); // Usa método auxiliar
-
+            var postDtos = posts.Select(MapToDto);
             return Ok(postDtos);
         }
 
-        // GET /api/CommunityPosts/{id} - Retorna PostDto
+        // GET /api/CommunityPosts/me (Busca posts do usuário logado)
+        [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PostDto>))]
+        public async Task<ActionResult<IEnumerable<PostDto>>> GetMyPosts()
+        {
+            var userId = GetAuthenticatedUserId(); // Obtém ID do token
+            var posts = await _postService.GetPostsByUserIdAsync(userId);
+            var postDtos = posts.Select(MapToDto);
+            return Ok(postDtos);
+        }
+
+        // GET /api/CommunityPosts/user/{userId} (Busca posts de um usuário específico)
+        [HttpGet("user/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PostDto>))]
+        public async Task<ActionResult<IEnumerable<PostDto>>> GetPostsByUser(int userId)
+        {
+            // Qualquer usuário logado pode ver os posts de outro
+            var posts = await _postService.GetPostsByUserIdAsync(userId);
+            var postDtos = posts.Select(MapToDto);
+            return Ok(postDtos);
+        }
+
+        // GET /api/CommunityPosts/{id}
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<PostDto>> GetPostById(int id)
         {
-            // O serviço/repositório já deve incluir User e PostReactions
             var post = await _postService.GetPostByIdAsync(id);
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            // Mapear Model para Dto
+            if (post == null) return NotFound(); // Verificação manual de nulo mantida
             var postDto = MapToDto(post);
             return Ok(postDto);
         }
 
-        // POST /api/CommunityPosts - Retorna PostDto
+        // POST /api/CommunityPosts (Cria um post para o usuário logado)
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PostDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PostDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<PostDto>> CreatePost([FromBody] CreatePostDto postDto) // DTO de Entrada
+        [ProducesResponseType(StatusCodes.Status404NotFound)] // User não encontrado
+        public async Task<ActionResult<PostDto>> CreatePost([FromBody] CreatePostDto postDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            // TODO: Obter userId autenticado
-            int requestingUserId = postDto.UserId;
 
-            try
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO
+            var postToCreate = new CommunityPost
             {
-                var postToCreate = new CommunityPost
-                {
-                    UserId = requestingUserId, // Usar ID autenticado
-                    Title = postDto.Title,
-                    Content = postDto.Content ?? string.Empty,
-                    Type = postDto.Type
-                };
-                var newPost = await _postService.CreatePostAsync(postToCreate);
+                Title = postDto.Title,
+                Content = postDto.Content ?? string.Empty,
+                Type = postDto.Type
+            };
+            var newPost = await _postService.CreatePostAsync(postToCreate, requestingUserId); // Passa o ID do token
 
-                // Re-buscar para garantir includes (User) para o DTO de resposta
-                var createdPostWithDetails = await _postService.GetPostByIdAsync(newPost.PostId);
-                if (createdPostWithDetails == null) return BadRequest("Erro ao buscar post criado.");
+            var createdPostWithDetails = await _postService.GetPostByIdAsync(newPost.PostId);
+            if (createdPostWithDetails == null) return BadRequest("Erro ao buscar post criado.");
 
-                // Mapear para DTO de resposta
-                var newPostDto = MapToDto(createdPostWithDetails);
-
-                return CreatedAtAction(nameof(GetPostById), new { id = newPostDto.PostId }, newPostDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var newPostDto = MapToDto(createdPostWithDetails);
+            return CreatedAtAction(nameof(GetPostById), new { id = newPostDto.PostId }, newPostDto);
         }
 
-        // PUT /api/CommunityPosts/{id} - Retorna PostDto
+        // PUT /api/CommunityPosts/{id} (Edita um post do usuário logado)
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostDto))] // Atualizado
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<PostDto>> UpdatePost(int id, [FromBody] UpdatePostDto updateDto, [FromQuery] int userId) // DTO de Entrada
+        public async Task<ActionResult<PostDto>> UpdatePost(int id, [FromBody] UpdatePostDto updateDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            // TODO: Obter userId autenticado
-            int requestingUserId = userId;
 
-            try
-            {
-                // O serviço só precisa dos dados a serem atualizados
-                var updatedPost = await _postService.UpdatePostAsync(id, updateDto.Title ?? "", updateDto.Content ?? "");
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
 
-                // Re-buscar para garantir includes (User, Reactions) para o DTO de resposta
-                var updatedPostWithDetails = await _postService.GetPostByIdAsync(id);
-                if (updatedPostWithDetails == null) return NotFound(); // Segurança
+            // Bloco try-catch REMOVIDO
+            var updatedPost = await _postService.UpdatePostAsync(id, updateDto.Title ?? "", updateDto.Content ?? "", requestingUserId); // Passa o ID do token
 
-                // Mapear para DTO de resposta
-                var updatedPostDto = MapToDto(updatedPostWithDetails);
-                return Ok(updatedPostDto);
-            }
-            // ... (catch blocks como antes) ...
-            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
-            catch (Exception ex) when (ex.Message.Contains("permissão")) { return Forbid(ex.Message); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            var updatedPostWithDetails = await _postService.GetPostByIdAsync(id);
+            if (updatedPostWithDetails == null) return NotFound();
+
+            var updatedPostDto = MapToDto(updatedPostWithDetails);
+            return Ok(updatedPostDto);
         }
 
-        // DELETE /api/CommunityPosts/{id} - Sem mudança, retorna NoContent
+        // DELETE /api/CommunityPosts/{id} (Deleta um post do usuário logado)
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeletePost(int id, [FromQuery] int userId) // Temporário userId
+        public async Task<IActionResult> DeletePost(int id)
         {
-            // TODO: Obter userId autenticado
-            int requestingUserId = userId;
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
 
-            try
-            {
-                await _postService.DeletePostAsync(id, requestingUserId);
-                return NoContent();
-            }
-            // ... (catch blocks como antes) ...
-            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
-            catch (Exception ex) when (ex.Message.Contains("permissão")) { return Forbid(ex.Message); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            // Bloco try-catch REMOVIDO
+            await _postService.DeletePostAsync(id, requestingUserId); // Passa o ID do token
+            return NoContent();
         }
 
-        // POST /api/CommunityPosts/{id}/react - Sem mudança, retorna Ok simples
+        // POST /api/CommunityPosts/{id}/react (Reage a um post como o usuário logado)
         [HttpPost("{id}/react")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ReactToPost(int id, [FromBody] ReactToPostDto reactionDto) // DTO de Entrada
+        public async Task<IActionResult> ReactToPost(int id, [FromBody] ReactToPostDto reactionDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            // TODO: Obter userId autenticado
-            int requestingUserId = reactionDto.UserId;
 
-            try
-            {
-                await _postService.ReactToPostAsync(id, requestingUserId, reactionDto.ReactionType);
-                return Ok();
-            }
-            // ... (catch blocks como antes) ...
-            catch (Exception ex) when (ex.Message.Contains("não encontrado")) { return NotFound(ex.Message); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            var requestingUserId = GetAuthenticatedUserId(); // Obtém ID do token
+
+            // Bloco try-catch REMOVIDO
+            await _postService.ReactToPostAsync(id, requestingUserId, reactionDto.ReactionType); // Passa o ID do token
+            return Ok();
         }
 
         // --- MÉTODO AUXILIAR DE MAPEAMENTO ---
         private PostDto MapToDto(CommunityPost post)
         {
-            if (post == null) return null; // Segurança
-
+            if (post == null) return null;
             return new PostDto
             {
                 PostId = post.PostId,
-                AuthorInfo = post.User == null ? null : new UserSummaryDto // Mapeia o User incluído
+                AuthorInfo = post.User == null ? null : new UserSummaryDto
                 {
                     UserId = post.User.UserId,
                     Username = post.User.Username
@@ -181,10 +166,23 @@ namespace MyBeast.API.Controllers
                 Content = post.Content,
                 Type = post.Type,
                 CreatedAt = post.CreatedAt,
-                // Calcula contagem de reações (requer Include(p => p.PostReactions))
                 Upvotes = post.PostReactions?.Count(r => r.ReactionType == "Upvote") ?? 0,
                 Downvotes = post.PostReactions?.Count(r => r.ReactionType == "Downvote") ?? 0
             };
+        }
+
+        // --- MÉTODO AUXILIAR DE AUTORIZAÇÃO ---
+        private int GetAuthenticatedUserId()
+        {
+            var userIdString = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.NameIdentifier ||
+                c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                throw new Exception("ID de usuário não encontrado no token.");
+            }
+            return userId;
         }
     }
 }
