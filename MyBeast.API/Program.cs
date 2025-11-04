@@ -10,6 +10,7 @@ using System.Text;
 using MyBeast.Application.Interfaces;
 using MyBeast.Application.Services;
 using MyBeast.API.Middleware;
+using Microsoft.OpenApi.Models;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -77,7 +78,58 @@ builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
 // --- 3. Adicionar serviços padrão da API ---
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+// --- ATUALIZAÇÃO DO SWAGGERGEN ---
+builder.Services.AddSwaggerGen(setup =>
+{
+    // Define a configuração de segurança do "Bearer" (JWT)
+    setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey, // Usamos ApiKey para o cabeçalho Bearer
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Introduza 'Bearer' [espaço] e, em seguida, o seu token JWT.\n\nExemplo: 'Bearer eyJhbGciOiJIUzI1Ni...'"
+    });
+
+    // Adiciona o requisito de segurança a todos os endpoints
+    setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = configuration["Jwt:Issuer"],
+        ValidAudience = configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+    };
+});
 
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>();
@@ -91,7 +143,6 @@ if (app.Environment.IsDevelopment())
 app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 app.UseAuthentication();
-app.UseAuthorization();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
