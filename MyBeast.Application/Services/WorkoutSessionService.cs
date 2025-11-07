@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Interfaces;
-using MyBeast.Domain.Models;
+using MyBeast.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq; // Para Any() e Count()

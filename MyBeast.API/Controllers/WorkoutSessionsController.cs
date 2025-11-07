@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
-using MyBeast.Domain.Models;
+using MyBeast.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

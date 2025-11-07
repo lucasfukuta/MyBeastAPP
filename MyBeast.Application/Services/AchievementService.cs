@@ -1,6 +1,6 @@
 ﻿using MyBeast.Application.Interfaces;
+using MyBeast.Domain.Entities;
 using MyBeast.Domain.Interfaces;
-using MyBeast.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -32,7 +32,7 @@ namespace MyBeast.Application.Services
         {
             // Verificar usuário
             var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null) throw new Exception($"Usuário com ID {userId} não encontrado.");
+            if (user = null) throw new Exception($"Usuário com ID {userId} não encontrado.");
 
             // Validar dados
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Nome da conquista é obrigatório.");

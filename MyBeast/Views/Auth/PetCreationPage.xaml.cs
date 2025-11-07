@@ -1,4 +1,4 @@
-namespace MyBeast.Views.Login;
+namespace MyBeast.Views.Auth;
 
 public partial class PetCreationPage : ContentPage
 {

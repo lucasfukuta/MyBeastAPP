@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
-using MyBeast.Domain.Models;
+using MyBeast.Domain.Entities;
 using MyBeast.API.DTOs.FoodItem.Input;   // DTOs de Entrada
 using MyBeast.API.DTOs.FoodItem.Output;  // DTOs de Saída
 using System;

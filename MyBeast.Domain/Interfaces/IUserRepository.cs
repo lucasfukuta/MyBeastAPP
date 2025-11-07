@@ -1,4 +1,4 @@
-﻿using MyBeast.Domain.Models;
+﻿using MyBeast.Domain.Entities;
 using System.Collections.Generic; // Para IEnumerable
 using System.Threading.Tasks;
 

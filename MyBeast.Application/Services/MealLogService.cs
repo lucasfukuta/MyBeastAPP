@@ -1,6 +1,6 @@
 ﻿using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Interfaces;
-using MyBeast.Domain.Models;
+using MyBeast.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

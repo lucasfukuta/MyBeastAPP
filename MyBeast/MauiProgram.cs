@@ -3,7 +3,9 @@ using MyBeast.Data; // Importar o seu DbContext
 using CommunityToolkit.Maui; // Importar o Community Toolkit
 using Microsoft.EntityFrameworkCore; // Importar o Entity Framework Core
 using MyBeast.Services; // Importar seus Serviços
-using MyBeast.ViewModels; // Importar seus ViewModels
+using MyBeast.ViewModels.Auth;
+using MyBeast.ViewModels;
+using MyBeast.Views.Auth;
 using MyBeast.Views; // Importar suas Views
 
 namespace MyBeast
@@ -30,22 +32,23 @@ namespace MyBeast
             builder.Services.AddDbContext<LocalDbContext>();
 
             // --- 2. REGISTRAR SERVIÇOS, VIEWMODELS E VIEWS ---
-            // Você precisará adicionar todos os seus serviços, VMs e Views aqui
+            // Serviços
+            builder.Services.AddSingleton<IAuthService, AuthService>();
+            builder.Services.AddSingleton<ILocalDbService, LocalDbService>();
+            builder.Services.AddSingleton<IPetService, PetService>();
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
+            builder.Services.AddSingleton<LoginPage>();
+            builder.Services.AddSingleton<MainPage>();
 
-            // Exemplo de Serviços (Descomente e adicione os seus)
-            // builder.Services.AddSingleton<IAuthService, AuthService>();
-            // builder.Services.AddSingleton<ILocalDbService, LocalDbService>();
+            // ViewModels
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddTransient<MainViewModel>();
 
-            // Exemplo de ViewModels (Descomente e adicione os seus)
-            // builder.Services.AddTransient<Auth.LoginViewModel>();
-            // builder.Services.AddTransient<Auth.RegisterViewModel>();
-            // ... etc ...
-
-            // Exemplo de Views (Descomente e adicione as suas)
-            // builder.Services.AddTransient<Auth.LoginPage>();
-            // builder.Services.AddTransient<Auth.RegisterPage>();
-            // ... etc ...
-
+            // Views
+            builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<RegisterPage>();
+            builder.Services.AddTransient<MainPage>();
 
             // --- 3. CONSTRUIR O APP ---
             var app = builder.Build();

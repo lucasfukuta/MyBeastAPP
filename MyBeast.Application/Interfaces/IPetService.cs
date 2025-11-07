@@ -1,4 +1,4 @@
-﻿using MyBeast.Domain.Models;
+﻿using MyBeast.Domain.Entities;
 using System.Threading.Tasks;
 
 namespace MyBeast.Application.Interfaces

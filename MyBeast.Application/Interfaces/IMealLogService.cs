@@ -1,4 +1,4 @@
-﻿using MyBeast.Domain.Models;
+﻿using MyBeast.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

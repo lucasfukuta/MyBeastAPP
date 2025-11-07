@@ -1,6 +1,7 @@
 ﻿using CsvHelper; // Você não precisa mais deste NuGet (CSV)
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using MyBeast.Domain.Entities;
 using MyBeast.Domain.Models;
 using MyBeast.Infrastructure.Data;
 using Newtonsoft.Json;

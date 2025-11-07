@@ -57,6 +57,12 @@ build_metadata.AdditionalFiles.ManifestResourceName = MyBeast.Resources.Styles.S
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml
 build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Styles.xaml
 
+[C:/Users/Admin/OneDrive/Documentos/Projetos Faculdade/CEUB/MyBeast/MyBeast/Views/Achievements/Achievement.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = MyBeast.Views.Achievements.Achievement.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\Achievements\Achievement.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\Achievements\Achievement.xaml
+
 [C:/Users/Admin/OneDrive/Documentos/Projetos Faculdade/CEUB/MyBeast/MyBeast/Views/Auth/LoginPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = MyBeast.Views.Auth.LoginPage.xaml

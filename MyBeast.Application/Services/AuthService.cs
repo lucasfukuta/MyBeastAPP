@@ -2,7 +2,7 @@
 using Microsoft.IdentityModel.Tokens;     // Para SymmetricSecurityKey, SigningCredentials
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Interfaces;
-using MyBeast.Domain.Models;
+using MyBeast.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt; // Para JwtSecurityToken, JwtSecurityTokenHandler

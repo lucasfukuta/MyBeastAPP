@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
-using MyBeast.Domain.Models;
+using MyBeast.Domain.Entities;
 using MyBeast.API.DTOs.Pets.Input;
 using MyBeast.API.DTOs.Pets.Output;
 using System;

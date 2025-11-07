@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MyBeast.Application.Interfaces;
-using MyBeast.Application.Services;
+using MyBeast.Infrastructure.Repositories;
 using MyBeast.API.Middleware;
 using Microsoft.OpenApi.Models;
 

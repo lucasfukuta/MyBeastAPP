@@ -1,6 +1,6 @@
 ﻿using MyBeast.Application.Interfaces;
+using MyBeast.Domain.Entities;
 using MyBeast.Domain.Interfaces;
-using MyBeast.Domain.Models;
 using System; // Para Exception
 using System.Collections.Generic;
 using System.Linq; // Para Any/Where

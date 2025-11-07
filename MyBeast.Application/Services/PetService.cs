@@ -1,6 +1,6 @@
 ﻿using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Interfaces;
-using MyBeast.Domain.Models;
+using MyBeast.Domain.Entities;
 using System;
 using System.Threading.Tasks; // Verifique este using
 

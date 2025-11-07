@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyBeast.Domain.Models; // Importando do projeto Domain
+using MyBeast.Domain.Entities;
 
 namespace MyBeast.Infrastructure.Data
 {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
-using MyBeast.Domain.Models;
 using MyBeast.API.DTOs.Community.Input;  // DTOs de Entrada
 using MyBeast.API.DTOs.Community.Output; // DTOs de Saída
 using MyBeast.API.DTOs.User.Output;    // Para UserSummaryDto
@@ -11,7 +10,8 @@ using System.Linq; // Para Select
 using Microsoft.AspNetCore.Authorization; // Para [Authorize]
 using System.Security.Claims; // Para Claims
 using System.IdentityModel.Tokens.Jwt;
-using MyBeast.API.DTOs.Community; // Para JwtRegisteredClaimNames
+using MyBeast.API.DTOs.Community;
+using MyBeast.Domain.Entities; // Para JwtRegisteredClaimNames
 
 namespace MyBeast.API.Controllers
 {

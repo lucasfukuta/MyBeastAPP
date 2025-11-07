@@ -1,4 +1,4 @@
-﻿using MyBeast.Domain.Models; // Importa o Modelo de Domínio
+﻿using MyBeast.Domain.Entities; // Importa o Modelo de Domínio
 using System; // Para DateTime
 using System.Threading.Tasks;
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
-using MyBeast.Domain.Models;
 using MyBeast.API.DTOs.Exercise.Input;   // DTOs de Entrada
 using MyBeast.API.DTOs.Exercise.Output;  // DTOs de Saída
 using System;
@@ -9,7 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization; // Para [Authorize]
 using System.Security.Claims; // Para Claims
-using System.IdentityModel.Tokens.Jwt; // Para JwtRegisteredClaimNames
+using System.IdentityModel.Tokens.Jwt;
+using MyBeast.Domain.Entities; // Para JwtRegisteredClaimNames
 
 namespace MyBeast.API.Controllers
 {

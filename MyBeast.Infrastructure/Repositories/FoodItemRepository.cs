@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBeast.Domain.Interfaces;
-using MyBeast.Domain.Models;
 using MyBeast.Infrastructure.Data;
+using MyBeast.Domain.Entities;
 using System.Collections.Generic; // Adicionado
 using System.Linq; // Adicionado
 using System.Threading.Tasks; // Adicionado
