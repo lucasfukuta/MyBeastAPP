@@ -1,37 +1,33 @@
-// MyBeast/Views/Community/CommunityFeedPage.xaml.cs
-using Microsoft.Maui.Controls;
-using MyBeast.ViewModels.Community;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using MyBeast.Views.Community;
 
-namespace MyBeast.Views.Community
+public partial class CommunityFeedViewModel : INotifyPropertyChanged
 {
-    public partial class CommunityFeedPage : ContentPage
+    public ObservableCollection<Post> Posts { get; set; } = new();
+    public bool IsLoading { get; private set; }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public async Task LoadPostsAsync()
     {
-        // 1. O ViewModel agora é injetado via construtor (o MauiProgram precisa estar configurado para isso)
-        private readonly CommunityFeedViewModel _viewModel;
+        if (IsLoading) return;
+        IsLoading = true;
+        OnPropertyChanged(nameof(IsLoading));
 
-        public CommunityFeedPage(CommunityFeedViewModel viewModel)
+        try
         {
-            InitializeComponent();
-
-            // Atribui a instância injetada ao campo e ao BindingContext
-            _viewModel = viewModel;
-            BindingContext = _viewModel;
-
-            // Para que o MauiProgram.cs funcione corretamente, ele precisará ter algo como:
-            // builder.Services.AddSingleton<CommunityFeedPage>();
-            // builder.Services.AddSingleton<CommunityFeedViewModel>();
+            // Simule o carregamento dos posts
+            await Task.Delay(1000);
+            // Exemplo: Posts.Add(new Post { ... });
         }
-
-        // 2. Aciona o carregamento dos posts quando a página é exibida
-        protected override async void OnAppearing()
+        finally
         {
-            base.OnAppearing();
-
-            // Carrega os posts se a lista estiver vazia (primeiro carregamento)
-            if (_viewModel.Posts.Count == 0 && !_viewModel.IsLoading)
-            {
-                await _viewModel.LoadPostsAsync();
-            }
+            IsLoading = false;
+            OnPropertyChanged(nameof(IsLoading));
         }
     }
+
+    protected void OnPropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
