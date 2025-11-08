@@ -1,12 +1,55 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:MyBeast.ViewModels.Community"
+             xmlns:models="clr-namespace:MyBeast.API.DTOs.Community.Output;assembly=MyBeast.API"
+             xmlns:controls="clr-namespace:MyBeast.Views.Controls"
              x:Class="MyBeast.Views.Community.CommunityFeedPage"
-             Title="CommunityFeedPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Comunidade"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <Grid RowDefinitions="*,Auto">
+
+        <RefreshView Grid.Row="0"
+                     IsRefreshing="{Binding IsLoading}"
+                     Command="{Binding LoadPostsCommand}"
+                     RefreshColor="{StaticResource Primary}">
+
+            <CollectionView ItemsSource="{Binding Posts}"
+                            SelectionMode="None"
+                            Margin="5, 10, 5, 0">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:PostDto">
+                        <controls:PostCardView Post="{Binding .}" Margin="0, 0, 0, 10" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="Center" Padding="50">
+                        <Label Text="Nenhum post no feed ainda."
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray500}"
+                               FontSize="Medium"/>
+                        <Label Text="Seja o primeiro a postar! (Ou puxe para tentar carregar novamente)"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray400}"
+                               FontSize="Small"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
+
+            </CollectionView>
+        </RefreshView>
+
+        <Button Grid.Row="0"
+                Text="+"
+                CornerRadius="30"
+                FontSize="Large"
+                HeightRequest="60"
+                WidthRequest="60"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="20"
+                Command="{Binding CreateNewPostCommand}" 
+                Style="{StaticResource FABButton}"/>
+    </Grid>
 </ContentPage>

@@ -1,76 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MyBeast.ViewModels.Community
+namespace MyBeast.Views.Community;
+
+public class CommunityFeedViewModel : INotifyPropertyChanged
 {
-    internal class CommunityFeedViewModel : INotifyPropertyChanged
+    public ObservableCollection<Post> Posts { get; set; }
+
+    public CommunityFeedViewModel()
     {
-        private bool _isLoading;
-        private ObservableCollection<string> _posts;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public bool IsLoading
+        Posts = new ObservableCollection<Post>
         {
-            get => _isLoading;
-            set
-            {
-                if (_isLoading != value)
-                {
-                    _isLoading = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public ObservableCollection<string> Posts
-        {
-            get => _posts;
-            set
-            {
-                if (_posts != value)
-                {
-                    _posts = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public CommunityFeedViewModel()
-        {
-            _posts = new ObservableCollection<string>();
-        }
-
-        public async Task LoadPostsAsync()
-        {
-            IsLoading = true;
-
-            try
-            {
-                // Simulate data loading
-                await Task.Delay(2000);
-                Posts = new ObservableCollection<string>
-                    {
-                        "Post 1",
-                        "Post 2",
-                        "Post 3"
-                    };
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            new Post { Titulo = "Bem-vindo!", Conteudo = "Apresente-se para a comunidade.", Autor = "Admin" },
+            new Post { Titulo = "Dica do dia", Conteudo = "Use o .NET MAUI para apps multiplataforma.", Autor = "João" }
+        };
     }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }
+
+public class Post
+{
+    public string Titulo { get; set; }
+    public string Conteudo { get; set; }
+    public string Autor { get; set; }
+}
+
