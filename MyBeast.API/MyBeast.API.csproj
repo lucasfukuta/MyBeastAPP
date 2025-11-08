@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyBeast.Application\MyBeast.Application.csproj" />
+    <ProjectReference Include="..\MyBeast.Domain\MyBeast.Domain.csproj" />
     <ProjectReference Include="..\MyBeast.Infrastructure\MyBeast.Infrastructure.csproj" />
   </ItemGroup>
 

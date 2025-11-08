@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyBeast.Domain.Entities;
-using MyBeast.Domain.Models;
 using MyBeast.Infrastructure.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq; // Adicionar este

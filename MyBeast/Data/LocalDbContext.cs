@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyBeast.Domain.Entities;
-using MyBeast.Domain.Models; // Importa seus modelos
+using MyBeast.Domain.Entities; // Importa seus modelos
 using System.IO;
 
 namespace MyBeast.Data
