@@ -1,18 +1,30 @@
-# Ignore Visual Studio cache folders
+# Ignorar pastas do Visual Studio
 .vs/
 
-# Ignore bin e obj (build)
+# Ignorar arquivos de build e compilação
 bin/
 obj/
 
-# Ignore arquivos temporários do usuário
+# Ignorar arquivos temporários de configuração do usuário
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-# Node/npm (se houver)
+# Ignorar pastas de dependências de Node.js (caso haja)
 node_modules/
 
-# Outros arquivos temporários
+# Ignorar arquivos de log temporários
 *.log
+
+# Ignorar arquivos gerados pelo .NET
+# Ignorar pacotes de dependências gerados
+project.lock.json
+project.fragment.lock.json
+
+# Ignorar arquivos do MAUI
+maui/*
+
+# Ignorar arquivos de cache do MAUI
+*.cache
+*.csproj.user
