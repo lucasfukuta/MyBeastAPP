@@ -1,56 +1,32 @@
-﻿using System;
+﻿using MyBeast.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// MyBeast/Services/NavigationService.cs
 namespace MyBeast.Services
 {
-    internal class NavigationService : INavigationService
+    // Troque 'internal' por 'public' para garantir que a Injeção de Dependência funcione
+    public class NavigationService : INavigationService
     {
-        private readonly Stack<string> _navigationStack = new Stack<string>();
+        // Implementação correta usando o Shell do MAUI
+        public Task NavigateToAsync(string route) =>
+            Shell.Current.GoToAsync(route);
 
-        public void NavigateTo(string page)
+        // Implementação correta para o método com parâmetros
+        public Task NavigateToAsync(string route, IDictionary<string, object> parameters)
         {
-            if (string.IsNullOrWhiteSpace(page))
-                throw new ArgumentException("Page cannot be null or empty.", nameof(page));
-
-            _navigationStack.Push(page);
+            return Shell.Current.GoToAsync(route, parameters);
         }
 
-        public string GoBack()
-        {
-            if (_navigationStack.Count <= 1)
-                throw new InvalidOperationException("No pages to navigate back to.");
+        // Implementação correta para voltar
+        public Task GoBackAsync() =>
+            Shell.Current.GoToAsync("..");
 
-            // Pop the current page
-            _navigationStack.Pop();
-
-            // Return the previous page
-            return _navigationStack.Peek();
-        }
-
-        public string GetCurrentPage()
-        {
-            if (_navigationStack.Count == 0)
-                throw new InvalidOperationException("No pages in the navigation stack.");
-
-            return _navigationStack.Peek();
-        }
-
-        public Task NavigateToAsync(string route)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task GoBackAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task NavigateToRootAsync()
-        {
-            throw new NotImplementedException();
-        }
+        // Implementação correta para ir para a raiz
+        public Task NavigateToRootAsync() =>
+            Shell.Current.GoToAsync($"//{nameof(MainPage)}");
     }
 }
