@@ -27,6 +27,12 @@ namespace MyBeast
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            builder.Services.AddHttpClient("MyBeastApi", client =>
+            {
+                // Usa HTTP (http://) para evitar problemas de certificado SSL
+                // Esta URL vem do seu arquivo 'launchSettings.json' da API
+                client.BaseAddress = new Uri("http://10.0.2.2:5145");
+            });
 
             // --- 1. REGISTRAR O BANCO DE DADOS ---
             builder.Services.AddDbContext<LocalDbContext>();
