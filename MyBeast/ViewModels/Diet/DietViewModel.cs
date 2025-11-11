@@ -29,16 +29,17 @@ namespace MyBeast.ViewModels.Diet
 
         [ObservableProperty]
         private bool _isLoading;
-
         public decimal TotalProtein => MealLogs.Sum(m => m.TotalProtein);
         public decimal TotalCarbs => MealLogs.Sum(m => m.TotalCarbs);
         public decimal TotalFat => MealLogs.Sum(m => m.TotalFat);
-
+        
         public DietViewModel(IDietApiService dietApiService, INavigationService navigationService)
         {
             _dietApiService = dietApiService;
             _navigationService = navigationService;
         }
+
+
 
         [RelayCommand]
         private async Task LoadLogsAsync()
