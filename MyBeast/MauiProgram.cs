@@ -7,6 +7,8 @@ using MyBeast.ViewModels.Auth;
 using MyBeast.ViewModels;
 using MyBeast.Views.Auth;
 using MyBeast.Views; // Importar suas Views
+using MyBeast.ViewModels.Diet; 
+using MyBeast.Views.Diet;
 
 namespace MyBeast
 {
@@ -27,6 +29,12 @@ namespace MyBeast
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            builder.Services.AddHttpClient("MyBeastApi", client =>
+            {
+                // Usa HTTP (http://) para evitar problemas de certificado SSL
+                // Esta URL vem do seu arquivo 'launchSettings.json' da API
+                client.BaseAddress = new Uri("http://10.0.2.2:5145");
+            });
 
             // --- 1. REGISTRAR O BANCO DE DADOS ---
             builder.Services.AddDbContext<LocalDbContext>();
@@ -37,6 +45,7 @@ namespace MyBeast
             builder.Services.AddSingleton<ILocalDbService, LocalDbService>();
             builder.Services.AddSingleton<IPetService, PetService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();
+            builder.Services.AddSingleton<IDietApiService, DietApiService>();
             builder.Services.AddSingleton<LoginPage>();
             builder.Services.AddSingleton<MainPage>();
 
@@ -44,11 +53,13 @@ namespace MyBeast
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<DietViewModel>();
 
             // Views
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<RegisterPage>();
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<DietPage>();
 
             // --- 3. CONSTRUIR O APP ---
             var app = builder.Build();

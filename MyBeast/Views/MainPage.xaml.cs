@@ -1,25 +1,18 @@
-﻿namespace MyBeast
+﻿namespace MyBeast.Views
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        // Método chamado quando o usuário clica no botão "Criar conta"
+        private async void onCriarConta(object sender, EventArgs e)
         {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            // Aqui você pode navegar para a página de registro
+            await Shell.Current.GoToAsync("//register");
         }
-    }
 
+    }
 }

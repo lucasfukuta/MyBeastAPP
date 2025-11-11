@@ -1,38 +1,100 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MyBeast.Domain.Entities;
+using MyBeast.Models.DTOs.Diet;
+using MyBeast.Services;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MyBeast.ViewModels.Diet
 {
-    internal class DietViewModel
+    public partial class DietViewModel : ObservableObject
     {
-        public string Name { get; set; }
-        public int Calories { get; set; }
-        public List<string> Meals { get; set; }
+        private readonly IDietApiService _dietApiService;
+        private readonly INavigationService _navigationService;
 
-        public DietViewModel()
+        [ObservableProperty]
+        private DateTime _selectedDate = DateTime.Today;
+
+        [ObservableProperty]
+        private ObservableCollection<MealLogDto> _mealLogs = new();
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(TotalProtein), nameof(TotalCarbs), nameof(TotalFat))]
+        private decimal _totalCalories;
+
+        [ObservableProperty]
+        private bool _isLoading;
+        public decimal TotalProtein => MealLogs.Sum(m => m.TotalProtein);
+        public decimal TotalCarbs => MealLogs.Sum(m => m.TotalCarbs);
+        public decimal TotalFat => MealLogs.Sum(m => m.TotalFat);
+        
+        public DietViewModel(IDietApiService dietApiService, INavigationService navigationService)
         {
-            Meals = new List<string>();
+            _dietApiService = dietApiService;
+            _navigationService = navigationService;
         }
 
-        public void AddMeal(string meal)
+
+
+        [RelayCommand]
+        private async Task LoadLogsAsync()
         {
-            if (!string.IsNullOrWhiteSpace(meal))
+            IsLoading = true;
+            MealLogs.Clear();
+            try
             {
-                Meals.Add(meal);
+                var logs = await _dietApiService.GetMealLogsByDateAsync(SelectedDate);
+                foreach (var log in logs)
+                {
+                    MealLogs.Add(log);
+                }
+                CalculateTotals();
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Erro", $"Não foi possível carregar o diário: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
-        public void RemoveMeal(string meal)
+        private void CalculateTotals()
         {
-            Meals.Remove(meal);
+            TotalCalories = MealLogs.Sum(m => m.TotalCalories);
+            // Notifica manualmente as propriedades dependentes
+            OnPropertyChanged(nameof(TotalProtein));
+            OnPropertyChanged(nameof(TotalCarbs));
+            OnPropertyChanged(nameof(TotalFat));
         }
 
-        public int TotalMeals()
+        // Este método é chamado automaticamente quando a propriedade _selectedDate muda
+        partial void OnSelectedDateChanged(DateTime value)
         {
-            return Meals.Count;
+            // Executa o comando para carregar os logs da nova data
+            if (LoadLogsCommand.CanExecute(null))
+            {
+                LoadLogsCommand.Execute(null);
+            }
+        }
+
+        // Comando para navegar para a página de adicionar refeição
+        [RelayCommand]
+        private async Task GoToAddMealAsync(string mealType)
+        {
+            var navigationParams = new Dictionary<string, object>
+            {
+                { "SelectedDate", SelectedDate },
+                { "MealType", mealType }
+            };
+            // Usaremos "AddMealPage" como o nome da rota
+            await _navigationService.NavigateToAsync("AddMealPage", navigationParams);
         }
     }
 }

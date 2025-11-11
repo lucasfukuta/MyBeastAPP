@@ -3,13 +3,16 @@
     x:Class="MyBeast.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:MyBeast"
+    xmlns:views="clr-namespace:MyBeast.Views;assembly=MyBeast"
+    xmlns:auth="clr-namespace:MyBeast.Views.Auth;assembly=MyBeast"
     Shell.FlyoutBehavior="Disabled"
     Title="MyBeast">
+    <!-- Definindo rotas para MainPage e RegisterPage -->
+    <TabBar>
+        <!-- Rota para a página de login (MainPage) -->
+        <ShellContent Title="Login" ContentTemplate="{DataTemplate views:MainPage}" Route="mainpage"/>
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+        <!-- Rota para a página de registro (RegisterPage) -->
+        <ShellContent Title="Registro" ContentTemplate="{DataTemplate auth:RegisterPage}" Route="register"/>
+    </TabBar>
 </Shell>
