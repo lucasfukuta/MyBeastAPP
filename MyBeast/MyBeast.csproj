@@ -68,8 +68,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MyBeast.Domain\MyBeast.Domain.csproj" />
 	</ItemGroup>
-	
-	
 
 	<ItemGroup>
 		<MauiXaml Update="Views\Achievements\Achievement.xaml">
@@ -119,5 +117,4 @@
 		</MauiXaml>
 	</ItemGroup>
 
-	
 </Project>
