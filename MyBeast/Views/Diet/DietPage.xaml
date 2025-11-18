@@ -1,81 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodels="clr-namespace:MyBeast.ViewModels.Diet"
-             xmlns:dtos="clr-namespace:MyBeast.Models.DTOs.Diet"
              x:Class="MyBeast.Views.Diet.DietPage"
-             x:DataType="viewmodels:DietViewModel"
-             Title="Diário Alimentar">
-
-    <Grid RowDefinitions="Auto, Auto, *, Auto">
-
-        <DatePicker Grid.Row="0" 
-                    Date="{Binding SelectedDate}" 
-                    Format="dd/MM/yyyy"
-                    Margin="10"/>
-
-        <Frame Grid.Row="1" Margin="10,0" Padding="10" CornerRadius="10">
-            <VerticalStackLayout>
-                <Label Text="{Binding TotalCalories, StringFormat='Total: {0:F0} kcal'}" 
-                       FontSize="Large" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
-                <Grid ColumnDefinitions="*,*,*" Margin="0,10,0,0">
-                    <VerticalStackLayout Grid.Column="0">
-                        <Label Text="Proteínas" HorizontalTextAlignment="Center" FontSize="Small" FontAttributes="Bold"/>
-                        <Label Text="{Binding TotalProtein, StringFormat='{0:F0}g'}" HorizontalTextAlignment="Center"/>
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Carboidratos" HorizontalTextAlignment="Center" FontSize="Small" FontAttributes="Bold"/>
-                        <Label Text="{Binding TotalCarbs, StringFormat='{0:F0}g'}" HorizontalTextAlignment="Center"/>
-                    </VerticalStackLayout>
-                    <VerticalStackLayout Grid.Column="2">
-                        <Label Text="Gorduras" HorizontalTextAlignment="Center" FontSize="Small" FontAttributes="Bold"/>
-                        <Label Text="{Binding TotalFat, StringFormat='{0:F0}g'}" HorizontalTextAlignment="Center"/>
-                    </VerticalStackLayout>
-                </Grid>
-            </VerticalStackLayout>
-        </Frame>
-
-        <ScrollView Grid.Row="2" Margin="10">
-            <VerticalStackLayout BindableLayout.ItemsSource="{Binding MealLogs}">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate x:DataType="dtos:MealLogDto">
-                        <Frame Padding="15" Margin="0,5" CornerRadius="10">
-                            <VerticalStackLayout>
-                                <Grid ColumnDefinitions="*, Auto">
-                                    <Label Grid.Column="0" Text="{Binding MealType}" FontSize="Medium" FontAttributes="Bold"/>
-                                    <Label Grid.Column="1" Text="{Binding TotalCalories, StringFormat='{0:F0} kcal'}" FontSize="Medium" FontAttributes="Bold"/>
-                                </Grid>
-
-                                <BoxView HeightRequest="1" Color="LightGray" Margin="0,5"/>
-
-                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}">
-                                    <BindableLayout.ItemTemplate>
-                                        <DataTemplate x:DataType="dtos:MealItemResponseDto">
-                                            <Grid ColumnDefinitions="*, Auto" Margin="0,5">
-                                                <VerticalStackLayout Grid.Column="0">
-                                                    <Label Text="{Binding FoodName}" FontAttributes="Bold"/>
-                                                    <Label Text="{Binding Quantity, StringFormat='{0}g'}" FontSize="Small" TextColor="Gray"/>
-                                                </VerticalStackLayout>
-                                                <Label Grid.Column="1" Text="{Binding Calories, StringFormat='{0:F0} kcal'}" VerticalOptions="Center"/>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </BindableLayout.ItemTemplate>
-                                </VerticalStackLayout>
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
-                           Grid.Row="0" Grid.RowSpan="3" VerticalOptions="Center" HorizontalOptions="Center" />
-
-        <Grid Grid.Row="3" ColumnDefinitions="*,*,*" Padding="10" ColumnSpacing="10">
-            <Button Grid.Column="0" Text="Café" Command="{Binding GoToAddMealCommand}" CommandParameter="Breakfast"/>
-            <Button Grid.Column="1" Text="Almoço" Command="{Binding GoToAddMealCommand}" CommandParameter="Lunch"/>
-            <Button Grid.Column="2" Text="Jantar" Command="{Binding GoToAddMealCommand}" CommandParameter="Dinner"/>
-        </Grid>
-
-    </Grid>
+             Title="DietPage">
+    <VerticalStackLayout>
+        <Label 
+            Text="Welcome to .NET MAUI!"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+    </VerticalStackLayout>
 </ContentPage>
