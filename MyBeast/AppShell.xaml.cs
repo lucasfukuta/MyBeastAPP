@@ -7,8 +7,9 @@ namespace MyBeast
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute("LoginPage", typeof(LoginPage));
-            Routing.RegisterRoute("HomePage", typeof(MainPage));
+            //Routing.RegisterRoute("LoginPage", typeof(LoginPage));
+            //Routing.RegisterRoute("HomePage", typeof(MainPage));
         }
     }
 }
+ 
