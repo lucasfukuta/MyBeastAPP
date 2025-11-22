@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:MyBeast.ViewModels.Diet"
              x:Class="MyBeast.Views.Diet.DietPage"
+             x:DataType="viewmodels:DietViewModel" 
              Title="Minha Dieta"
              BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
 
@@ -16,9 +17,10 @@
                     </ImageButton.Source>
                 </ImageButton>
 
-                <Label Text="{Binding CurrentDateDisplay, StringFormat='{0:D}'}" 
-                 HorizontalOptions="Center" VerticalOptions="Center" 
-                 FontAttributes="Bold" FontSize="16"/>
+                <Label Text="{Binding CurrentDate, StringFormat='{0:D}'}" 
+                       HorizontalOptions="Center" VerticalOptions="Center" 
+                       FontAttributes="Bold" FontSize="16"
+                       TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
 
                 <ImageButton Command="{Binding NextDateCommand}" HeightRequest="30" WidthRequest="30">
                     <ImageButton.Source>
@@ -32,7 +34,8 @@
                    BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}">
                 <VerticalStackLayout Spacing="10">
                     <Grid ColumnDefinitions="*, Auto">
-                        <Label Text="Calorias Diárias" FontAttributes="Bold" FontSize="16"/>
+                        <Label Text="Calorias Diárias" FontAttributes="Bold" FontSize="16" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+
                         <Label Grid.Column="1">
                             <Label.FormattedText>
                                 <FormattedString>
@@ -43,23 +46,22 @@
                         </Label>
                     </Grid>
 
-                    <ProgressBar Progress="{Binding CaloriesProgress}" 
-                                 ProgressColor="{StaticResource Primary}" ScaleY="1.5"/>
+                    <ProgressBar Progress="{Binding CaloriesProgress}" ProgressColor="{StaticResource Primary}" ScaleY="1.5"/>
 
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,10,0,0">
                         <VerticalStackLayout>
                             <Label Text="Proteína" HorizontalOptions="Center" FontSize="12" TextColor="{StaticResource Gray500}"/>
-                            <Label Text="{Binding CurrentProtein, StringFormat='{0:F0}g'}" HorizontalOptions="Center" FontAttributes="Bold"/>
+                            <Label Text="{Binding CurrentProtein, StringFormat='{0:F0}g'}" HorizontalOptions="Center" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
                             <BoxView Color="#4CAF50" HeightRequest="4" CornerRadius="2" Margin="10,2"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1">
                             <Label Text="Carbo" HorizontalOptions="Center" FontSize="12" TextColor="{StaticResource Gray500}"/>
-                            <Label Text="{Binding CurrentCarbs, StringFormat='{0:F0}g'}" HorizontalOptions="Center" FontAttributes="Bold"/>
+                            <Label Text="{Binding CurrentCarbs, StringFormat='{0:F0}g'}" HorizontalOptions="Center" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
                             <BoxView Color="#FFC107" HeightRequest="4" CornerRadius="2" Margin="10,2"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="2">
                             <Label Text="Gordura" HorizontalOptions="Center" FontSize="12" TextColor="{StaticResource Gray500}"/>
-                            <Label Text="{Binding CurrentFat, StringFormat='{0:F0}g'}" HorizontalOptions="Center" FontAttributes="Bold"/>
+                            <Label Text="{Binding CurrentFat, StringFormat='{0:F0}g'}" HorizontalOptions="Center" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
                             <BoxView Color="#F44336" HeightRequest="4" CornerRadius="2" Margin="10,2"/>
                         </VerticalStackLayout>
                     </Grid>
@@ -67,14 +69,22 @@
             </Frame>
 
             <CollectionView Grid.Row="2" ItemsSource="{Binding DailyMeals}" Margin="15,0,15,80">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+                        <Label Text="Nenhuma refeição registrada hoje." TextColor="{StaticResource Gray400}" HorizontalOptions="Center"/>
+                        <Label Text="Clique no + para adicionar." TextColor="{StaticResource Gray400}" FontSize="12" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="viewmodels:MealEntryDisplay">
                         <VerticalStackLayout Spacing="5" Margin="0,0,0,20">
+
                             <Grid ColumnDefinitions="*, Auto">
                                 <Label Text="{Binding MealType}" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
                                 <Label Grid.Column="1" Text="{Binding TotalCalories, StringFormat='{0:F0} kcal'}" VerticalOptions="Center" FontSize="12" TextColor="{StaticResource Gray500}"/>
                             </Grid>
-                            <Frame Padding="0" CornerRadius="10" HasShadow="False" BorderColor="{StaticResource Gray200}">
+
+                            <Frame Padding="0" CornerRadius="10" HasShadow="False" BorderColor="{StaticResource Gray200}" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
                                 <StackLayout BindableLayout.ItemsSource="{Binding Items}">
                                     <BindableLayout.ItemTemplate>
                                         <DataTemplate x:DataType="viewmodels:MealItemDisplay">
@@ -87,9 +97,10 @@
                                                                    CommandParameter="{Binding .}"/>
                                                     </SwipeItems>
                                                 </SwipeView.RightItems>
+
                                                 <Grid ColumnDefinitions="*, Auto" Padding="15,10" BackgroundColor="Transparent">
                                                     <VerticalStackLayout>
-                                                        <Label Text="{Binding Food.Name}" FontSize="14"/>
+                                                        <Label Text="{Binding Food.Name}" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
                                                         <Border IsVisible="{Binding Food.IsCustom}" 
                                                                 StrokeShape="RoundRectangle 4" 
                                                                 BackgroundColor="{StaticResource Secondary}"
@@ -113,35 +124,27 @@
             </CollectionView>
         </Grid>
 
-        <Grid BackgroundColor="#CC000000" IsVisible="{Binding IsAddFormVisible}" Padding="20">
+        <Grid BackgroundColor="#CC000000" IsVisible="{Binding IsAddFormVisible}" Padding="20" ZIndex="10">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding ToggleAddFormCommand}"/>
             </Grid.GestureRecognizers>
 
             <Frame VerticalOptions="Center" CornerRadius="20" Padding="20"
-                   BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray950}}">
+                   BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer />
                 </Frame.GestureRecognizers>
 
                 <VerticalStackLayout Spacing="15">
                     <Grid ColumnDefinitions="*, Auto">
-                        <Label Text="Novo Alimento" FontSize="20" FontAttributes="Bold" VerticalOptions="Center"/>
-
-                        <Button Grid.Column="1" 
-                                Text="✕" 
-                                Command="{Binding ToggleAddFormCommand}"
-                                BackgroundColor="Transparent" 
-                                TextColor="{StaticResource Gray500}"
-                                FontSize="18"
-                                HeightRequest="40"
-                                WidthRequest="40"/>
+                        <Label Text="Novo Alimento" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
+                        <Button Grid.Column="1" Text="✕" Command="{Binding ToggleAddFormCommand}" BackgroundColor="Transparent" TextColor="{StaticResource Gray500}" FontSize="18" HeightRequest="40" WidthRequest="40"/>
                     </Grid>
 
                     <Entry Placeholder="Nome do Alimento" Text="{Binding NewItemName}" />
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Picker Title="Refeição" ItemsSource="{Binding AvailableMealTypes}" SelectedItem="{Binding SelectedMealType}" Grid.Column="0"/>
+                        <Picker Title="Refeição" ItemsSource="{Binding AvailableMealTypes}" SelectedItem="{Binding SelectedMealType}" Grid.Column="0" TextColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" TitleColor="{StaticResource Gray500}"/>
                         <Entry Placeholder="Qtd" Keyboard="Numeric" Text="{Binding NewItemQuantity}" Grid.Column="1"/>
                     </Grid>
 
@@ -153,11 +156,7 @@
                         <Entry Placeholder="Gord" Keyboard="Numeric" Text="{Binding NewItemFat}" Grid.Column="3"/>
                     </Grid>
 
-                    <Button Text="Salvar Alimento" 
-                            Command="{Binding SaveMealCommand}" 
-                            BackgroundColor="{StaticResource Primary}" 
-                            TextColor="White"
-                            Margin="0,10,0,0"/>
+                    <Button Text="Salvar Alimento" Command="{Binding SaveMealCommand}" BackgroundColor="{StaticResource Primary}" TextColor="White" Margin="0,10,0,0" CornerRadius="10"/>
                 </VerticalStackLayout>
             </Frame>
         </Grid>
@@ -174,7 +173,7 @@
                 VerticalOptions="End"
                 Margin="20"
                 Shadow="{Shadow Brush=Black, Offset='2,2', Radius=5, Opacity=0.3}"
-                IsVisible="{Binding IsAddButtonVisible}"/>
-
+                IsVisible="{Binding IsAddButtonVisible}"
+                ZIndex="5"/>
     </Grid>
 </ContentPage>
