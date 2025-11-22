@@ -17,6 +17,7 @@ namespace MyBeast.Domain.Entities
         [ForeignKey("MealLogId")]
         public virtual MealLog MealLog { get; set; } 
         [ForeignKey("FoodId")]
-        public virtual FoodItem FoodItem { get; set; } 
+        public virtual FoodItem FoodItem { get; set; }
+        public int MealLogItemId { get; set; }
     }
 }

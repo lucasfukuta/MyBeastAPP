@@ -16,9 +16,9 @@
                     </ImageButton.Source>
                 </ImageButton>
 
-                <Label Text="{Binding CurrentDate, StringFormat='{0:D}'}" 
-                       HorizontalOptions="Center" VerticalOptions="Center" 
-                       FontAttributes="Bold" FontSize="16"/>
+                <Label Text="{Binding CurrentDateDisplay, StringFormat='{0:D}'}" 
+                 HorizontalOptions="Center" VerticalOptions="Center" 
+                 FontAttributes="Bold" FontSize="16"/>
 
                 <ImageButton Command="{Binding NextDateCommand}" HeightRequest="30" WidthRequest="30">
                     <ImageButton.Source>
@@ -31,7 +31,6 @@
                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}"
                    BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray900}}">
                 <VerticalStackLayout Spacing="10">
-
                     <Grid ColumnDefinitions="*, Auto">
                         <Label Text="Calorias Diárias" FontAttributes="Bold" FontSize="16"/>
                         <Label Grid.Column="1">
@@ -71,17 +70,14 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="viewmodels:MealEntryDisplay">
                         <VerticalStackLayout Spacing="5" Margin="0,0,0,20">
-
                             <Grid ColumnDefinitions="*, Auto">
                                 <Label Text="{Binding MealType}" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
                                 <Label Grid.Column="1" Text="{Binding TotalCalories, StringFormat='{0:F0} kcal'}" VerticalOptions="Center" FontSize="12" TextColor="{StaticResource Gray500}"/>
                             </Grid>
-
                             <Frame Padding="0" CornerRadius="10" HasShadow="False" BorderColor="{StaticResource Gray200}">
                                 <StackLayout BindableLayout.ItemsSource="{Binding Items}">
                                     <BindableLayout.ItemTemplate>
                                         <DataTemplate x:DataType="viewmodels:MealItemDisplay">
-
                                             <SwipeView>
                                                 <SwipeView.RightItems>
                                                     <SwipeItems>
@@ -91,7 +87,6 @@
                                                                    CommandParameter="{Binding .}"/>
                                                     </SwipeItems>
                                                 </SwipeView.RightItems>
-
                                                 <Grid ColumnDefinitions="*, Auto" Padding="15,10" BackgroundColor="Transparent">
                                                     <VerticalStackLayout>
                                                         <Label Text="{Binding Food.Name}" FontSize="14"/>
@@ -108,28 +103,46 @@
                                                     <Label Grid.Column="1" Text="{Binding TotalItemCalories, StringFormat='{0:F0} kcal'}" VerticalOptions="Center" TextColor="{StaticResource Gray400}"/>
                                                 </Grid>
                                             </SwipeView>
-
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>
                                 </StackLayout>
                             </Frame>
-
                         </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Grid>
 
-        <Grid BackgroundColor="#AA000000" IsVisible="{Binding IsAddFormVisible}" Padding="20">
-            <Frame VerticalOptions="Center" CornerRadius="20" BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray950}}">
+        <Grid BackgroundColor="#CC000000" IsVisible="{Binding IsAddFormVisible}" Padding="20">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ToggleAddFormCommand}"/>
+            </Grid.GestureRecognizers>
+
+            <Frame VerticalOptions="Center" CornerRadius="20" Padding="20"
+                   BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource Gray950}}">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Frame.GestureRecognizers>
+
                 <VerticalStackLayout Spacing="15">
-                    <Label Text="Novo Alimento" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Label Text="Novo Alimento" FontSize="20" FontAttributes="Bold" VerticalOptions="Center"/>
+
+                        <Button Grid.Column="1" 
+                                Text="✕" 
+                                Command="{Binding ToggleAddFormCommand}"
+                                BackgroundColor="Transparent" 
+                                TextColor="{StaticResource Gray500}"
+                                FontSize="18"
+                                HeightRequest="40"
+                                WidthRequest="40"/>
+                    </Grid>
 
                     <Entry Placeholder="Nome do Alimento" Text="{Binding NewItemName}" />
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <Picker Title="Refeição" ItemsSource="{Binding AvailableMealTypes}" SelectedItem="{Binding SelectedMealType}" Grid.Column="0"/>
-                        <Entry Placeholder="Qtd (porções)" Keyboard="Numeric" Text="{Binding NewItemQuantity}" Grid.Column="1"/>
+                        <Entry Placeholder="Qtd" Keyboard="Numeric" Text="{Binding NewItemQuantity}" Grid.Column="1"/>
                     </Grid>
 
                     <Label Text="Macros (por porção)" FontSize="12" TextColor="{StaticResource Gray500}"/>
@@ -140,10 +153,11 @@
                         <Entry Placeholder="Gord" Keyboard="Numeric" Text="{Binding NewItemFat}" Grid.Column="3"/>
                     </Grid>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
-                        <Button Text="Cancelar" Command="{Binding ToggleAddFormCommand}" BackgroundColor="Transparent" TextColor="{StaticResource Gray500}" BorderWidth="1" BorderColor="{StaticResource Gray200}"/>
-                        <Button Text="Salvar" Command="{Binding SaveMealCommand}" BackgroundColor="{StaticResource Primary}" TextColor="White"/>
-                    </Grid>
+                    <Button Text="Salvar Alimento" 
+                            Command="{Binding SaveMealCommand}" 
+                            BackgroundColor="{StaticResource Primary}" 
+                            TextColor="White"
+                            Margin="0,10,0,0"/>
                 </VerticalStackLayout>
             </Frame>
         </Grid>
@@ -161,5 +175,6 @@
                 Margin="20"
                 Shadow="{Shadow Brush=Black, Offset='2,2', Radius=5, Opacity=0.3}"
                 IsVisible="{Binding IsAddButtonVisible}"/>
+
     </Grid>
 </ContentPage>
