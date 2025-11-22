@@ -1,68 +1,77 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Linq;
-using MyBeast.Services; // Importar a interface
-using MyBeast.Domain.Entities; // Importar Entidades reais
+using MyBeast.Domain.Entities;
+using MyBeast.Services;
 
 namespace MyBeast.ViewModels.Diet
 {
     public class DietViewModel : BindableObject
     {
-        private readonly IDietService _dietService; // Injeção de Dependência
+        private readonly IDietService _dietService;
 
-        // --- Propriedades de Controle ---
+        // --- Estado da Tela ---
         private DateTime _currentDate;
         private bool _isAddFormVisible;
         private bool _isLoading;
 
-        // --- Campos Novo Alimento ---
+        // --- Dados de Entrada (Novo Alimento) ---
+        // Usando strings para os inputs numéricos para evitar "0" fixo na UI antes de digitar, 
+        // mas convertendo para decimal na lógica.
         private string _newItemName;
-        private double _newItemCalories;
-        private double _newItemProtein;
-        private double _newItemCarbs;
-        private double _newItemFat;
-        private double _newItemQuantity = 1;
+        private decimal _newItemCalories;
+        private decimal _newItemProtein;
+        private decimal _newItemCarbs;
+        private decimal _newItemFat;
+        private decimal _newItemQuantity = 1;
         private string _selectedMealType;
 
-        // --- Totais ---
-        private double _currentCalories;
-        private double _targetCalories = 3200;
-        private double _currentProtein;
-        private double _currentCarbs;
-        private double _currentFat;
+        // --- Totais do Dia (Usando decimal como nas Entities) ---
+        private decimal _currentCalories;
+        private decimal _targetCalories = 3200; // Exemplo fixo, poderia vir de User settings
+        private decimal _currentProtein;
+        private decimal _currentCarbs;
+        private decimal _currentFat;
 
-        public ObservableCollection<MealEntryDisplay> DailyMeals { get; set; }
+        // Coleção principal que a View vai observar
+        public ObservableCollection<MealLogDisplay> DailyMeals { get; set; }
+
+        // Lista estática de tipos de refeição para o Picker
         public ObservableCollection<string> AvailableMealTypes { get; } = new ObservableCollection<string>
         {
-            "Café da Manhã", "Almoço", "Lanche", "Jantar", "Ceia"
+            "Café da Manhã", "Almoço", "Lanche da Tarde", "Jantar", "Ceia"
         };
 
+        // --- Comandos ---
         public ICommand PreviousDateCommand { get; }
         public ICommand NextDateCommand { get; }
         public ICommand ToggleAddFormCommand { get; }
         public ICommand SaveMealCommand { get; }
         public ICommand RemoveItemCommand { get; }
 
-        // CONSTRUTOR: Recebe o serviço
         public DietViewModel(IDietService dietService)
         {
-            _dietService = dietService; // O Mock será injetado aqui
+            _dietService = dietService;
 
-            DailyMeals = new ObservableCollection<MealEntryDisplay>();
+            DailyMeals = new ObservableCollection<MealLogDisplay>();
             CurrentDate = DateTime.Today;
             SelectedMealType = AvailableMealTypes[0];
 
+            // Navegação de datas
             PreviousDateCommand = new Command(() => CurrentDate = CurrentDate.AddDays(-1));
             NextDateCommand = new Command(() => CurrentDate = CurrentDate.AddDays(1));
+
+            // UI Control
             ToggleAddFormCommand = new Command(() => IsAddFormVisible = !IsAddFormVisible);
 
-            // Agora as ações chamam métodos assíncronos
+            // Operações CRUD (Async)
             SaveMealCommand = new Command(async () => await SaveMealAsync());
-            RemoveItemCommand = new Command<MealItemDisplay>(async (item) => await RemoveItemAsync(item));
+            RemoveItemCommand = new Command<MealLogItemDisplay>(async (item) => await RemoveItemAsync(item));
 
-            // Carrega dados iniciais
+            // Carga Inicial
             LoadDataForDate(CurrentDate);
         }
+
+        // --- Propriedades Bindable ---
 
         public DateTime CurrentDate
         {
@@ -71,7 +80,7 @@ namespace MyBeast.ViewModels.Diet
             {
                 _currentDate = value;
                 OnPropertyChanged();
-                LoadDataForDate(_currentDate);
+                LoadDataForDate(_currentDate); // Recarrega ao mudar data
             }
         }
 
@@ -84,150 +93,186 @@ namespace MyBeast.ViewModels.Diet
         public bool IsAddFormVisible
         {
             get => _isAddFormVisible;
-            set { _isAddFormVisible = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsAddButtonVisible)); }
+            set
+            {
+                _isAddFormVisible = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsAddButtonVisible)); // Atualiza o botão "+"
+            }
         }
         public bool IsAddButtonVisible => !IsAddFormVisible;
 
-        // Inputs
+        // --- Propriedades de Entrada ---
         public string NewItemName { get => _newItemName; set { _newItemName = value; OnPropertyChanged(); } }
-        public double NewItemCalories { get => _newItemCalories; set { _newItemCalories = value; OnPropertyChanged(); } }
-        public double NewItemProtein { get => _newItemProtein; set { _newItemProtein = value; OnPropertyChanged(); } }
-        public double NewItemCarbs { get => _newItemCarbs; set { _newItemCarbs = value; OnPropertyChanged(); } }
-        public double NewItemFat { get => _newItemFat; set { _newItemFat = value; OnPropertyChanged(); } }
-        public double NewItemQuantity { get => _newItemQuantity; set { _newItemQuantity = value; OnPropertyChanged(); } }
+        public decimal NewItemCalories { get => _newItemCalories; set { _newItemCalories = value; OnPropertyChanged(); } }
+        public decimal NewItemProtein { get => _newItemProtein; set { _newItemProtein = value; OnPropertyChanged(); } }
+        public decimal NewItemCarbs { get => _newItemCarbs; set { _newItemCarbs = value; OnPropertyChanged(); } }
+        public decimal NewItemFat { get => _newItemFat; set { _newItemFat = value; OnPropertyChanged(); } }
+        public decimal NewItemQuantity { get => _newItemQuantity; set { _newItemQuantity = value; OnPropertyChanged(); } }
         public string SelectedMealType { get => _selectedMealType; set { _selectedMealType = value; OnPropertyChanged(); } }
 
-        // Totais
-        public double CurrentCalories { get => _currentCalories; set { _currentCalories = value; OnPropertyChanged(); OnPropertyChanged(nameof(CaloriesProgress)); } }
-        public double TargetCalories { get => _targetCalories; set { _targetCalories = value; OnPropertyChanged(); OnPropertyChanged(nameof(CaloriesProgress)); } }
-        public double CaloriesProgress => TargetCalories > 0 ? CurrentCalories / TargetCalories : 0;
-        public double CurrentProtein { get => _currentProtein; set { _currentProtein = value; OnPropertyChanged(); } }
-        public double CurrentCarbs { get => _currentCarbs; set { _currentCarbs = value; OnPropertyChanged(); } }
-        public double CurrentFat { get => _currentFat; set { _currentFat = value; OnPropertyChanged(); } }
+        // --- Propriedades de Totais (Macros) ---
+        public decimal CurrentCalories { get => _currentCalories; set { _currentCalories = value; OnPropertyChanged(); OnPropertyChanged(nameof(CaloriesProgress)); } }
+        public decimal TargetCalories { get => _targetCalories; set { _targetCalories = value; OnPropertyChanged(); OnPropertyChanged(nameof(CaloriesProgress)); } }
 
-        // --- Lógica Conectada ao Mock ---
+        // Progress Bar espera double, fazemos o cast aqui apenas para a View
+        public double CaloriesProgress => (double)(TargetCalories > 0 ? CurrentCalories / TargetCalories : 0);
+
+        public decimal CurrentProtein { get => _currentProtein; set { _currentProtein = value; OnPropertyChanged(); } }
+        public decimal CurrentCarbs { get => _currentCarbs; set { _currentCarbs = value; OnPropertyChanged(); } }
+        public decimal CurrentFat { get => _currentFat; set { _currentFat = value; OnPropertyChanged(); } }
+
+
+        // --- Lógica de Negócio ---
 
         private async void LoadDataForDate(DateTime date)
         {
+            if (IsLoading) return;
             IsLoading = true;
-            DailyMeals.Clear();
 
-            // 1. Busca os dados do serviço (Mock)
-            var mealLogs = await _dietService.GetMealsByDateAsync(date);
-
-            // 2. Converte as Entidades (MealLog) para os objetos de tela (MealEntryDisplay)
-            foreach (var log in mealLogs)
+            try
             {
-                var entryDisplay = new MealEntryDisplay { MealType = log.MealType };
+                // 1. Busca dados do Serviço (retorna IEnumerable<MealLog>)
+                var mealLogsEntity = await _dietService.GetMealsByDateAsync(date);
 
-                foreach (var item in log.MealLogItems)
+                DailyMeals.Clear();
+
+                // 2. Mapeia Entidades -> ViewModel Displays
+                // Mesmo que não haja logs no banco, iteramos sobre os tipos conhecidos se quisermos mostrar seções vazias,
+                // ou apenas mostramos o que veio do banco. Aqui vou mostrar o que veio do banco.
+
+                foreach (var log in mealLogsEntity)
                 {
-                    entryDisplay.Items.Add(new MealItemDisplay
+                    var mealDisplay = new MealLogDisplay
                     {
-                        Id = item.MealLogItemId, // Importante guardar o ID para deletar depois
-                        Food = new FoodItemDisplay
-                        {
-                            Name = item.FoodItem.Name,
-                            Calories = (double)item.FoodItem.Calories, // Cast de decimal para double
-                            Protein = (double)item.FoodItem.Protein,
-                            Carbs = (double)item.FoodItem.Carbs,
-                            Fat = (double)item.FoodItem.Fat,
-                            IsCustom = item.FoodItem.IsCustom
-                        },
-                        Quantity = (double)item.Quantity
-                    });
-                }
-                entryDisplay.RefreshTotal(); // Recalcula total da refeição
-                DailyMeals.Add(entryDisplay);
-            }
+                        MealType = log.MealType,
+                        MealLogId = log.MealLogId
+                    };
 
-            CalculateTotals();
-            IsLoading = false;
+                    foreach (var item in log.MealLogItems)
+                    {
+                        mealDisplay.Items.Add(new MealLogItemDisplay
+                        {
+                            MealLogItemId = item.MealLogItemId,
+                            FoodId = item.FoodId,
+                            Name = item.FoodItem?.Name ?? "Desconhecido",
+                            Quantity = item.Quantity,
+                            CaloriesPerUnit = item.FoodItem?.Calories ?? 0,
+                            ProteinPerUnit = item.FoodItem?.Protein ?? 0,
+                            CarbsPerUnit = item.FoodItem?.Carbs ?? 0,
+                            FatPerUnit = item.FoodItem?.Fat ?? 0,
+                            IsCustom = item.FoodItem?.IsCustom ?? false
+                        });
+                    }
+
+                    // Calcula totais daquela refeição específica
+                    mealDisplay.RecalculateTotals();
+                    DailyMeals.Add(mealDisplay);
+                }
+
+                // 3. Calcula Totais do Dia
+                CalculateDailyTotals();
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private async Task SaveMealAsync()
         {
-            if (string.IsNullOrWhiteSpace(NewItemName) || string.IsNullOrWhiteSpace(SelectedMealType)) return;
+            if (string.IsNullOrWhiteSpace(NewItemName) || string.IsNullOrWhiteSpace(SelectedMealType))
+                return;
 
-            // 1. Cria entidade FoodItem
+            // 1. Constrói a entidade FoodItem (Domínio)
             var newFood = new FoodItem
             {
                 Name = NewItemName,
-                Calories = (decimal)NewItemCalories,
-                Protein = (decimal)NewItemProtein,
-                Carbs = (decimal)NewItemCarbs,
-                Fat = (decimal)NewItemFat,
-                IsCustom = true
+                Calories = NewItemCalories,
+                Protein = NewItemProtein,
+                Carbs = NewItemCarbs,
+                Fat = NewItemFat,
+                IsCustom = true,
+                UserId = 1 // TODO: Pegar do contexto do usuário logado
             };
 
-            // 2. Envia para o serviço
-            await _dietService.AddFoodItemAsync(CurrentDate, SelectedMealType, newFood, NewItemQuantity);
+            // 2. Chama o serviço (note o cast para double na quantidade, pois sua interface IDietService usa double, embora a Entity use decimal)
+            // Idealmente, refatore IDietService para usar decimal também.
+            await _dietService.AddFoodItemAsync(CurrentDate, SelectedMealType, newFood, (double)NewItemQuantity);
 
-            // 3. Recarrega a tela (para pegar IDs gerados e totais atualizados)
-            LoadDataForDate(CurrentDate);
-
-            // Limpa form
-            NewItemName = ""; NewItemCalories = 0; NewItemProtein = 0; NewItemCarbs = 0; NewItemFat = 0; NewItemQuantity = 1;
+            // 3. Limpa campos e atualiza
+            NewItemName = string.Empty;
+            NewItemCalories = 0;
+            NewItemProtein = 0;
+            NewItemCarbs = 0;
+            NewItemFat = 0;
+            NewItemQuantity = 1;
             IsAddFormVisible = false;
+
+            LoadDataForDate(CurrentDate);
         }
 
-        private async Task RemoveItemAsync(MealItemDisplay item)
+        private async Task RemoveItemAsync(MealLogItemDisplay item)
         {
             if (item == null) return;
 
-            // Chama o serviço para deletar pelo ID
-            await _dietService.RemoveFoodItemAsync(item.Id);
+            bool confirm = await App.Current.MainPage.DisplayAlert("Confirmar", $"Remover {item.Name}?", "Sim", "Não");
+            if (!confirm) return;
 
-            // Recarrega dados
+            await _dietService.RemoveFoodItemAsync(item.MealLogItemId);
             LoadDataForDate(CurrentDate);
         }
 
-        private void CalculateTotals()
+        private void CalculateDailyTotals()
         {
-            double cal = 0, prot = 0, carb = 0, fat = 0;
-            foreach (var meal in DailyMeals)
-            {
-                foreach (var item in meal.Items)
-                {
-                    cal += item.TotalItemCalories;
-                    prot += item.Food.Protein * item.Quantity;
-                    carb += item.Food.Carbs * item.Quantity;
-                    fat += item.Food.Fat * item.Quantity;
-                }
-            }
-            CurrentCalories = cal;
-            CurrentProtein = prot;
-            CurrentCarbs = carb;
-            CurrentFat = fat;
+            CurrentCalories = DailyMeals.Sum(m => m.TotalCalories);
+            CurrentProtein = DailyMeals.Sum(m => m.Items.Sum(i => i.TotalProtein));
+            CurrentCarbs = DailyMeals.Sum(m => m.Items.Sum(i => i.TotalCarbs));
+            CurrentFat = DailyMeals.Sum(m => m.Items.Sum(i => i.TotalFat));
         }
     }
 
-    // --- Models de Visualização (Podem ficar no mesmo arquivo ou separar) ---
-    public class MealEntryDisplay : BindableObject
+    // --- Classes de Visualização (Helpers) ---
+
+    // Representa uma "Refeição" (ex: Almoço) e sua lista de itens
+    public class MealLogDisplay : BindableObject
     {
+        public int MealLogId { get; set; }
         public string MealType { get; set; }
-        public ObservableCollection<MealItemDisplay> Items { get; set; } = new();
-        private double _totalCalories;
-        public double TotalCalories { get => _totalCalories; set { _totalCalories = value; OnPropertyChanged(); } }
+        public ObservableCollection<MealLogItemDisplay> Items { get; set; } = new();
 
-        public void RefreshTotal() => TotalCalories = Items?.Sum(i => i.TotalItemCalories) ?? 0;
+        private decimal _totalCalories;
+        public decimal TotalCalories
+        {
+            get => _totalCalories;
+            set { _totalCalories = value; OnPropertyChanged(); }
+        }
+
+        public void RecalculateTotals()
+        {
+            TotalCalories = Items.Sum(i => i.TotalCalories);
+        }
     }
 
-    public class MealItemDisplay
+    // Representa um Item dentro da refeição (FoodItem + Quantidade)
+    public class MealLogItemDisplay
     {
-        public int Id { get; set; } // ID do LogItem para exclusão
-        public FoodItemDisplay Food { get; set; }
-        public double Quantity { get; set; }
-        public double TotalItemCalories => Food.Calories * Quantity;
-    }
-
-    public class FoodItemDisplay
-    {
+        public int MealLogItemId { get; set; } // ID fundamental para deletar
+        public int FoodId { get; set; }
         public string Name { get; set; }
-        public double Calories { get; set; }
-        public double Protein { get; set; }
-        public double Carbs { get; set; }
-        public double Fat { get; set; }
         public bool IsCustom { get; set; }
+        public decimal Quantity { get; set; }
+
+        // Valores unitários (do FoodItem)
+        public decimal CaloriesPerUnit { get; set; }
+        public decimal ProteinPerUnit { get; set; }
+        public decimal CarbsPerUnit { get; set; }
+        public decimal FatPerUnit { get; set; }
+
+        // Valores totais calculados (Visualização)
+        public decimal TotalCalories => CaloriesPerUnit * Quantity;
+        public decimal TotalProtein => ProteinPerUnit * Quantity;
+        public decimal TotalCarbs => CarbsPerUnit * Quantity;
+        public decimal TotalFat => FatPerUnit * Quantity;
     }
 }
