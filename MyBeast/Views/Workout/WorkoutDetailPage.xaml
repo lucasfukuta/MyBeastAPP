@@ -1,12 +1,44 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MyBeast.ViewModels.Workout"
+             xmlns:model="clr-namespace:MyBeast.Domain.Entities;assembly=MyBeast.Domain"
              x:Class="MyBeast.Views.Workout.WorkoutDetailPage"
-             Title="WorkoutDetailPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Detalhes do Treino"
+             x:DataType="vm:WorkoutDetailViewModel">
+
+    <Grid RowDefinitions="Auto, *" Padding="15" RowSpacing="15">
+
+        <Frame Grid.Row="0" BackgroundColor="{AppThemeBinding Light=White, Dark=Gray}" CornerRadius="10">
+            <VerticalStackLayout Spacing="5">
+                <Label Text="{Binding Session.Date, StringFormat='{0:D}'}" 
+                       FontAttributes="Bold" FontSize="18"/>
+                <Grid ColumnDefinitions="*, *">
+                    <Label Grid.Column="0" Text="{Binding Session.DurationMinutes, StringFormat='Tempo: {0} min'}"/>
+                    <Label Grid.Column="1" Text="{Binding Session.TotalVolume, StringFormat='Volume: {0} kg'}"/>
+                </Grid>
+            </VerticalStackLayout>
+        </Frame>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Session.SetLogs}">
+            <CollectionView.Header>
+                <Label Text="Exercícios Realizados" FontAttributes="Bold" Margin="0,0,0,10"/>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:SetLog">
+                    <Border Stroke="LightGray" StrokeThickness="1" Padding="10" Margin="0,5" StrokeShape="RoundRectangle 5">
+                        <Grid ColumnDefinitions="*, Auto, Auto" ColumnSpacing="15">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="{Binding Exercise.Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding SetNumber, StringFormat='Série {0}'}" FontSize="10" TextColor="Gray"/>
+                            </VerticalStackLayout>
+
+                            <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0} kg'}" VerticalOptions="Center"/>
+                            <Label Grid.Column="2" Text="{Binding Reps, StringFormat='{0} reps'}" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>

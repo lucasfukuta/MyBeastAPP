@@ -10,6 +10,8 @@ using MyBeast.Views; // Importar suas Views
 using MyBeast.Services.Mocks;
 using MyBeast.ViewModels.Diet;
 using MyBeast.Views.Diet;
+using MyBeast.ViewModels.Workout;
+using MyBeast.Views.Workout;
 
 namespace MyBeast
 {
@@ -48,6 +50,10 @@ namespace MyBeast
             if (useMocks)
             {
                 builder.Services.AddSingleton<IDietService,MockDietService>();
+
+                builder.Services.AddSingleton<IWorkoutSessionService, MockWorkoutSessionService>();
+                builder.Services.AddSingleton<IExerciseService, MockExerciseService>();
+                builder.Services.AddSingleton<IWorkoutTemplateService, MockWorkoutTemplateService>();
                 //outros mock que for adicionar
             }
             else
@@ -68,12 +74,20 @@ namespace MyBeast
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<DietViewModel>();
+            builder.Services.AddTransient<WorkoutListViewModel>();
+            builder.Services.AddTransient<ActiveWorkoutViewModel>();
+            builder.Services.AddTransient<WorkoutDetailViewModel>();
+            builder.Services.AddTransient<WorkoutSummaryViewModel>();
 
             // Views
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<RegisterPage>();
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<DietPage>();
+            builder.Services.AddTransient<WorkoutListPage>();
+            builder.Services.AddTransient<ActiveWorkoutPage>();
+            builder.Services.AddTransient<WorkoutDetailPage>();
+            builder.Services.AddTransient<WorkoutSummaryPage>();
 
             // --- 3. CONSTRUIR O APP ---
             var app = builder.Build();
