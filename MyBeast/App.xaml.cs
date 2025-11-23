@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MyBeast.Views.Diet; // 1. Adicione este using se não tiver
+using MyBeast.Views.Diet;
+using MyBeast.Views.Workout; 
 
 namespace MyBeast
 {
@@ -9,7 +10,7 @@ namespace MyBeast
         public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
-            MainPage = serviceProvider.GetRequiredService<MyBeast.Views.Diet.DietPage>(); ;
+            MainPage = serviceProvider.GetRequiredService<WorkoutSummaryPage>();
         }
     }
 }
