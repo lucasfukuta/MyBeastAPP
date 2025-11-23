@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast\\MyBeast.csproj": {}
+    "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast\\MyBeast.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+    "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj",
+        "projectUniqueName": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj",
         "projectName": "MyBeast.Domain",
-        "projectPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj",
-        "packagesPath": "C:\\Users\\Miguel.costallat\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\obj\\",
+        "projectPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj",
+        "packagesPath": "C:\\Users\\julio\\.nuget\\packages\\",
+        "outputPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Miguel.costallat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\julio\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -66,25 +66,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast\\MyBeast.csproj": {
+    "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast\\MyBeast.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast\\MyBeast.csproj",
+        "projectUniqueName": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast\\MyBeast.csproj",
         "projectName": "MyBeast",
-        "projectPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast\\MyBeast.csproj",
-        "packagesPath": "C:\\Users\\Miguel.costallat\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast\\obj\\",
+        "projectPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast\\MyBeast.csproj",
+        "packagesPath": "C:\\Users\\julio\\.nuget\\packages\\",
+        "outputPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast\\obj\\",
         "projectStyle": "PackageReference",
         "crossTargeting": true,
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Miguel.costallat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\julio\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -103,32 +103,32 @@
           "net8.0-android34.0": {
             "targetAlias": "net8.0-android",
             "projectReferences": {
-              "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
-                "projectPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
+              "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+                "projectPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
               }
             }
           },
-          "net8.0-ios18.0": {
+          "net8.0-ios1.0": {
             "targetAlias": "net8.0-ios",
             "projectReferences": {
-              "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
-                "projectPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
+              "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+                "projectPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
               }
             }
           },
-          "net8.0-maccatalyst18.0": {
+          "net8.0-maccatalyst1.0": {
             "targetAlias": "net8.0-maccatalyst",
             "projectReferences": {
-              "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
-                "projectPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
+              "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+                "projectPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
               }
             }
           },
           "net8.0-windows10.0.19041": {
             "targetAlias": "net8.0-windows10.0.19041.0",
             "projectReferences": {
-              "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
-                "projectPath": "C:\\Users\\Miguel.costallat\\Downloads\\projeto\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
+              "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj": {
+                "projectPath": "E:\\Dev\\Ceub\\MyBeastAPP\\MyBeast.Domain\\MyBeast.Domain.csproj"
               }
             }
           }
@@ -143,7 +143,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0-android34.0": {
@@ -160,6 +160,10 @@
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[6.1.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.10, )"
             },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
@@ -186,7 +190,7 @@
             "Microsoft.NET.ILLink.Tasks": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.12, )",
+              "version": "[8.0.21, )",
               "autoReferenced": true
             },
             "Newtonsoft.Json": {
@@ -212,23 +216,23 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.Android.Ref.34",
-              "version": "[34.0.145, 34.0.145]"
+              "version": "[34.0.154, 34.0.154]"
             },
             {
               "name": "Microsoft.Android.Runtime.34.android-arm",
-              "version": "[34.0.145, 34.0.145]"
+              "version": "[34.0.154, 34.0.154]"
             },
             {
               "name": "Microsoft.Android.Runtime.34.android-arm64",
-              "version": "[34.0.145, 34.0.145]"
+              "version": "[34.0.154, 34.0.154]"
             },
             {
               "name": "Microsoft.Android.Runtime.34.android-x64",
-              "version": "[34.0.145, 34.0.145]"
+              "version": "[34.0.154, 34.0.154]"
             },
             {
               "name": "Microsoft.Android.Runtime.34.android-x86",
-              "version": "[34.0.145, 34.0.145]"
+              "version": "[34.0.154, 34.0.154]"
             }
           ],
           "frameworkReferences": {
@@ -239,9 +243,9 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         },
-        "net8.0-ios18.0": {
+        "net8.0-ios1.0": {
           "targetAlias": "net8.0-ios",
           "dependencies": {
             "CommunityToolkit.Maui": {
@@ -256,6 +260,10 @@
               "target": "Package",
               "version": "[6.1.2, )"
             },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.10, )"
+            },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[9.0.10, )"
@@ -278,12 +286,6 @@
               "target": "Package",
               "version": "[8.0.100, )"
             },
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.12, )",
-              "autoReferenced": true
-            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.4, )"
@@ -304,27 +306,14 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.iOS.Ref.net8.0_18.0",
-              "version": "[18.0.8316, 18.0.8316]"
-            },
-            {
-              "name": "Microsoft.iOS.Runtime.iossimulator-x64.net8.0_18.0",
-              "version": "[18.0.8316, 18.0.8316]"
-            }
-          ],
           "frameworkReferences": {
-            "Microsoft.iOS": {
-              "privateAssets": "all"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         },
-        "net8.0-maccatalyst18.0": {
+        "net8.0-maccatalyst1.0": {
           "targetAlias": "net8.0-maccatalyst",
           "dependencies": {
             "CommunityToolkit.Maui": {
@@ -339,6 +328,10 @@
               "target": "Package",
               "version": "[6.1.2, )"
             },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.10, )"
+            },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[9.0.10, )"
@@ -361,12 +354,6 @@
               "target": "Package",
               "version": "[8.0.100, )"
             },
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.12, )",
-              "autoReferenced": true
-            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.4, )"
@@ -377,7 +364,6 @@
             }
           },
           "imports": [
-            "xamarinios10",
             "net461",
             "net462",
             "net47",
@@ -388,25 +374,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.MacCatalyst.Ref.net8.0_18.0",
-              "version": "[18.0.8316, 18.0.8316]"
-            },
-            {
-              "name": "Microsoft.MacCatalyst.Runtime.maccatalyst-x64.net8.0_18.0",
-              "version": "[18.0.8316, 18.0.8316]"
-            }
-          ],
           "frameworkReferences": {
-            "Microsoft.MacCatalyst": {
-              "privateAssets": "all"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         },
         "net8.0-windows10.0.19041": {
           "targetAlias": "net8.0-windows10.0.19041.0",
@@ -422,6 +395,10 @@
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[6.1.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.10, )"
             },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
@@ -479,7 +456,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306\\RuntimeIdentifierGraph.json"
         }
       },
       "runtimes": {
@@ -493,12 +470,6 @@
           "#import": []
         },
         "android-x86": {
-          "#import": []
-        },
-        "iossimulator-x64": {
-          "#import": []
-        },
-        "maccatalyst-x64": {
           "#import": []
         },
         "win10-x64": {

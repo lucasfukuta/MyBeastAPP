@@ -21,5 +21,6 @@ namespace MyBeast.Domain.Entities
 
         // --- Propriedades de Navegação ---
         public virtual ICollection<TemplateExercise> TemplateExercises { get; set; } = new List<TemplateExercise>();
+        public int WorkoutTemplateId { get; set; }
     }
 }

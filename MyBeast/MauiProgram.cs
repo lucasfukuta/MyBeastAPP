@@ -7,6 +7,11 @@ using MyBeast.ViewModels.Auth;
 using MyBeast.ViewModels;
 using MyBeast.Views.Auth;
 using MyBeast.Views; // Importar suas Views
+using MyBeast.Services.Mocks;
+using MyBeast.ViewModels.Diet;
+using MyBeast.Views.Diet;
+using MyBeast.ViewModels.Workout;
+using MyBeast.Views.Workout;
 
 namespace MyBeast
 {
@@ -27,12 +32,36 @@ namespace MyBeast
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            builder.Services.AddHttpClient("MyBeastApi", client =>
+            {
+                // Usa HTTP (http://) para evitar problemas de certificado SSL
+                // Esta URL vem do seu arquivo 'launchSettings.json' da API
+                client.BaseAddress = new Uri("http://10.0.2.2:5145");
+            });
 
             // --- 1. REGISTRAR O BANCO DE DADOS ---
             builder.Services.AddDbContext<LocalDbContext>();
 
             // --- 2. REGISTRAR SERVIÇOS, VIEWMODELS E VIEWS ---
             // Serviços
+
+            bool useMocks = true;
+
+            if (useMocks)
+            {
+                builder.Services.AddSingleton<IDietService,MockDietService>();
+
+                builder.Services.AddSingleton<IWorkoutSessionService, MockWorkoutSessionService>();
+                builder.Services.AddSingleton<IExerciseService, MockExerciseService>();
+                builder.Services.AddSingleton<IWorkoutTemplateService, MockWorkoutTemplateService>();
+                //outros mock que for adicionar
+            }
+            else
+            {
+                // builder.Services.AddSingleton<IDietService, DietService>(); // Futuro serviço real
+            }
+
+
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<ILocalDbService, LocalDbService>();
             builder.Services.AddSingleton<IPetService, PetService>();
@@ -44,11 +73,21 @@ namespace MyBeast
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<DietViewModel>();
+            builder.Services.AddTransient<WorkoutListViewModel>();
+            builder.Services.AddTransient<ActiveWorkoutViewModel>();
+            builder.Services.AddTransient<WorkoutDetailViewModel>();
+            builder.Services.AddTransient<WorkoutSummaryViewModel>();
 
             // Views
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<RegisterPage>();
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<DietPage>();
+            builder.Services.AddTransient<WorkoutListPage>();
+            builder.Services.AddTransient<ActiveWorkoutPage>();
+            builder.Services.AddTransient<WorkoutDetailPage>();
+            builder.Services.AddTransient<WorkoutSummaryPage>();
 
             // --- 3. CONSTRUIR O APP ---
             var app = builder.Build();

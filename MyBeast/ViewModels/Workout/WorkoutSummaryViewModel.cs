@@ -1,22 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MyBeast.Domain.Entities;
+using MyBeast.Views.Workout; // Para referenciar rotas se necessário
 
 namespace MyBeast.ViewModels.Workout
 {
-    internal class WorkoutSummaryViewModel
+    public partial class WorkoutSummaryViewModel : ObservableObject, IQueryAttributable
     {
-        public string WorkoutName { get; set; }
-        public DateTime Date { get; set; }
-        public TimeSpan Duration { get; set; }
-        public int CaloriesBurned { get; set; }
-        public List<string> Exercises { get; set; }
+        [ObservableProperty]
+        private WorkoutSession session;
 
-        public WorkoutSummaryViewModel()
+        [ObservableProperty]
+        private string motivationalMessage;
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            Exercises = new List<string>();
+            if (query.ContainsKey("Session"))
+            {
+                Session = query["Session"] as WorkoutSession;
+                GenerateMessage();
+            }
+        }
+
+        private void GenerateMessage()
+        {
+            if (Session.TotalVolume > 5000)
+                MotivationalMessage = "Você é uma besta enjaulada! Treino insano!";
+            else if (Session.TotalVolume > 2000)
+                MotivationalMessage = "Ótimo trabalho! Continue focado.";
+            else
+                MotivationalMessage = "Treino concluído! O importante é a constância.";
+        }
+
+        [RelayCommand]
+        public async Task GoHomeAsync()
+        {
+            // Volta para a raiz da navegação (provavelmente a lista ou a Home)
+            await Shell.Current.GoToAsync("///MainPage");
+            // Nota: Se sua lista de treinos for uma aba, ajuste a rota conforme seu AppShell
         }
     }
 }

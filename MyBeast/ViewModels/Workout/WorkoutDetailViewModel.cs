@@ -1,41 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MyBeast.Domain.Entities;
 
 namespace MyBeast.ViewModels.Workout
 {
-    internal class WorkoutDetailViewModel
+    public partial class WorkoutDetailViewModel : ObservableObject, IQueryAttributable
     {
-        // Properties
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public TimeSpan Duration { get; set; }
-        public List<string> Exercises { get; set; }
+        [ObservableProperty]
+        private WorkoutSession session;
 
-        // Constructor
-        public WorkoutDetailViewModel()
+        // Este método é chamado automaticamente pelo Shell quando passamos parâmetros
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            Exercises = new List<string>();
-        }
-
-        // Methods
-        public void AddExercise(string exercise)
-        {
-            if (!string.IsNullOrWhiteSpace(exercise))
+            if (query.ContainsKey("Session"))
             {
-                Exercises.Add(exercise);
+                Session = query["Session"] as WorkoutSession;
             }
         }
 
-        public void RemoveExercise(string exercise)
+        [RelayCommand]
+        public async Task GoBackAsync()
         {
-            if (Exercises.Contains(exercise))
-            {
-                Exercises.Remove(exercise);
-            }
+            await Shell.Current.GoToAsync("..");
         }
     }
 }

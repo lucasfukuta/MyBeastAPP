@@ -1,26 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MyBeast.Domain.Entities;
+using MyBeast.Services;
+using MyBeast.Views.Workout;
+using System.Collections.ObjectModel;
 
 namespace MyBeast.ViewModels.Workout
 {
-    internal class WorkoutListViewModel
+    public partial class WorkoutListViewModel : ObservableObject
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<WorkoutItemViewModel> Workouts { get; set; }
+        private readonly IWorkoutSessionService _workoutService;
 
-        public WorkoutListViewModel()
+        // Coleção que a View vai observar para montar a lista
+        public ObservableCollection<WorkoutSession> History { get; } = new();
+
+        [ObservableProperty]
+        private bool isBusy;
+
+        public WorkoutListViewModel(IWorkoutSessionService workoutService)
         {
-            Workouts = new List<WorkoutItemViewModel>();
+            _workoutService = workoutService;
         }
-    }
 
-    internal class WorkoutItemViewModel
-    {
-        public int Id { get; set; }
-        public string ExerciseName { get; set; }
-        public int Repetitions { get; set; }
-        public int Sets { get; set; }
+        [RelayCommand]
+        public async Task LoadHistoryAsync()
+        {
+            if (IsBusy) return;
+
+            try
+            {
+                IsBusy = true;
+                var sessions = await _workoutService.GetSessionHistoryAsync();
+
+                History.Clear();
+                foreach (var session in sessions)
+                {
+                    History.Add(session);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Erro", $"Falha ao carregar histórico: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        public async Task StartNewWorkoutAsync()
+        {
+            // Navega para a tela de treino ativo
+            await Shell.Current.GoToAsync(nameof(ActiveWorkoutPage));
+        }
+
+        [RelayCommand]
+        public async Task GoToDetailsAsync(WorkoutSession session)
+        {
+            if (session == null) return;
+
+            // Navega para a tela de detalhes passando o objeto da sessão
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { "Session", session }
+            };
+            await Shell.Current.GoToAsync(nameof(WorkoutDetailPage), navigationParameter);
+        }
     }
 }
