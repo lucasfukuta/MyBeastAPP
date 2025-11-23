@@ -9,7 +9,6 @@ namespace MyBeast
         public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
-
             MainPage = serviceProvider.GetRequiredService<MyBeast.Views.Diet.DietPage>(); ;
         }
     }
