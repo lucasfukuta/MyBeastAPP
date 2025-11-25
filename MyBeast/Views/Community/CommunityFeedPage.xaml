@@ -2,11 +2,122 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyBeast.Views.Community.CommunityFeedPage"
-             Title="CommunityFeedPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Social"
+             BackgroundColor="#1C1C1E"
+             xmlns:converters="clr-namespace:MyBeast.Converters"
+             xmlns:viewmodels="clr-namespace:MyBeast.ViewModels.Community">
+
+    <ContentPage.Resources>
+        <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+        <converters:BoolToHeartIconConverter x:Key="BoolToHeartIconConverter" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="0,0,0,20">
+
+            <!-- Seção do Cabeçalho -->
+            <Grid Padding="20,20,20,0" ColumnDefinitions="*, Auto">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Comunidade" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                    <Label Text="Inspire-se com outros atletas" TextColor="LightGray" FontSize="16" Margin="0,5,0,0" />
+                </VerticalStackLayout>
+                <Image Grid.Column="1" Source="profile_placeholder.png" HeightRequest="50" WidthRequest="50" Aspect="AspectFill" VerticalOptions="Center" />
+            </Grid>
+
+            <!-- Área de Criação de Postagem -->
+            <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Margin="20,0" Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Editor Placeholder="O que você está pensando, atleta?" 
+                            Text="{Binding NewPostText}"
+                            PlaceholderColor="LightGray"
+                            TextColor="White"
+                            BackgroundColor="Transparent"
+                            AutoSize="TextChanges"
+                            HeightRequest="80" />
+                    <Button Text="Publicar" 
+                            Command="{Binding PostMessageCommand}"
+                            BackgroundColor="#5A2E8B"
+                            TextColor="White"
+                            CornerRadius="20"
+                            HorizontalOptions="End" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Seção de Posts da Comunidade -->
+            <Label Text="Posts da Comunidade" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,10,20,0" />
+
+            <CollectionView ItemsSource="{Binding Posts}" Margin="0,0,0,0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Margin="20,10,20,0" Padding="15">
+                            <VerticalStackLayout Spacing="10">
+                                <Grid ColumnDefinitions="Auto, *">
+                                    <Frame Grid.Column="0" BackgroundColor="#5A2E8B" CornerRadius="20" HeightRequest="40" WidthRequest="40" Padding="0" HorizontalOptions="Start" VerticalOptions="Start">
+                                        <Label Text="{Binding AuthorInitials}" TextColor="White" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Frame>
+                                    <VerticalStackLayout Grid.Column="1" Margin="10,0,0,0">
+                                        <Label Text="{Binding AuthorName}" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                                        <Label Text="{Binding TimeAgo}" TextColor="LightGray" FontSize="12" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                                <Frame BackgroundColor="{Binding TagBackgroundColor}" CornerRadius="5" Padding="10,5" HorizontalOptions="Start" VerticalOptions="Center" IsVisible="{Binding Tag, Converter={StaticResource StringToBoolConverter}}">
+                                    <Label Text="{Binding Tag}" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                </Frame>
+                                <Label Text="{Binding Content}" TextColor="White" FontSize="14" LineBreakMode="WordWrap" />
+                                <Grid ColumnDefinitions="Auto, Auto, *, Auto" Margin="0,10,0,0">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                                        <HorizontalStackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityFeedViewModel}}, Path=LikePostCommand}" CommandParameter="{Binding .}" />
+                                        </HorizontalStackLayout.GestureRecognizers>
+                                        <Image Source="{Binding IsLiked, Converter={StaticResource BoolToHeartIconConverter}}" HeightRequest="20" WidthRequest="20" />
+                                        <Label Text="{Binding Likes}" TextColor="LightGray" FontSize="14" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center" Margin="15,0,0,0">
+                                        <HorizontalStackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityFeedViewModel}}, Path=CommentPostCommand}" CommandParameter="{Binding .}" />
+                                        </HorizontalStackLayout.GestureRecognizers>
+                                        <Image Source="comment_icon.png" HeightRequest="20" WidthRequest="20" />
+                                        <Label Text="{Binding Comments}" TextColor="LightGray" FontSize="14" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                    <Image Grid.Column="3" Source="share_icon.png" HeightRequest="20" WidthRequest="20" HorizontalOptions="End" VerticalOptions="Center" />
+                                </Grid>
+
+                                <!-- Seção de Comentários -->
+                                <VerticalStackLayout IsVisible="{Binding IsCommentSectionVisible}" Spacing="10" Margin="0,10,0,0">
+                                    <Label Text="Comentários:" TextColor="White" FontSize="14" FontAttributes="Bold" />
+                                    <CollectionView ItemsSource="{Binding PostComments}">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Frame BackgroundColor="#1C1C1E" CornerRadius="5" Padding="10">
+                                                    <Label Text="{Binding .}" TextColor="LightGray" FontSize="12" LineBreakMode="WordWrap" />
+                                                </Frame>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                    <Grid ColumnDefinitions="*, Auto" Margin="0,10,0,0">
+                                        <Frame Grid.Column="0" CornerRadius="20" Padding="0" BackgroundColor="#1C1C1E">
+                                            <Entry Placeholder="Escreva um comentário..." 
+                                                   Text="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityFeedViewModel}}, Path=NewCommentText}" 
+                                                   TextColor="White" 
+                                                   PlaceholderColor="DarkGray" 
+                                                   BackgroundColor="Transparent" 
+                                                   Margin="10,0"/>
+                                        </Frame>
+                                        <Button Grid.Column="1" Text="Enviar" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityFeedViewModel}}, Path=SubmitCommentCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#5A2E8B" 
+                                                TextColor="White" 
+                                                CornerRadius="20" 
+                                                Margin="10,0,0,0" />
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>

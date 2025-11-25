@@ -14,17 +14,13 @@ namespace MyBeast.Domain.Entities
         [MaxLength(100)]
         public string Name { get; set; } = null!; // Corrigido
 
-        [Column(TypeName = "decimal(10, 2)")]
-        public decimal Calories { get; set; }
+        public int Calories { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
-        public decimal Protein { get; set; }
+        public int Protein { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
-        public decimal Carbs { get; set; }
+        public int Carbs { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
-        public decimal Fat { get; set; }
+        public int Fat { get; set; }
 
         public bool IsCustom { get; set; }
 

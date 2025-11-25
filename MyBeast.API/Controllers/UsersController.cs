@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Entities;
-using MyBeast.API.DTOs.User.Input;     // DTOs de Entrada
-using MyBeast.API.DTOs.User.Output;    // DTOs de Saída
+using MyBeast.Domain.DTOs.User.Input;     // DTOs de Entrada
+using MyBeast.Domain.DTOs.User.Output;    // DTOs de Saída
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -91,7 +91,7 @@
           "net8.0-android",
           "net8.0-ios",
           "net8.0-maccatalyst",
-          "net8.0-windows10.0.19041.0"
+          "net8.0-windows10.0.22621.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
@@ -123,8 +123,8 @@
               }
             }
           },
-          "net8.0-windows10.0.19041": {
-            "targetAlias": "net8.0-windows10.0.19041.0",
+          "net8.0-windows10.0.22621": {
+            "targetAlias": "net8.0-windows10.0.22621.0",
             "projectReferences": {
               "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj": {
                 "projectPath": "C:\\Users\\Admin\\source\\repos\\MyBeast\\MyBeast.Domain\\MyBeast.Domain.csproj"
@@ -154,6 +154,14 @@
             "CommunityToolkit.Mvvm": {
               "target": "Package",
               "version": "[8.4.0, )"
+            },
+            "LiveChartsCore.SkiaSharpView.Maui": {
+              "target": "Package",
+              "version": "[2.0.0-rc6.1, )"
+            },
+            "Microcharts.Maui": {
+              "target": "Package",
+              "version": "[1.0.1, )"
             },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
@@ -228,6 +236,14 @@
               "target": "Package",
               "version": "[8.4.0, )"
             },
+            "LiveChartsCore.SkiaSharpView.Maui": {
+              "target": "Package",
+              "version": "[2.0.0-rc6.1, )"
+            },
+            "Microcharts.Maui": {
+              "target": "Package",
+              "version": "[1.0.1, )"
+            },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[6.1.2, )"
@@ -301,6 +317,14 @@
               "target": "Package",
               "version": "[8.4.0, )"
             },
+            "LiveChartsCore.SkiaSharpView.Maui": {
+              "target": "Package",
+              "version": "[2.0.0-rc6.1, )"
+            },
+            "Microcharts.Maui": {
+              "target": "Package",
+              "version": "[1.0.1, )"
+            },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[6.1.2, )"
@@ -364,8 +388,8 @@
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
         },
-        "net8.0-windows10.0.19041": {
-          "targetAlias": "net8.0-windows10.0.19041.0",
+        "net8.0-windows10.0.22621": {
+          "targetAlias": "net8.0-windows10.0.22621.0",
           "dependencies": {
             "CommunityToolkit.Maui": {
               "target": "Package",
@@ -374,6 +398,14 @@
             "CommunityToolkit.Mvvm": {
               "target": "Package",
               "version": "[8.4.0, )"
+            },
+            "LiveChartsCore.SkiaSharpView.Maui": {
+              "target": "Package",
+              "version": "[2.0.0-rc6.1, )"
+            },
+            "Microcharts.Maui": {
+              "target": "Package",
+              "version": "[1.0.1, )"
             },
             "Microsoft.Data.SqlClient": {
               "target": "Package",
@@ -401,6 +433,18 @@
               "target": "Package",
               "version": "[8.0.100, )"
             },
+            "Microsoft.Windows.CsWinRT": {
+              "target": "Package",
+              "version": "[2.1.1, )"
+            },
+            "Microsoft.Windows.SDK.BuildTools": {
+              "target": "Package",
+              "version": "[10.0.22621.756, )"
+            },
+            "Microsoft.WindowsAppSDK": {
+              "target": "Package",
+              "version": "[1.5.240802000, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.4, )"
@@ -424,7 +468,7 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.Windows.SDK.NET.Ref",
-              "version": "[10.0.19041.44, 10.0.19041.44]"
+              "version": "[10.0.22621.44, 10.0.22621.44]"
             }
           ],
           "frameworkReferences": {

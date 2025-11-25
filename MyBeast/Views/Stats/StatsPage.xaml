@@ -1,12 +1,119 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MyBeast.ViewModels.Stats"
+             
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             
              x:Class="MyBeast.Views.Stats.StatsPage"
-             Title="StatsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Stats"
+             BackgroundColor="#1C1C1E">
+
+    <ContentPage.BindingContext>
+        <local:StatsPageViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="0,0,0,20">
+
+            <Grid Padding="20,20,20,0" ColumnDefinitions="*, Auto">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Estatísticas" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                    <Label Text="Seu progresso semanal" TextColor="LightGray" FontSize="16" Margin="0,5,0,0" />
+                </VerticalStackLayout>
+                <Image Grid.Column="1" Source="profile_placeholder.png" HeightRequest="50" WidthRequest="50" Aspect="AspectFit" VerticalOptions="Center" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10" Margin="20,10">
+
+                <Frame Grid.Column="0" Grid.Row="0" BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <HorizontalStackLayout HorizontalOptions="End">
+                            <Image Source="fire_icon.png" HeightRequest="20" WidthRequest="20" />
+                        </HorizontalStackLayout>
+                        <Label Text="Total Calorias" TextColor="LightGray" FontSize="12" />
+                        <Label Text="{Binding TotalCalories, StringFormat='{0:N0}'}" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                        <Label Text="acumulado" TextColor="Green" FontSize="10" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="1" Grid.Row="0" BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <HorizontalStackLayout HorizontalOptions="End">
+                            <Image Source="clock_icon.png" HeightRequest="20" WidthRequest="20" />
+                        </HorizontalStackLayout>
+                        <Label Text="Tempo Ativo" TextColor="LightGray" FontSize="12" />
+                        <Label Text="{Binding ActiveTime, StringFormat='{0:F1}h'}" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                        <Label Text="de treino real" TextColor="Green" FontSize="10" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="0" Grid.Row="1" BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <HorizontalStackLayout HorizontalOptions="End">
+                            <Image Source="dumbbell_icon.png" HeightRequest="20" WidthRequest="20" />
+                        </HorizontalStackLayout>
+                        <Label Text="Treinos" TextColor="LightGray" FontSize="12" />
+                        <Label Text="{Binding TotalWorkouts}" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                        <Label Text="finalizados" TextColor="LightGray" FontSize="10" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="1" Grid.Row="1" BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <HorizontalStackLayout HorizontalOptions="End">
+                            <Image Source="chart_column_solid.png" HeightRequest="20" WidthRequest="20" />
+                        </HorizontalStackLayout>
+                        <Label Text="Sequência" TextColor="LightGray" FontSize="12" />
+                        <Label Text="{Binding CurrentStreak}" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                        <Label Text="dias seguidos" TextColor="LightGray" FontSize="10" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <Label Text="Balanço: Consumo vs Queima" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,10,20,0" />
+
+            <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Margin="20,0" Padding="10">
+
+                <lvc:CartesianChart 
+                    Series="{Binding Series}"
+                    XAxes="{Binding XAxes}"
+                    YAxes="{Binding YAxes}"
+                    HeightRequest="250"
+                    LegendPosition="Top">
+
+                    <lvc:CartesianChart.LegendTextPaint>
+                        <lvc:SolidColorPaint Color="White"/>
+                    </lvc:CartesianChart.LegendTextPaint>
+
+                </lvc:CartesianChart>
+
+            </Frame>
+
+            <Label Text="Conquistas Recentes" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,10,20,0" />
+
+            <CollectionView ItemsSource="{Binding RecentAchievements}" Margin="20,0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" Margin="0,0,0,10">
+                            <Grid ColumnDefinitions="Auto, *, Auto">
+                                <Image Grid.Column="0" Source="{Binding Icon}" HeightRequest="30" WidthRequest="30" VerticalOptions="Center" Margin="0,0,10,0" />
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Title}" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                                    <Label Text="{Binding Date}" TextColor="LightGray" FontSize="12" />
+                                </VerticalStackLayout>
+
+                                <Image Grid.Column="2" Source="{Binding BadgeIcon}" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="Continue treinando para desbloquear conquistas!" TextColor="Gray" HorizontalOptions="Center" Margin="20"/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

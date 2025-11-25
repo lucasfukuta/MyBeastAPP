@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MyBeast.Views.HelpSupport.HelpSupportPage"
+             Title="Ajuda e Suporte"
+             BackgroundColor="#1C1C1E">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Voltar" Clicked="OnBackButtonClicked" />
+    </ContentPage.ToolbarItems>
+    <ScrollView>
+        <VerticalStackLayout>
+            <Label 
+                Text="Página de Ajuda e Suporte"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"
+                TextColor="White"
+                FontSize="24" />
+
+            <!-- Seção de Perguntas Frequentes (FAQ) -->
+            <Label Text="Perguntas Frequentes (FAQ)" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,20,20,10" />
+
+            <VerticalStackLayout Spacing="10" Margin="20,0">
+                <!-- Pergunta 1 -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Como faço para registrar um novo treino?" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                        <Label Text="Para registrar um novo treino, vá para a seção 'Treinos' e clique no botão 'Iniciar Treino'. Você poderá selecionar os exercícios e registrar suas séries e repetições." TextColor="LightGray" FontSize="14" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Pergunta 2 -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Posso personalizar meu plano de dieta?" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                        <Label Text="Sim, na seção 'Dieta', você pode adicionar suas refeições, definir metas calóricas e acompanhar seu progresso. Oferecemos sugestões, mas a personalização é chave." TextColor="LightGray" FontSize="14" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Pergunta 3 -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Como entro em contato com o suporte?" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                        <Label Text="Você pode entrar em contato com o suporte enviando um e-mail para suporte@mybeast.com ou usando o formulário de contato em nosso site." TextColor="LightGray" FontSize="14" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

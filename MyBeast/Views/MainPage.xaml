@@ -1,36 +1,148 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MyBeast.MainPage">
+             xmlns:vm="clr-namespace:MyBeast.ViewModels"
+             x:Class="MyBeast.MainPage"
+             BackgroundColor="#1C1C1E">
+
+    <ContentPage.BindingContext>
+        <vm:MainViewModel />
+    </ContentPage.BindingContext>
 
     <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Image
-                Source="dotnet_bot.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a race car number eight" />
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, *" RowSpacing="0">
 
-            <Label
-                Text="Hello, World!"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+            <Grid Grid.Row="0" Padding="20,20,20,0" ColumnDefinitions="*, Auto">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Olá, Atleta! 👋" FontSize="24" TextColor="White" FontAttributes="Bold" />
+                    <Label Text="Pronto para treinar hoje?" FontSize="16" TextColor="LightGray" Margin="0,5,0,0" />
+                </VerticalStackLayout>
+                <Frame Grid.Column="1" CornerRadius="25" HeightRequest="50" WidthRequest="50" Padding="0" IsClippedToBounds="True" HorizontalOptions="End" VerticalOptions="Center">
+                    <Image Source="avatar_bear.png" Aspect="AspectFill" />
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ProfileTappedCommand}" />
+                    </Frame.GestureRecognizers>
+                </Frame>
+            </Grid>
 
-            <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
+            <Frame Grid.Row="1" Margin="20,10" CornerRadius="15" Padding="0" HasShadow="False" BackgroundColor="#5A2E8B">
+                <VerticalStackLayout Padding="15">
 
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Fill" />
-        </VerticalStackLayout>
+                    <Image Source="pet_wait.gif" 
+                           IsAnimationPlaying="True" 
+                           HeightRequest="200" 
+                           Aspect="AspectFit" 
+                           Margin="0,0,0,10">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EatCommand}" NumberOfTapsRequired="2"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Label Grid.Column="0" Text="❤️ Health" TextColor="White" VerticalOptions="Center" WidthRequest="80"/>
+                        <ProgressBar Grid.Column="1" Progress="{Binding Health}" ProgressColor="DeepPink" HeightRequest="10" VerticalOptions="Center" Margin="10,0" />
+                        <Label Grid.Column="1" Text="{Binding HealthText}" HorizontalOptions="End" TextColor="White" VerticalOptions="Center" Margin="0,0,5,0" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="Auto, *" Margin="0,5,0,0">
+                        <Label Grid.Column="0" Text="⚡ Energy" TextColor="White" VerticalOptions="Center" WidthRequest="80"/>
+                        <ProgressBar Grid.Column="1" Progress="{Binding Energy}" ProgressColor="Yellow" HeightRequest="10" VerticalOptions="Center" Margin="10,0" />
+                        <Label Grid.Column="1" Text="{Binding EnergyText}" HorizontalOptions="End" TextColor="White" VerticalOptions="Center" Margin="0,0,5,0" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="Auto, *" Margin="0,5,0,0">
+                        <Label Grid.Column="0" Text="🍔 Hunger" TextColor="White" VerticalOptions="Center" WidthRequest="80"/>
+                        <ProgressBar Grid.Column="1" Progress="{Binding Hunger}" ProgressColor="LimeGreen" HeightRequest="10" VerticalOptions="Center" Margin="10,0" />
+                        <Label Grid.Column="1" Text="{Binding HungerText}" HorizontalOptions="End" TextColor="White" VerticalOptions="Center" Margin="0,0,5,0" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="Auto, Auto" ColumnSpacing="10" RowSpacing="10" Margin="20,10">
+                <Frame Grid.Column="0" Grid.Row="0" BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout>
+                        <Label Text="Calorias" TextColor="LightGray" FontSize="14" />
+                        <Label Text="1,245" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Column="1" Grid.Row="0" BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout>
+                        <Label Text="Sequência" TextColor="LightGray" FontSize="14" />
+                        <Label Text="7 dias" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <Button Grid.Row="3" 
+                    Text="▶ Iniciar Treino Selecionado" 
+                    Command="{Binding StartWorkoutCommand}"
+                    BackgroundColor="#FF4500" 
+                    TextColor="White" 
+                    FontSize="18" 
+                    CornerRadius="25" 
+                    HeightRequest="50" 
+                    Margin="20,10" />
+
+            <VerticalStackLayout Grid.Row="4" Margin="20,10,20,0">
+                <Label Text="Treinos Recomendados" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10" />
+                <Label Text="(Toque em um treino para selecionar)" TextColor="Gray" FontSize="12" />
+            </VerticalStackLayout>
+
+            <CollectionView Grid.Row="5" 
+                            ItemsSource="{Binding RecommendedWorkouts}" 
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedWorkout}"
+                            HeightRequest="300"
+                            Margin="20,0,20,20">
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#2C2C2E" 
+                                StrokeShape="RoundRectangle 10" 
+                                StrokeThickness="2"
+                                Padding="15">
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="Transparent" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="#FF4500" />
+                                            <Setter Property="BackgroundColor" Value="#3A3A3C" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Grid ColumnDefinitions="*, Auto">
+                                <VerticalStackLayout Grid.Column="0">
+                                    <Label Text="{Binding Name}" TextColor="White" FontSize="18" FontAttributes="Bold" />
+                                    <HorizontalStackLayout Spacing="10" Margin="0,5,0,0">
+                                        <Image Source="clock_icon.png" HeightRequest="15" WidthRequest="15" />
+                                        <Label Text="{Binding Duration, StringFormat='{0} min'}" TextColor="LightGray" FontSize="14" />
+                                        <Image Source="fire_icon.png" HeightRequest="15" WidthRequest="15" Margin="10,0,0,0" />
+                                        <Label Text="{Binding Calories, StringFormat='{0} kcal'}" TextColor="LightGray" FontSize="14" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+
+                                <Frame Grid.Column="1" BackgroundColor="{Binding LevelColor}" CornerRadius="5" Padding="5,2" HorizontalOptions="End" VerticalOptions="Start">
+                                    <Label Text="{Binding Level}" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                </Frame>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </Grid>
     </ScrollView>
-
 </ContentPage>

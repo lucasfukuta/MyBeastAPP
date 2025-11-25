@@ -9,6 +9,6 @@ namespace MyBeast.Domain.Interfaces
         Task<Pet?> GetByIdAsync(int petId);
         Task<Pet> AddAsync(Pet pet);
         Task<Pet> UpdateAsync(Pet pet);
-        Task DeleteAsync(int petId); // Novo
+        Task DeleteAsync(int petId); 
     }
 }

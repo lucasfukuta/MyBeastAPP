@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
-using MyBeast.API.DTOs.Auth.Input;     // DTO de Entrada
-using MyBeast.API.DTOs.Auth.Output;    // DTO de Saída
-using MyBeast.API.DTOs.User.Output;
+using MyBeast.Domain.DTOs.Auth.Input;     // DTO de Entrada
+using MyBeast.Domain.DTOs.Auth.Output;    // DTO de Saída
+using MyBeast.Domain.DTOs.User.Output;
 
 namespace MyBeast.API.Controllers
 {

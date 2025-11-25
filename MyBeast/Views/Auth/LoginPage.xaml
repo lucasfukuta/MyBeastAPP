@@ -1,26 +1,60 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MyBeast.Views.LoginPage"
-             Title="Login">
-    <ContentPage.Content>
-        <StackLayout Padding="20" VerticalOptions="Center">
-            <Label Text="Bem-vindo ao MyBeast!" 
-                   FontSize="24" 
-                   HorizontalOptions="Center" />
-            <Entry x:Name="UsernameEntry" 
-                   Placeholder="Usuário" 
-                   Keyboard="Text" />
-            <Entry x:Name="PasswordEntry" 
-                   Placeholder="Senha" 
-                   IsPassword="True" />
-            <Button Text="Entrar" 
-                    Command="{Binding LoginCommand}" 
-                    Margin="0,20,0,0" />
-            <Label Text="{Binding ErrorMessage}" 
-                   TextColor="Red" 
-                   HorizontalOptions="Center" 
-                   IsVisible="{Binding HasError}" />
-        </StackLayout>
-    </ContentPage.Content>
+             xmlns:vm="clr-namespace:MyBeast.ViewModels.Auth"
+             x:Class="MyBeast.Views.Auth.LoginPage"
+             BackgroundColor="#150016">
+
+    <VerticalStackLayout Spacing="20" VerticalOptions="Center" Padding="30">
+
+        <Label Text="MyBeast Fitness" FontSize="32" TextColor="#FF4081" HorizontalOptions="Center" FontAttributes="Bold"/>
+        <Label Text="Bem-vindo de volta!" FontSize="16" TextColor="White" HorizontalOptions="Center" Margin="0,0,0,30"/>
+
+        <Border Stroke="White" 
+                StrokeThickness="1" 
+                BackgroundColor="Transparent" 
+                StrokeShape="RoundRectangle 10" 
+                Padding="10,0">
+            <Entry Placeholder="Email ou Usuário" 
+                   PlaceholderColor="LightGray"
+                   TextColor="White"
+                   Text="{Binding Username}" />
+        </Border>
+
+        <Border Stroke="White" 
+                StrokeThickness="1" 
+                BackgroundColor="Transparent" 
+                StrokeShape="RoundRectangle 10" 
+                Padding="10,0">
+            <Entry Placeholder="Senha" 
+                   PlaceholderColor="LightGray"
+                   TextColor="White"
+                   IsPassword="True"
+                   Text="{Binding Password}" />
+        </Border>
+
+        <Label Text="Esqueceu a senha?" TextColor="#FF4081" HorizontalOptions="End" FontSize="12"/>
+
+        <Button Text="Entrar" 
+                Command="{Binding LoginCommand}" 
+                BackgroundColor="#FF4081" 
+                TextColor="White" 
+                CornerRadius="25" 
+                HeightRequest="50" 
+                FontAttributes="Bold"/>
+
+        <Label Text="OU" TextColor="White" HorizontalOptions="Center"/>
+
+        <Button Text="Criar nova conta" 
+                Command="{Binding GoToRegisterCommand}" 
+                BackgroundColor="#333" 
+                TextColor="White" 
+                CornerRadius="25" 
+                HeightRequest="50"/>
+
+        <Label Text="{Binding ErrorMessage}" 
+               TextColor="Red" 
+               HorizontalOptions="Center" 
+               IsVisible="{Binding HasError}"/>
+
+    </VerticalStackLayout>
 </ContentPage>

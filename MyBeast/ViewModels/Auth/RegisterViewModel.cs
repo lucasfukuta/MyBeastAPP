@@ -1,28 +1,105 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MyBeast.Services;
+using System.Diagnostics;
 
 namespace MyBeast.ViewModels.Auth
 {
-    internal class RegisterViewModel
+    // 'partial' é obrigatório para o Toolkit gerar o código
+    public partial class RegisterViewModel : ObservableObject
     {
-        [Required(ErrorMessage = "O nome de usuário é obrigatório.")]
-        [StringLength(50, ErrorMessage = "O nome de usuário deve ter no máximo 50 caracteres.")]
-        public string Username { get; set; }
+        private readonly IAuthService _authService;
 
-        [Required(ErrorMessage = "O e-mail é obrigatório.")]
-        [EmailAddress(ErrorMessage = "O e-mail informado não é válido.")]
-        public string Email { get; set; }
+        [ObservableProperty] // Gera a propriedade pública Username com notificação
+        private string username;
 
-        [Required(ErrorMessage = "A senha é obrigatória.")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "A senha deve ter entre 6 e 100 caracteres.")]
-        public string Password { get; set; }
+        [ObservableProperty]
+        private string email;
 
-        [Required(ErrorMessage = "A confirmação de senha é obrigatória.")]
-        [Compare("Password", ErrorMessage = "A senha e a confirmação de senha não coincidem.")]
-        public string ConfirmPassword { get; set; }
+        [ObservableProperty]
+        private string password;
+
+        [ObservableProperty]
+        private string confirmPassword;
+
+        [ObservableProperty]
+        private string errorMessage;
+
+        [ObservableProperty]
+        private bool hasError;
+
+        [ObservableProperty]
+        private string successMessage;
+
+        [ObservableProperty]
+        private bool hasSuccess;
+
+        public RegisterViewModel(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
+        // Gera o comando 'BackCommand' automaticamente
+        [RelayCommand]
+        private async Task Back()
+        {
+            await Shell.Current.GoToAsync("//LoginPage");
+        }
+
+        // Gera o comando 'RegisterUserCommand' automaticamente
+        [RelayCommand]
+        private async Task RegisterUser()
+        {
+            try
+            {
+                HasError = false;
+                HasSuccess = false; // Reseta sucesso também
+                ErrorMessage = string.Empty;
+
+                // Validação Básica
+                if (string.IsNullOrWhiteSpace(Username) ||
+                    string.IsNullOrWhiteSpace(Email) ||
+                    string.IsNullOrWhiteSpace(Password) ||
+                    string.IsNullOrWhiteSpace(ConfirmPassword))
+                {
+                    ErrorMessage = "Todos os campos são obrigatórios.";
+                    HasError = true;
+                    return;
+                }
+
+                if (Password != ConfirmPassword)
+                {
+                    ErrorMessage = "As senhas não coincidem.";
+                    HasError = true;
+                    return;
+                }
+
+                // CHAMADA AO SERVIÇO (CORRIGIDA A ORDEM DOS PARÂMETROS)
+                // Verifica a assinatura do seu IAuthService. Se for (user, pass, email):
+                var result = await _authService.RegisterAsync(Username, Password, Email);
+
+                if (result)
+                {
+                    SuccessMessage = "Conta criada! Redirecionando...";
+                    HasSuccess = true;
+
+                    // Pequeno delay para o usuário ler a mensagem
+                    await Task.Delay(1500);
+                    await Shell.Current.GoToAsync("//LoginPage");
+                }
+                else
+                {
+                    ErrorMessage = "Falha ao registrar. O email ou usuário já existe?";
+                    HasError = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erro: {ex.Message}");
+                ErrorMessage = "Erro de conexão com o servidor.";
+                HasError = true;
+            }
+        }
+
     }
 }

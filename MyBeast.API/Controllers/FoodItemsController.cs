@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Entities;
-using MyBeast.API.DTOs.FoodItem.Input;   // DTOs de Entrada
-using MyBeast.API.DTOs.FoodItem.Output;  // DTOs de Saída
+using MyBeast.Domain.DTOs.FoodItem.Input;   // DTOs de Entrada
+using MyBeast.Domain.DTOs.FoodItem.Output;  // DTOs de Saída
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -91,10 +91,10 @@ namespace MyBeast.API.Controllers
             var foodItemToCreate = new FoodItem
             {
                 Name = createDto.Name,
-                Calories = createDto.Calories,
-                Protein = createDto.Protein,
-                Carbs = createDto.Carbs,
-                Fat = createDto.Fat
+                Calories = (int)createDto.Calories,
+                Protein = (int)createDto.Protein,
+                Carbs = (int)createDto.Carbs,
+                Fat = (int)createDto.Fat
             };
 
             var newFoodItem = await _foodItemService.CreateCustomFoodItemAsync(foodItemToCreate, requestingUserId);
@@ -119,10 +119,10 @@ namespace MyBeast.API.Controllers
             var foodItemUpdateData = new FoodItem
             {
                 Name = updateDto.Name ?? "",
-                Calories = updateDto.Calories ?? -1,
-                Protein = updateDto.Protein ?? -1,
-                Carbs = updateDto.Carbs ?? -1,
-                Fat = updateDto.Fat ?? -1
+                Calories = (int)(updateDto.Calories ?? -1),
+                Protein = (int)(updateDto.Protein ?? -1),
+                Carbs = (int)(updateDto.Carbs ?? -1),
+                Fat = (int)(updateDto.Fat ?? -1)
             };
 
             var updatedFoodItem = await _foodItemService.UpdateCustomFoodItemAsync(id, foodItemUpdateData, requestingUserId);

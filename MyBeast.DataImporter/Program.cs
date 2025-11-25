@@ -219,10 +219,10 @@ try
                     Name = name,
                     IsCustom = false,
                     // --- CHAMADAS CORRIGIDAS ---
-                    Calories = GetNutrientValue(item, "208"), // "Energy" (KCAL)
-                    Protein = GetNutrientValue(item, "203"), // "Protein"
-                    Fat = GetNutrientValue(item, "204"), // "Total lipid (fat)"
-                    Carbs = GetNutrientValue(item, "205")  // "Carbohydrate, by difference"
+                    Calories = (int)GetNutrientValue(item, "208"), // "Energy" (KCAL)
+                    Protein = (int)GetNutrientValue(item, "203"), // "Protein"
+                    Fat = (int)GetNutrientValue(item, "204"), // "Total lipid (fat)"
+                    Carbs = (int)GetNutrientValue(item, "205")  // "Carbohydrate, by difference"
                 };
 
                 foodsToImport.Add(foodItem);

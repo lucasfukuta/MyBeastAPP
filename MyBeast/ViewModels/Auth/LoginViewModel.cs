@@ -1,91 +1,70 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MyBeast.Services;
 
-namespace MyBeast.ViewModels
+namespace MyBeast.ViewModels.Auth
 {
-    public class LoginViewModel : INotifyPropertyChanged
+    public partial class LoginViewModel : ObservableObject
     {
-        private string _username;
-        private string _password;
-        private string _errorMessage;
-        private bool _hasError;
+        private readonly IAuthService _authService;
 
-        public string Username
+        [ObservableProperty]
+        private string username;
+
+        [ObservableProperty]
+        private string password;
+
+        [ObservableProperty]
+        private string errorMessage;
+
+        [ObservableProperty]
+        private bool hasError;
+
+        public LoginViewModel(IAuthService authService)
         {
-            get => _username;
-            set
-            {
-                _username = value;
-                OnPropertyChanged();
-            }
+            _authService = authService;
         }
 
-        public string Password
+        [RelayCommand]
+        private async Task Login()
         {
-            get => _password;
-            set
+            try
             {
-                _password = value;
-                OnPropertyChanged();
+                // 1. Validação
+                if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+                {
+                    ErrorMessage = "Usuário e senha são obrigatórios.";
+                    HasError = true;
+                    return;
+                }
+
+                // 2. Chama a API
+                bool isAuthenticated = await _authService.LoginAsync(Username, Password);
+
+                if (isAuthenticated)
+                {
+                    HasError = false;
+                    // 3. Navega para a Home (Rota absoluta para limpar o histórico)
+                    await Shell.Current.GoToAsync("//HomePage");
+                }
+                else
+                {
+                    ErrorMessage = "Usuário ou senha inválidos.";
+                    HasError = true;
+                }
             }
-        }
-
-        public string ErrorMessage
-        {
-            get => _errorMessage;
-            set
+            catch (Exception ex)
             {
-                _errorMessage = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool HasError
-        {
-            get => _hasError;
-            set
-            {
-                _hasError = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ICommand LoginCommand { get; }
-
-        public LoginViewModel()
-        {
-            LoginCommand = new Command(OnLogin);
-        }
-
-        private async void OnLogin()
-        {
-            // Simulação de autenticação
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
-            {
-                ErrorMessage = "Usuário e senha são obrigatórios.";
-                HasError = true;
-                return;
-            }
-
-            if (Username == "admin" && Password == "1234")
-            {
-                HasError = false;
-                // Navegar para a próxima página
-                await Shell.Current.GoToAsync("//HomePage");
-            }
-            else
-            {
-                ErrorMessage = "Usuário ou senha inválidos.";
+                ErrorMessage = $"Erro de conexão: {ex.Message}";
                 HasError = true;
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        [RelayCommand]
+        private async Task GoToRegister()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            // Navega para a tela de registro
+            await Shell.Current.GoToAsync("//RegisterPage");
         }
     }
 }

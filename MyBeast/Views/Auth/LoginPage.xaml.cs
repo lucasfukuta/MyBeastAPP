@@ -1,14 +1,13 @@
-using MyBeast.ViewModels;
 using MyBeast.ViewModels.Auth;
 
-namespace MyBeast.Views
+namespace MyBeast.Views.Auth
 {
     public partial class LoginPage : ContentPage
     {
-        public LoginPage()
+        public LoginPage(LoginViewModel viewModel)
         {
             InitializeComponent();
-            BindingContext = new LoginViewModel();
+            BindingContext = viewModel;
         }
     }
 }

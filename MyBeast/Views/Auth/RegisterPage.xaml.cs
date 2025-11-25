@@ -1,9 +1,14 @@
-namespace MyBeast.Views.Auth;
+using MyBeast.ViewModels.Auth;
 
-public partial class RegisterPage : ContentPage
+namespace MyBeast.Views.Auth
 {
-    public RegisterPage()
+    public partial class RegisterPage : ContentPage
     {
-        InitializeComponent();
+        // O MAUI injeta o ViewModel aqui automaticamente
+        public RegisterPage(RegisterViewModel viewModel)
+        {
+            InitializeComponent();
+            BindingContext = viewModel; // Conecta o XAML ao C#
+        }
     }
 }

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MyBeast.Domain.Entities;
-
-namespace MyBeast.Services
+﻿namespace MyBeast.Services
 {
-    internal interface INavigationService
+    public interface INavigationService
     {
+        // Navega para uma rota (ex: "WorkoutDetailPage")
         Task NavigateToAsync(string route);
+
+        // Navega passando parâmetros (ex: passar o treino clicado)
+        Task NavigateToAsync(string route, IDictionary<string, object> parameters);
+
+        // Volta para a tela anterior
         Task GoBackAsync();
-        Task NavigateToRootAsync();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
-using MyBeast.API.DTOs.Achievement.Output; // Importa o DTO de Saída
+using MyBeast.Domain.DTOs.Achievement.Output; // Importa o DTO de Saída
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,76 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using Microsoft.Data.SqlClient; // Substituindo System.Data.SqlClient por Microsoft.Data.SqlClient
-using System.Threading.Tasks;
-using MyBeast.Services;
-using MyBeast.Domain.Entities;
+﻿using System.Text.Json;
 
 namespace MyBeast.Services
 {
-    public class LocalDbService: ILocalDbService
+    public class LocalDbService : ILocalDbService
     {
-        private readonly string _connectionString;
-
-        public LocalDbService(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-
-        public async Task<IEnumerable<T>> QueryAsync<T>(string query, Func<IDataReader, T> map)
-        {
-            var results = new List<T>();
-
-            await using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(query, connection);
-            await using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
-            {
-                results.Add(map(reader));
-            }
-
-            return results;
-        }
-
-        public async Task<int> ExecuteAsync(string query, Dictionary<string, object>? parameters = null)
-        {
-            await using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(query, connection);
-
-            if (parameters != null)
-            {
-                foreach (var param in parameters)
-                {
-                    command.Parameters.AddWithValue(param.Key, param.Value);
-                }
-            }
-
-            return await command.ExecuteNonQueryAsync();
-        }
-
+        // Salva qualquer tipo de objeto (T) transformando em texto (JSON)
         public Task<bool> SaveDataAsync<T>(string key, T data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (data == null) return Task.FromResult(false);
+
+                string jsonString = JsonSerializer.Serialize(data);
+
+                // Preferences é nativo do MAUI. Salva dados leves no celular.
+                Preferences.Default.Set(key, jsonString);
+
+                return Task.FromResult(true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao salvar localmente: {ex.Message}");
+                return Task.FromResult(false);
+            }
         }
 
+        // Recupera o dado e transforma de volta em objeto
         public Task<T?> GetDataAsync<T>(string key)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (!Preferences.Default.ContainsKey(key))
+                    return Task.FromResult<T?>(default);
+
+                string jsonString = Preferences.Default.Get(key, string.Empty);
+
+                if (string.IsNullOrEmpty(jsonString))
+                    return Task.FromResult<T?>(default);
+
+                var data = JsonSerializer.Deserialize<T>(jsonString);
+                return Task.FromResult(data);
+            }
+            catch
+            {
+                return Task.FromResult<T?>(default);
+            }
         }
 
         public Task<bool> DeleteDataAsync(string key)
         {
-            throw new NotImplementedException();
+            Preferences.Default.Remove(key);
+            return Task.FromResult(true);
         }
 
         public Task<IEnumerable<string>> GetAllKeysAsync()
         {
-            throw new NotImplementedException();
+            // Preferences não tem um método nativo fácil para listar todas as chaves
+            // de forma genérica, então retornamos vazio ou implementamos lógica customizada.
+            // Para este uso básico, podemos deixar vazio ou lançar exceção.
+            return Task.FromResult(Enumerable.Empty<string>());
         }
     }
 }

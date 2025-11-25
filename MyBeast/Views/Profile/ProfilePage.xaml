@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MyBeast.Views.Profile.ProfilePage"
+             Title="Perfil"
+             BackgroundColor="#1C1C1E">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Voltar" Clicked="OnBackButtonClicked" />
+    </ContentPage.ToolbarItems>
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="0,0,0,20">
+
+            <!-- Seção do Cabeçalho do Perfil -->
+            <Frame BackgroundColor="#5A2E8B" CornerRadius="0" HasShadow="False" Padding="20,30,20,20">
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                    <Image Source="profile_placeholder.png" HeightRequest="100" WidthRequest="100" Aspect="AspectFill" />
+                    <Label Text="Profile" TextColor="White" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                    <Label Text="Profile@gmail.com" TextColor="LightGray" FontSize="16" HorizontalTextAlignment="Center" />
+                    <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+                        <Image Source="crown_icon.png" HeightRequest="18" WidthRequest="18" VerticalOptions="Center" />
+                        <Label Text="Premium Member" TextColor="Gold" FontSize="14" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Opções de Menu -->
+            <VerticalStackLayout Spacing="1" Margin="20,0">
+                <!-- Notificações -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="60">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnNotificationsTapped" NumberOfTapsRequired="1" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="notification_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Notificações" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
+                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
+                    </Grid>
+                </Frame>
+                <!-- Configurações -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="60" Margin="0,5,0,0">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnSettingsTapped" NumberOfTapsRequired="1" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="settings_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Settings" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
+                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
+                    </Grid>
+                </Frame>
+                <!-- Ajuda e Suporte -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="60" Margin="0,5,0,0">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnHelpSupportTapped" NumberOfTapsRequired="1" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="help_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Help &amp; Support" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
+                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
+                    </Grid>
+                </Frame>
+                <!-- Sair -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="60" Margin="0,5,0,0">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnLogOutTapped" NumberOfTapsRequired="1" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="logout_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="Log Out" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
+                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
+                    </Grid>
+                </Frame>
+            </VerticalStackLayout>
+
+            <!-- Rodapé -->
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="5" Margin="0,30,0,0">
+                <Label Text="MyBeast Fitness v1.0.0" TextColor="LightGray" FontSize="14" HorizontalTextAlignment="Center" />
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                    <Label Text="Made with" TextColor="LightGray" FontSize="14" />
+                    <Image Source="heart_icon_filled.png" HeightRequest="15" WidthRequest="15" VerticalOptions="Center" />
+                    <Label Text="for your health" TextColor="LightGray" FontSize="14" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

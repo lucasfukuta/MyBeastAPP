@@ -4,12 +4,108 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MyBeast"
+    xmlns:authViews="clr-namespace:MyBeast.Views.Auth"
+    xmlns:workoutViews="clr-namespace:MyBeast.Views.Workout"
+    xmlns:dietViews="clr-namespace:MyBeast.Views.Diet"
+    xmlns:communityViews="clr-namespace:MyBeast.Views.Community"
+    xmlns:statsViews="clr-namespace:MyBeast.Views.Stats"
+    xmlns:profileViews="clr-namespace:MyBeast.Views.Profile"
+    xmlns:settingsViews="clr-namespace:MyBeast.Views"
+    xmlns:notificationsViews="clr-namespace:MyBeast.Views.Notifications"
+    xmlns:helpViews="clr-namespace:MyBeast.Views.HelpSupport"
     Shell.FlyoutBehavior="Disabled"
-    Title="MyBeast">
+    Title="MyBeast"
+    Shell.TabBarBackgroundColor="#1C1C1E"
+    Shell.TabBarForegroundColor="#8A2BE2"
+    Shell.TabBarUnselectedColor="#AAAAAA">
+
+    <!-- 
+        1. TELA DE LOGIN (PRIMEIRO ITEM = TELA INICIAL) 
+        Envolvemos em um ShellItem para separar logicamente do TabBar.
+        Route="Login" permite navegação absoluta.
+        NavBar e TabBar ocultas para tela cheia.
+    -->
+    <ShellItem Route="Login">
+        <ShellContent ContentTemplate="{DataTemplate authViews:LoginPage}"
+                      Shell.NavBarIsVisible="False"
+                      Shell.TabBarIsVisible="False"
+                      Route="LoginPage" />
+    </ShellItem>
+
+    <!-- 
+        2. APLICAÇÃO PRINCIPAL (ABAS)
+        Route="Main" permite navegar para cá usando "//Main"
+    -->
+    <TabBar Route="Main">
+        <Tab Title="Home" Icon="home_icon.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="HomePage" />
+        </Tab>
+
+        <Tab Title="Treinos" Icon="workout_icon.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate workoutViews:WorkoutListPage}"
+                Route="WorkoutListPage" />
+        </Tab>
+
+        <Tab Title="Dieta" Icon="diet_icon.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate dietViews:DietPage}"
+                Route="DietPage" />
+        </Tab>
+
+        <Tab Title="Social" Icon="social_icon.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate communityViews:CommunityFeedPage}"
+                Route="CommunityPage" />
+        </Tab>
+
+        <Tab Title="Stats" Icon="stats_icon.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate statsViews:StatsPage}"
+                Route="StatsPage" />
+        </Tab>
+    </TabBar>
+
+    <!-- 
+        3. OUTRAS PÁGINAS (REGISTRO GLOBAL)
+        Elas ficam aqui embaixo para serem registradas no sistema de rotas,
+        mas não aparecem no menu nem iniciam o app.
+    -->
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="Register"
+        ContentTemplate="{DataTemplate authViews:RegisterPage}"
+        Route="RegisterPage"
+        Shell.NavBarIsVisible="False" 
+        Shell.TabBarIsVisible="False" />
+
+    <ShellContent
+        Title="Forgot Password"
+        ContentTemplate="{DataTemplate authViews:ForgotPasswordPage}"
+        Route="ForgotPasswordPage" 
+        Shell.NavBarIsVisible="False"
+        Shell.TabBarIsVisible="False" />
+
+    <ShellContent
+        Title="Profile"
+        ContentTemplate="{DataTemplate profileViews:ProfilePage}"
+        Route="ProfilePage" />
+
+    <ShellContent
+        Title="Settings"
+        ContentTemplate="{DataTemplate settingsViews:SettingsPage}"
+        Route="SettingsPage" />
+
+    <ShellContent
+        Title="Notifications"
+        ContentTemplate="{DataTemplate notificationsViews:NotificationsPage}"
+        Route="NotificationsPage" />
+
+    <ShellContent
+        Title="Help e Support"
+        ContentTemplate="{DataTemplate helpViews:HelpSupportPage}"
+        Route="HelpSupportPage" />
 
 </Shell>

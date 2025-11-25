@@ -1,12 +1,110 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MyBeast.ViewModels.Workout"
+             xmlns:models="clr-namespace:MyBeast.Models"
              x:Class="MyBeast.Views.Workout.WorkoutDetailPage"
-             Title="WorkoutDetailPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="{Binding TitlePage}"
+             BackgroundColor="#1C1C1E">
+
+    <ContentPage.BindingContext>
+        <vm:WorkoutDetailViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Nome do Treino" TextColor="Gray" FontSize="12"/>
+            <Entry Text="{Binding Name}" 
+                   Placeholder="Ex: Peito e Tríceps" 
+                   PlaceholderColor="Gray"
+                   TextColor="White" 
+                   FontSize="20" 
+                   FontAttributes="Bold"
+                   BackgroundColor="Transparent" />
+
+            <Label Text="Tempo Estimado (min)" TextColor="Gray" FontSize="12"/>
+            <Entry Text="{Binding DurationMinutes}" 
+                   Keyboard="Numeric" 
+                   Placeholder="Ex: 60" 
+                   PlaceholderColor="Gray"
+                   TextColor="White" 
+                   BackgroundColor="#2C2C2E" />
+
+            <Label Text="Descrição" TextColor="Gray" FontSize="12" Margin="0,10,0,0"/>
+            <Editor Text="{Binding Description}" 
+                    Placeholder="Instruções do treino..." 
+                    PlaceholderColor="Gray"
+                    TextColor="White" 
+                    HeightRequest="80"
+                    BackgroundColor="#2C2C2E"/>
+
+            <Label Text="Exercícios" TextColor="White" FontSize="18" FontAttributes="Bold" Margin="0,15,0,5"/>
+
+            <CollectionView ItemsSource="{Binding Exercises}" HeightRequest="400">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:WorkoutExercise">
+                        <Border BackgroundColor="#2C2C2E" StrokeShape="RoundRectangle 10" Padding="10" Margin="0,0,0,10">
+                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
+
+                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" TextColor="White" FontAttributes="Bold" FontSize="16"/>
+                                <Button Grid.Row="0" Grid.Column="1" Text="✕" TextColor="Red" BackgroundColor="Transparent"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WorkoutDetailViewModel}}, Path=RemoveExerciseCommand}"
+                                        CommandParameter="{Binding .}" HeightRequest="30" WidthRequest="40"/>
+
+                                <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*" ColumnSpacing="5" Margin="0,10,0,0">
+                                    <VerticalStackLayout Grid.Column="0">
+                                        <Label Text="Séries" TextColor="Gray" FontSize="10" HorizontalOptions="Center"/>
+                                        <Entry Text="{Binding Sets}" Keyboard="Numeric" TextColor="#9747FF" HorizontalTextAlignment="Center" BackgroundColor="#1C1C1E"/>
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1">
+                                        <Label Text="Reps" TextColor="Gray" FontSize="10" HorizontalOptions="Center"/>
+                                        <Entry Text="{Binding Reps}" Keyboard="Numeric" TextColor="#9747FF" HorizontalTextAlignment="Center" BackgroundColor="#1C1C1E"/>
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2">
+                                        <Label Text="Peso (kg)" TextColor="Gray" FontSize="10" HorizontalOptions="Center"/>
+                                        <Entry Text="{Binding Weight}" Keyboard="Numeric" TextColor="#FF4081" HorizontalTextAlignment="Center" BackgroundColor="#1C1C1E"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="Nenhum exercício adicionado." TextColor="Gray" HorizontalOptions="Center" Margin="20"/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+            <Label Text="Adicionar Exercício Rápido" TextColor="Gray" FontSize="12"/>
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                <Entry x:Name="ExerciseEntry" Grid.Column="0" Placeholder="Nome do exercício" TextColor="White" BackgroundColor="#2C2C2E"/>
+                <Button Grid.Column="1" Text="+" BackgroundColor="#9747FF" TextColor="White" WidthRequest="50"
+                        Command="{Binding AddExerciseCommand}"
+                        CommandParameter="{Binding Source={x:Reference ExerciseEntry}, Path=Text}"/>
+            </Grid>
+
+            <Button Text="SALVAR TREINO" 
+                    Command="{Binding SaveCommand}"
+                    BackgroundColor="#FF4081" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    CornerRadius="25" 
+                    HeightRequest="50" 
+                    Margin="0,20,0,0"/>
+
+            <Button Text="COMEÇAR AGORA" 
+                    Command="{Binding StartWorkoutCommand}"
+                    BackgroundColor="#4CAF50" 
+                    TextColor="White" 
+                    FontAttributes="Bold" 
+                    CornerRadius="25" 
+                    HeightRequest="50" 
+                    IsVisible="{Binding IsExistingWorkout}"
+                    Margin="0,10,0,20"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

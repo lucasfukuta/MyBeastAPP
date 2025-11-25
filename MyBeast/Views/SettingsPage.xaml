@@ -2,11 +2,116 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyBeast.Views.SettingsPage"
-             Title="SettingsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Settings"
+             BackgroundColor="#1C1C1E">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Voltar" Clicked="OnBackButtonClicked" />
+    </ContentPage.ToolbarItems>
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="0,0,0,20">
+
+            <!-- Seção do Cabeçalho das Configurações -->
+            <Frame BackgroundColor="#5A2E8B" CornerRadius="0" HasShadow="False" Padding="20,30,20,20">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Image Grid.Column="0" Source="monster_avatar.png" HeightRequest="80" WidthRequest="80" Aspect="AspectFill" VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
+                        <Label Text="Settings" TextColor="White" FontSize="24" FontAttributes="Bold" />
+                        <HorizontalStackLayout Spacing="5">
+                            <Label Text="Seja um membro" TextColor="LightGray" FontSize="14" VerticalOptions="Center" />
+                            <Image Source="crown_icon.png" HeightRequest="18" WidthRequest="18" VerticalOptions="Center" />
+                            <Label Text="Premium Member" TextColor="Gold" FontSize="14" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- Seção App Preferences -->
+            <Label Text="App Preferences" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,0" />
+            <VerticalStackLayout Spacing="10" Margin="20,0">
+                <!-- Dark Mode -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="moon_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
+                            <Label Text="Dark Mode" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="Switch between light and dark theme" TextColor="LightGray" FontSize="12" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="2" IsToggled="True" OnColor="#8A2BE2" HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                </Frame>
+                <!-- Language -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="globe_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
+                            <Label Text="Language" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="Português (Brasil)" TextColor="LightGray" FontSize="12" />
+                        </VerticalStackLayout>
+                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
+                    </Grid>
+                </Frame>
+                <!-- Privacy & Security -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="lock_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
+                            <Label Text="Privacy &amp; Security" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="Manage your privacy settings" TextColor="LightGray" FontSize="12" />
+                        </VerticalStackLayout>
+                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
+                    </Grid>
+                </Frame>
+                <!-- App Version -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Image Grid.Column="0" Source="info_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
+                            <Label Text="App Version" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="v1.0.0" TextColor="LightGray" FontSize="12" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+            </VerticalStackLayout>
+
+            <!-- Seção Edit Profile -->
+            <Label Text="Edit Profile" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,0" />
+            <VerticalStackLayout Spacing="10" Margin="20,0">
+                <!-- Name -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Image Grid.Column="0" Source="person_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0">
+                            <Label Text="Name" TextColor="LightGray" FontSize="12" />
+                            <Entry Text="Beast Fitness" TextColor="White" FontSize="16" PlaceholderColor="DarkGray" BackgroundColor="Transparent" Keyboard="Text" Margin="0,-5,0,0" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+                <!-- Email -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Image Grid.Column="0" Source="mail_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0">
+                            <Label Text="Email" TextColor="LightGray" FontSize="12" />
+                            <Entry Text="Profile@gmail.com" TextColor="White" FontSize="16" PlaceholderColor="DarkGray" BackgroundColor="Transparent" Keyboard="Email" Margin="0,-5,0,0" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+                <!-- Password -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <Grid ColumnDefinitions="Auto, *">
+                        <Image Grid.Column="0" Source="key_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0">
+                            <Label Text="Password" TextColor="LightGray" FontSize="12" />
+                            <Entry Text="" Placeholder="Leave blank to keep current password" IsPassword="True" TextColor="White" FontSize="16" PlaceholderColor="DarkGray" BackgroundColor="Transparent" Keyboard="Text" Margin="0,-5,0,0" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Frame>
+            </VerticalStackLayout>
+
+            <!-- Botão Save Changes -->
+            <Button Text="Save Changes" BackgroundColor="#FF4500" TextColor="White" FontSize="18" CornerRadius="25" HeightRequest="50" Margin="20,20,20,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>

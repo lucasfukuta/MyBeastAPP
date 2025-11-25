@@ -4,8 +4,8 @@ using MyBeast.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MyBeast.API.DTOs.WorkoutSessions.Input;  // DTOs de Entrada
-using MyBeast.API.DTOs.WorkoutSessions.Output; // DTOs de Saída
+using MyBeast.Domain.DTOs.WorkoutSessions.Input;  // DTOs de Entrada
+using MyBeast.Domain.DTOs.WorkoutSessions.Output; // DTOs de Saída
 using System.Linq; // Para Select
 using Microsoft.AspNetCore.Authorization; // Para [Authorize]
 using System.Security.Claims; // Para Claims

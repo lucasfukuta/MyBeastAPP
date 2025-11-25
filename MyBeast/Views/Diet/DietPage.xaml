@@ -2,11 +2,167 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyBeast.Views.Diet.DietPage"
-             Title="DietPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Dieta"
+             BackgroundColor="#1C1C1E"
+             xmlns:viewmodels="clr-namespace:MyBeast.ViewModels.Diet"
+             xmlns:converters="clr-namespace:MyBeast.Converters">
+
+    <ContentPage.Resources>
+        <converters:MultiplierConverter x:Key="MultiplierConverter" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="0,0,0,20">
+
+            <!-- Seção do Cabeçalho -->
+            <Grid Padding="20,20,20,0" ColumnDefinitions="*, Auto">
+                <Label Grid.Column="0" Text="Nutrição" TextColor="White" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+                <Image Grid.Column="1" Source="profile_placeholder.png" HeightRequest="50" WidthRequest="50" Aspect="AspectFill" VerticalOptions="Center" />
+            </Grid>
+
+            <!-- Cartão de Calorias Hoje / Meta -->
+            <Frame Margin="20,10" CornerRadius="15" Padding="0" BackgroundColor="#5A2E8B" HasShadow="True">
+                <Grid RowDefinitions="*, Auto">
+
+                    <Grid Grid.Row="0" ColumnDefinitions="*, 1, *" Padding="20">
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                            <Label Text="🍎 Ingeridas" TextColor="#E0E0E0" FontSize="12" HorizontalOptions="Center"/>
+                            <Label Text="{Binding CurrentCalories}" TextColor="White" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="{Binding TargetCalories, StringFormat='Meta: {0}'}" TextColor="#D8BFD8" FontSize="10" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <BoxView Grid.Column="1" WidthRequest="1" Color="#FFFFFF" Opacity="0.2" VerticalOptions="FillAndExpand" Margin="0,5"/>
+
+                        <VerticalStackLayout Grid.Column="2" Spacing="5" VerticalOptions="Center">
+                            <Label Text="🔥 Queimadas" TextColor="#E0E0E0" FontSize="12" HorizontalOptions="Center"/>
+                            <Label Text="{Binding CaloriesBurned}" TextColor="#FFD700" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+                            <Label Text="Treinos Hoje" TextColor="#D8BFD8" FontSize="10" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView Grid.Row="1" HeightRequest="6" Color="#3A1F5C" HorizontalOptions="Fill"/>
+                    <ProgressBar Grid.Row="1" 
+                     Progress="{Binding CurrentCalories, Converter={StaticResource MultiplierConverter}, ConverterParameter={Binding TargetCalories}}" 
+                     ProgressColor="#FFA500" 
+                     HeightRequest="6" 
+                     VerticalOptions="End"/>
+                </Grid>
+            </Frame>
+
+            <!-- Seção Macronutrientes -->
+            <Label Text="Macronutrientes" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,10,20,0" />
+            <VerticalStackLayout Spacing="10" Margin="20,0">
+                <!-- Proteínas -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0" Text="Proteínas" TextColor="White" FontSize="16" />
+                            <Label Grid.Column="1" Text="{Binding FormattedProteinConsumed}" TextColor="LightGray" FontSize="14" />
+                        </Grid>
+                        <ProgressBar Progress="{Binding ProteinConsumed, Converter={StaticResource MultiplierConverter}, ConverterParameter={Binding ProteinTarget}}" ProgressColor="#8A2BE2" HeightRequest="5" Margin="0,5,0,0" /> <!-- 120/150 = 0.8 -->
+                    </VerticalStackLayout>
+                </Frame>
+                <!-- Carboidratos -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0" Text="Carboidratos" TextColor="White" FontSize="16" />
+                            <Label Grid.Column="1" Text="{Binding FormattedCarbsConsumed}" TextColor="LightGray" FontSize="14" />
+                        </Grid>
+                        <ProgressBar Progress="{Binding CarbsConsumed, Converter={StaticResource MultiplierConverter}, ConverterParameter={Binding CarbsTarget}}" ProgressColor="Orange" HeightRequest="5" Margin="0,5,0,0" /> <!-- 180/250 = 0.72 -->
+                    </VerticalStackLayout>
+                </Frame>
+                <!-- Gorduras -->
+                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0" Text="Gorduras" TextColor="White" FontSize="16" />
+                            <Label Grid.Column="1" Text="{Binding FormattedFatConsumed}" TextColor="LightGray" FontSize="14" />
+                        </Grid>
+                        <ProgressBar Progress="{Binding FatConsumed, Converter={StaticResource MultiplierConverter}, ConverterParameter={Binding FatTarget}}" ProgressColor="Gold" HeightRequest="5" Margin="0,5,0,0" /> <!-- 45/70 = ~0.64 -->
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+
+            <!-- Seção Refeições -->
+            <Grid ColumnDefinitions="*, Auto" Margin="20,10,20,0">
+                <Label Grid.Column="0" Text="Refeições" TextColor="White" FontSize="20" FontAttributes="Bold" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="+ Adicionar" BackgroundColor="#FF4500" TextColor="White" CornerRadius="20" HeightRequest="40" Padding="15,0" Command="{Binding AddMealCommand}" />
+            </Grid>
+            <CollectionView ItemsSource="{Binding Meals}" Margin="20,0">
+                <CollectionView.EmptyView>
+                    <Label Text="Nenhuma refeição adicionada ainda." TextColor="LightGray" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" Margin="0,5">
+                            <Grid RowDefinitions="Auto, Auto" RowSpacing="10">
+
+                                <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto">
+                                    <Image Grid.Column="0" Source="{Binding Icon}" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" Margin="0,0,10,0" />
+
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                        <Label Text="{Binding Name}" TextColor="White" FontSize="16" FontAttributes="Bold" />
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text="{Binding Time, StringFormat='{0:hh\\:mm}'}" TextColor="LightGray" FontSize="12" />
+                                            <Label Text=" • " TextColor="LightGray" FontSize="12" />
+                                            <Label Text="{Binding ItemsCount, StringFormat='{0} itens'}" TextColor="LightGray" FontSize="12" />
+                                        </StackLayout>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
+                                        <Label Text="{Binding Kcal}" TextColor="White" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="End" />
+                                        <Label Text="kcal" TextColor="LightGray" FontSize="12" HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <Grid Grid.Row="1" ColumnDefinitions="*, Auto, 10, Auto, 10, Auto">
+
+                                    <BoxView Grid.Column="0" BackgroundColor="Transparent" />
+
+                                    <Button Grid.Column="1" Text="Editar" 
+                            FontSize="10" HeightRequest="35" CornerRadius="8" Padding="10,0"
+                            BackgroundColor="#444" TextColor="White"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DietViewModel}}, Path=EditMealCommand}"
+                            CommandParameter="{Binding .}"/>
+
+                                    <Button Grid.Column="3" Text="Excluir" 
+                            FontSize="10" HeightRequest="35" CornerRadius="8" Padding="10,0"
+                            BackgroundColor="#FF453A" TextColor="White"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DietViewModel}}, Path=DeleteMealCommand}"
+                            CommandParameter="{Binding .}"/>
+
+                                    <Button Grid.Column="5" 
+                                            FontSize="10" HeightRequest="35" CornerRadius="8" Padding="10,0"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DietViewModel}}, Path=ConsumeMealCommand}"
+                                            CommandParameter="{Binding .}"> 
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsConsumed}" Value="False">
+                                                <Setter Property="Text" Value="✔ Comer" />
+                                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                                <Setter Property="BorderColor" Value="#4CAF50" />
+                                                <Setter Property="BorderWidth" Value="1" />
+                                                <Setter Property="TextColor" Value="#4CAF50" />
+                                            </DataTrigger>
+
+                                            <DataTrigger TargetType="Button" Binding="{Binding IsConsumed}" Value="True">
+                                                <Setter Property="Text" Value="✔ Feito" />
+                                                <Setter Property="BackgroundColor" Value="#4CAF50" />
+                                                <Setter Property="BorderColor" Value="#4CAF50" />
+                                                <Setter Property="BorderWidth" Value="0" />
+                                                <Setter Property="TextColor" Value="White" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                </Grid>
+
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
