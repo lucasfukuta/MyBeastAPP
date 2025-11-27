@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Entities;
-using MyBeast.Domain.DTOs.FoodItem.Input;   // DTOs de Entrada
-using MyBeast.Domain.DTOs.FoodItem.Output;  // DTOs de Saída
+using MyBeast.Domain.DTOs.FoodItem.Input;   
+using MyBeast.Domain.DTOs.FoodItem.Output;  
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq; // Adicionado para Select
-using Microsoft.AspNetCore.Authorization; // Para [Authorize]
-using System.Security.Claims; // Para Claims
-using System.IdentityModel.Tokens.Jwt; // Para JwtRegisteredClaimNames
+using System.Linq; 
+using Microsoft.AspNetCore.Authorization; 
+using System.Security.Claims; 
+using System.IdentityModel.Tokens.Jwt; 
 
 namespace MyBeast.API.Controllers
 {
@@ -27,11 +27,14 @@ namespace MyBeast.API.Controllers
 
         // GET /api/FoodItems (Busca templates + customizados do usuário logado)
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<FoodItemDto>))]
         public async Task<ActionResult<IEnumerable<FoodItemDto>>> GetFoodItems()
         {
-            var userId = GetAuthenticatedUserId(); // Obtém ID do token
-            var foodItems = await _foodItemService.GetAllFoodItemsAsync(userId);
+            int? userId = null;
+            try { userId = GetAuthenticatedUserId(); } catch { }
+            var foodItems = await _foodItemService.GetAllFoodItemsAsync(userId ?? 0);
+
             var foodItemDtos = foodItems.Select(MapToDto);
             return Ok(foodItemDtos);
         }

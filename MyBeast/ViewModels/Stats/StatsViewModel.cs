@@ -6,8 +6,9 @@ using System.Collections.ObjectModel;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
-using LiveChartsCore.Defaults; // <--- IMPORTANTE: Necessário para ObservableValue
+using LiveChartsCore.Defaults; 
 using SkiaSharp;
+using System.Globalization;
 
 namespace MyBeast.ViewModels.Stats
 {
@@ -51,57 +52,82 @@ namespace MyBeast.ViewModels.Stats
         private void InitializeChart()
         {
             // --- MUDANÇA 2: Inicializar com ObservableValue ---
-            _burnedValues = new ObservableCollection<ObservableValue>
-            {
-                new ObservableValue(0), new ObservableValue(0), new ObservableValue(0),
-                new ObservableValue(0), new ObservableValue(0), new ObservableValue(0), new ObservableValue(0)
-            };
+            _burnedValues = new ObservableCollection<ObservableValue> { new(0), new(0), new(0), new(0), new(0), new(0), new(0) };
+            _consumedValues = new ObservableCollection<ObservableValue> { new(0), new(0), new(0), new(0), new(0), new(0), new(0) };
 
-            _consumedValues = new ObservableCollection<ObservableValue>
-            {
-                new ObservableValue(0), new ObservableValue(0), new ObservableValue(0),
-                new ObservableValue(0), new ObservableValue(0), new ObservableValue(0), new ObservableValue(0)
-            };
+            // --- 1. GERAR RÓTULOS DINÂMICOS (COM DATA REAL) ---
+            var labels = new string[7];
+            var monday = GetMondayOfWeek(); // Pega a segunda-feira desta semana
 
+            for (int i = 0; i < 7; i++)
+            {
+                var date = monday.AddDays(i);
+                // Formata como "Seg 25", "Ter 26"
+                // "ddd" = Dia da semana abreviado, "dd" = Dia do mês
+                labels[i] = $"{date.ToString("ddd", new CultureInfo("pt-BR"))} {date.Day}";
+
+                // Capitaliza a primeira letra (seg -> Seg)
+                labels[i] = char.ToUpper(labels[i][0]) + labels[i].Substring(1);
+            }
+
+            // --- 2. CONFIGURAR AS SÉRIES ---
             Series = new ISeries[]
             {
-                new LineSeries<ObservableValue> // Tipo mudou para ObservableValue
-                {
-                    Values = _burnedValues,
-                    Name = "Queimadas",
-                    Stroke = new SolidColorPaint(SKColors.DodgerBlue) { StrokeThickness = 3 },
-                    GeometryStroke = new SolidColorPaint(SKColors.DodgerBlue) { StrokeThickness = 3 },
-                    GeometrySize = 10,
-                    Fill = null
-                },
-                new LineSeries<ObservableValue> // Tipo mudou para ObservableValue
-                {
-                    Values = _consumedValues,
-                    Name = "Consumidas",
-                    Stroke = new SolidColorPaint(SKColors.Orange) { StrokeThickness = 3 },
-                    GeometryStroke = new SolidColorPaint(SKColors.Orange) { StrokeThickness = 3 },
-                    GeometrySize = 10,
-                    Fill = null
-                }
+        new LineSeries<ObservableValue>
+        {
+            Values = _burnedValues,
+            Name = "Queimadas",
+            Stroke = new SolidColorPaint(SKColors.DodgerBlue) { StrokeThickness = 3 },
+            GeometryStroke = new SolidColorPaint(SKColors.DodgerBlue) { StrokeThickness = 3 },
+            GeometrySize = 10,
+            Fill = null
+        },
+        new LineSeries<ObservableValue>
+        {
+            Values = _consumedValues,
+            Name = "Consumidas",
+            Stroke = new SolidColorPaint(SKColors.Orange) { StrokeThickness = 3 },
+            GeometryStroke = new SolidColorPaint(SKColors.Orange) { StrokeThickness = 3 },
+            GeometrySize = 10,
+            Fill = null
+        }
             };
 
+            // --- 3. CONFIGURAR EIXO X COM OS RÓTULOS REAIS ---
             XAxes = new Axis[]
             {
-                new Axis
-                {
-                    Labels = new[] { "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom" },
-                    LabelsPaint = new SolidColorPaint(SKColors.LightGray)
-                }
+        new Axis
+        {
+            Labels = labels, // Usa o array gerado com datas
+            LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+            TextSize = 12
+        }
             };
 
             YAxes = new Axis[]
             {
-                new Axis
-                {
-                    LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                    SeparatorsPaint = new SolidColorPaint(SKColors.Gray.WithAlpha(50))
-                }
+        new Axis
+        {
+            LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+            SeparatorsPaint = new SolidColorPaint(SKColors.Gray.WithAlpha(50))
+        }
             };
+        }
+
+        // --- HELPER PARA ACHAR A SEGUNDA-FEIRA ---
+        private DateTime GetMondayOfWeek()
+        {
+            DateTime today = DateTime.Now;
+
+            // DayOfWeek do C#: Domingo=0, Segunda=1 ... Sábado=6
+            int currentDay = (int)today.DayOfWeek;
+
+            // Queremos que a semana comece na Segunda (1).
+            // Se hoje for Domingo (0), precisamos voltar 6 dias.
+            // Se for Segunda (1), voltamos 0 dias.
+            int daysToSubtract = (currentDay == 0) ? 6 : currentDay - 1;
+
+            return today.AddDays(-daysToSubtract);
         }
 
         private void ProcessWorkoutData(WorkoutResult result)

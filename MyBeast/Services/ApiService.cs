@@ -1,17 +1,20 @@
 ﻿using System.Net.Http.Json;
 using MyBeast.Domain.Entities; // <--- CORREÇÃO 1: Importando a Entidade Achievement
 using MyBeast.Domain.DTOs.WorkoutTemplate.Output; // DTOs de Saída
-using MyBeast.Domain.DTOs.WorkoutTemplate.Input;  // DTOs de Entrada
+using MyBeast.Domain.DTOs.WorkoutTemplate.Input;
+using MyBeast.Domain.DTOs.FoodItem.Output;  // DTOs de Entrada
 
 namespace MyBeast.Services
 {
     public class ApiService : IApiService
     {
         private readonly HttpClient _httpClient;
+        private readonly IAuthService _authService;
 
-        public ApiService(HttpClient httpClient)
+        public ApiService(HttpClient httpClient, IAuthService authService)
         {
             _httpClient = httpClient;
+            _authService = authService;
         }
 
         // ==========================================================
@@ -73,6 +76,57 @@ namespace MyBeast.Services
             return new List<WorkoutTemplateDto>();
         }
 
+        // ==========================================================
+        // ÁREA DE ALIMENTOS (DIET / FOOD ITEMS)
+        // ==========================================================
+
+        public async Task<List<FoodItemDto>> GetFoodTemplatesAsync()
+        {
+            try
+            {
+                // 1. GARANTE O TOKEN
+                await SetAuthorizationHeader();
+
+                // 2. LOG DA TENTATIVA
+                Console.WriteLine($"[API] Tentando buscar alimentos em: {_httpClient.BaseAddress}api/FoodItems");
+
+                var response = await _httpClient.GetAsync("api/FoodItems");
+
+                // 3. LOG DO STATUS
+                Console.WriteLine($"[API] Status Code: {response.StatusCode}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // 4. LER COMO STRING PRIMEIRO (Para ver o que veio)
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"[API] JSON Recebido: {jsonResult}");
+
+                    // 5. CONFIGURAÇÃO DO JSON (Para ignorar maiúsculas/minúsculas)
+                    var options = new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var dados = System.Text.Json.JsonSerializer.Deserialize<List<FoodItemDto>>(jsonResult, options);
+                    Console.WriteLine($"[API] Total deserializado: {dados?.Count ?? 0}");
+
+                    return dados ?? new List<FoodItemDto>();
+                }
+                else
+                {
+                    // Se der erro (ex: 401 ou 500), mostra o motivo
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"[API ERROR] {response.StatusCode}: {errorContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[API EXCEPTION] {ex.Message}");
+            }
+
+            return new List<FoodItemDto>();
+        }
+
         public async Task<List<WorkoutTemplateDto>> GetDefaultWorkoutsAsync()
         {
             try
@@ -113,6 +167,15 @@ namespace MyBeast.Services
             catch
             {
                 return false;
+            }
+        }
+        private async Task SetAuthorizationHeader()
+        {
+            var token = await _authService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             }
         }
     }

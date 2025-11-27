@@ -11,6 +11,7 @@ using MyBeast.Application.Interfaces;
 using MyBeast.Infrastructure.Repositories;
 using MyBeast.API.Middleware;
 using Microsoft.OpenApi.Models;
+using MyBeast.API.Services;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -74,6 +75,10 @@ builder.Services.AddScoped<IPostReactionRepository, PostReactionRepository>();
 // Achievement
 builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
+
+// DataSeederService
+builder.Services.AddHttpClient<MyBeast.API.Services.DataSeederService>();
+builder.Services.AddScoped<MyBeast.API.Services.DataSeederService>();
 
 // --- 3. Adicionar serviços padrão da API ---
 builder.Services.AddControllers();

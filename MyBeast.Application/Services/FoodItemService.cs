@@ -1,34 +1,23 @@
 ﻿using MyBeast.Application.Interfaces;
 using MyBeast.Domain.Interfaces;
 using MyBeast.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq; // Para Any/Where
-using System.Threading.Tasks;
 
 namespace MyBeast.Application.Services
 {
     public class FoodItemService : IFoodItemService
     {
         private readonly IFoodItemRepository _foodItemRepository;
-        private readonly IUserRepository _userRepository; // Para validar usuário
+        private readonly IUserRepository _userRepository;
 
-        public FoodItemService(IFoodItemRepository foodItemRepository, IUserRepository userRepository) // Adiciona IUserRepository
+        public FoodItemService(IFoodItemRepository foodItemRepository, IUserRepository userRepository)
         {
             _foodItemRepository = foodItemRepository;
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<FoodItem>> GetAllFoodItemsAsync(int? userId = null)
+        public async Task<IEnumerable<FoodItem>> GetAllFoodItemsAsync(int? userId)
         {
-            // Retorna templates E customizados do usuário (se userId fornecido)
-            var allFoodItems = await _foodItemRepository.GetAllAsync();
-            if (userId.HasValue)
-            {
-                return allFoodItems.Where(f => !f.IsCustom || f.UserId == userId.Value);
-            }
-            // Por padrão, retornar apenas templates?
-            return allFoodItems.Where(f => !f.IsCustom); // Exemplo: Retorna só templates se não autenticado
+            return await _foodItemRepository.GetAllAccessibleAsync(userId ?? 0);
         }
 
         public async Task<FoodItem?> GetFoodItemByIdAsync(int id)

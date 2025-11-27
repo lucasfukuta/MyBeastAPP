@@ -10,6 +10,7 @@ namespace MyBeast.Services
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
+        private readonly IAuthService _authService;
         // Opcional: Se quiser salvar dados do usuário no banco local
         // private readonly ILocalDbService _localDbService; 
 
@@ -107,5 +108,9 @@ namespace MyBeast.Services
         public bool Login(string u, string p) => throw new NotImplementedException();
         public bool Register(string u, string p) => throw new NotImplementedException();
         public Task<bool> ChangePasswordAsync(string u, string o, string n) => throw new NotImplementedException();
+        public async Task<string> GetTokenAsync()
+        {
+            return await SecureStorage.GetAsync("auth_token");
+        }
     }
 }

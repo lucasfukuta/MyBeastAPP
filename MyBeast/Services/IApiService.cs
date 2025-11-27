@@ -1,6 +1,7 @@
-﻿using MyBeast.Domain.Entities; // <--- CORREÇÃO 1: Adicionado para reconhecer Achievement
-using MyBeast.Domain.DTOs.WorkoutTemplate.Output; // <--- DTOs de Treino
+﻿using MyBeast.Domain.Entities; 
+using MyBeast.Domain.DTOs.WorkoutTemplate.Output; 
 using MyBeast.Domain.DTOs.WorkoutTemplate.Input;
+using MyBeast.Domain.DTOs.FoodItem.Output;
 
 namespace MyBeast.Services
 {
@@ -18,5 +19,8 @@ namespace MyBeast.Services
         Task<List<WorkoutTemplateDto>> GetDefaultWorkoutsAsync();
         Task<bool> CreateWorkoutAsync(WorkoutTemplateCreateDto dto);
         Task<bool> DeleteWorkoutAsync(int id);
+
+        // --- MÉTODOS DE ALIMENTAÇÃO (Novos) ---
+        Task<List<FoodItemDto>> GetFoodTemplatesAsync();
     }
 }

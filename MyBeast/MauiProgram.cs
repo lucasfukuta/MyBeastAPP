@@ -69,6 +69,29 @@ namespace MyBeast
                 }
                 return handler;
             });
+
+            // Configuração para DADOS DA API (Dieta, Treinos)
+            builder.Services.AddHttpClient<IApiService, ApiService>(client =>
+            {
+                string baseUrl;
+                if (DeviceInfo.Platform == DevicePlatform.Android)
+                    baseUrl = "https://10.0.2.2:7261/"; // Mesma porta da Auth
+                else
+                    baseUrl = "https://localhost:5145/";
+
+                client.BaseAddress = new Uri(baseUrl);
+                client.Timeout = TimeSpan.FromSeconds(30);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                if (DeviceInfo.Platform == DevicePlatform.Android)
+                {
+                    handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+                }
+                return handler;
+            });
+
             builder.Services.AddSingleton<ILocalDbService, LocalDbService>();
             builder.Services.AddSingleton<IPetService, PetService>();
             builder.Services.AddSingleton<INavigationService, NavigationService>();

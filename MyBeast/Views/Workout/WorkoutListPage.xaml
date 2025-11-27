@@ -79,88 +79,76 @@
 
         <CollectionView Grid.Row="2" ItemsSource="{Binding Workouts}" Margin="20,0">
             <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="15" />
             </CollectionView.ItemsLayout>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border BackgroundColor="#1C1C1E" 
-                StrokeThickness="1"
-                Stroke="#2C2C2E"
-                StrokeShape="RoundRectangle 15" 
-                Padding="15">
+                    StrokeThickness="1"
+                    Stroke="#2C2C2E"
+                    StrokeShape="RoundRectangle 15" 
+                    Padding="15">
 
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WorkoutListViewModel}}, Path=SelectWorkoutCommand}"
-                                      CommandParameter="{Binding .}" />
+                                          CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
 
-                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="8">
 
-                            <VerticalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
-
-                                <Label Text="{Binding Name}" 
+                            <Label Grid.Row="0" Grid.Column="0" 
+                           Text="{Binding Name}" 
                            TextColor="White" 
                            FontSize="17" 
                            FontAttributes="Bold" 
-                           LineBreakMode="TailTruncation"/>
+                           VerticalOptions="Center"/>
 
-                                <Border BackgroundColor="#2C2C2E" 
-                            StrokeThickness="0" 
-                            StrokeShape="RoundRectangle 6" 
-                            Padding="8,4"
-                            HorizontalOptions="Start">
-                                    <Label Text="{Binding Level}" 
-                               TextColor="{Binding LevelColor}" 
-                               FontSize="10" 
-                               FontAttributes="Bold"
-                               TextTransform="Uppercase"/>
-                                </Border>
+                            <Border Grid.Row="0" Grid.Column="1" 
+                            BackgroundColor="#2C2C2E" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="8,4" HorizontalOptions="End">
+                                <Label Text="{Binding Level}" TextColor="{Binding LevelColor}" FontSize="10" FontAttributes="Bold" TextTransform="Uppercase"/>
+                            </Border>
 
-                                <HorizontalStackLayout Spacing="15">
-                                    <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                        <Image Source="clock_icon.png" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
-                                        <Label Text="{Binding Duration, StringFormat='{0} min'}" TextColor="#9DA3B4" FontSize="12"/>
-                                    </HorizontalStackLayout>
-
-                                    <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                        <Image Source="fire_icon.png" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
-                                        <Label Text="{Binding Calories, StringFormat='{0} kcal'}" TextColor="#9DA3B4" FontSize="12"/>
-                                    </HorizontalStackLayout>
+                            <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="15">
+                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                    <Image Source="clock_icon.png" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
+                                    <Label Text="{Binding Duration, StringFormat='{0} min'}" TextColor="#9DA3B4" FontSize="13"/>
                                 </HorizontalStackLayout>
-                            </VerticalStackLayout>
+                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                    <Image Source="fire_icon.png" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
+                                    <Label Text="{Binding Calories, StringFormat='{0} kcal'}" TextColor="#9DA3B4" FontSize="13"/>
+                                </HorizontalStackLayout>
+                            </HorizontalStackLayout>
 
-                            <VerticalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                            <Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="*, 10, *" Margin="0,10,0,0">
 
-                                <Button Text="Editar"
-                            TextColor="White"
-                            BackgroundColor="#333333"
-                            FontSize="11"
-                            HeightRequest="35"
-                            WidthRequest="70"
-                            CornerRadius="8"
-                            Padding="0"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WorkoutListViewModel}}, Path=EditWorkoutCommand}"
-                            CommandParameter="{Binding .}"/>
+                                <Button Grid.Column="0"
+                                Text="Editar"
+                                TextColor="White"
+                                BackgroundColor="#333333"
+                                FontSize="12"
+                                HeightRequest="35"
+                                CornerRadius="8"
+                                Padding="0"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WorkoutListViewModel}}, Path=EditWorkoutCommand}"
+                                CommandParameter="{Binding .}"/>
 
-                                <Button Text="Excluir"
-                            TextColor="White"
-                            BackgroundColor="#FF453A"
-                            FontSize="11"
-                            HeightRequest="35"
-                            WidthRequest="70"
-                            CornerRadius="8"
-                            Padding="0"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WorkoutListViewModel}}, Path=DeleteWorkoutCommand}"
-                            CommandParameter="{Binding .}"/>
-                            </VerticalStackLayout>
+                                <Button Grid.Column="2"
+                                Text="Excluir"
+                                TextColor="White"
+                                BackgroundColor="#FF453A"
+                                FontSize="12"
+                                HeightRequest="35"
+                                CornerRadius="8"
+                                Padding="0"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WorkoutListViewModel}}, Path=DeleteWorkoutCommand}"
+                                CommandParameter="{Binding .}"/>
+                            </Grid>
 
                         </Grid>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-            <CollectionView.Footer>
-                <BoxView HeightRequest="20" Color="Transparent"/>
-            </CollectionView.Footer>
         </CollectionView>
     </Grid>
 </ContentPage>

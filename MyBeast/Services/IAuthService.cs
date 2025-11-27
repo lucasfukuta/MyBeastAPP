@@ -14,5 +14,6 @@ namespace MyBeast.Services
         Task LogoutAsync();
         Task<bool> RegisterAsync(string username, string password, string email);
         Task<bool> ChangePasswordAsync(string username, string oldPassword, string newPassword);
+        Task<string> GetTokenAsync();
     }
 }

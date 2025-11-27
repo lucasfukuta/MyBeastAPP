@@ -140,7 +140,7 @@ namespace MyBeast.ViewModels.Workout
         public int Duration { get; set; }
         public int Calories { get; set; }
         public int ExerciseCount { get; set; }
-
+        public ObservableCollection<MyBeast.Models.WorkoutExercise> ExercisesList { get; set; } = new();
         public Color LevelColor
         {
             get

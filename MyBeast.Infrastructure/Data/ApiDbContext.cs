@@ -1,47 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBeast.Domain.Entities;
+using MyBeast.Application.Interfaces; // Onde está a interface IApplicationDbContext
 
 namespace MyBeast.Infrastructure.Data
 {
-    public class ApiDbContext : DbContext
+    public class ApiDbContext : DbContext, IApplicationDbContext
     {
-        // Construtor usado pela Injeção de Dependência da API
+        // --- CONSTRUTOR ÚNICO E CORRETO ---
+        // O EF Core usa este construtor para injetar as opções (Connection String)
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
         }
 
-        public ApiDbContext(DbSet<User> users, 
-                            DbSet<Pet> pets, 
-                            DbSet<Exercise> exercises, 
-                            DbSet<FoodItem> foodItems, 
-                            DbSet<WorkoutTemplate> workoutTemplates, 
-                            DbSet<WorkoutSession> workoutSessions, 
-                            DbSet<SetLog> setLogs, 
-                            DbSet<MealLog> mealLogs, 
-                            DbSet<MealLogItem> mealLogItems, 
-                            DbSet<CommunityPost> communityPosts, 
-                            DbSet<PostReaction> postReactions, 
-                            DbSet<Achievement> achievements, 
-                            DbSet<TemplateExercise> templateExercises, 
-                            DbSet<AISuggestion> aISuggestions)
-        {
-            Users = users;
-            Pets = pets;
-            Exercises = exercises;
-            FoodItems = foodItems;
-            WorkoutTemplates = workoutTemplates;
-            WorkoutSessions = workoutSessions;
-            SetLogs = setLogs;
-            MealLogs = mealLogs;
-            MealLogItems = mealLogItems;
-            CommunityPosts = communityPosts;
-            PostReactions = postReactions;
-            Achievements = achievements;
-            TemplateExercises = templateExercises;
-            AISuggestions = aISuggestions;
-        }
-
-        // Mapeia todas as suas classes de modelo
+        // --- DBSETS (Tabelas) ---
+        // Eles implementam a interface IApplicationDbContext automaticamente
         public DbSet<User> Users { get; set; }
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
@@ -57,56 +29,73 @@ namespace MyBeast.Infrastructure.Data
         public DbSet<TemplateExercise> TemplateExercises { get; set; }
         public DbSet<AISuggestion> AISuggestions { get; set; }
 
+        // --- CONFIGURAÇÕES DO MODELO (RELACIONAMENTOS) ---
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // --- 1. DEFINIÇÃO DAS CHAVES PRIMÁRIAS COMPOSTAS ---
+            // --- 1. CHAVES COMPOSTAS (N:N) ---
 
-            // ESTA É A LINHA QUE ESTÁ FALTANDO E CAUSANDO O ERRO:
+            // PostReaction (Muitos usuários reagem a Muitos posts)
             modelBuilder.Entity<PostReaction>()
                 .HasKey(pr => new { pr.PostId, pr.UserId });
 
-            // Adicione as outras chaves compostas (você já deve ter)
+            // TemplateExercise (Um treino tem muitos exercícios e vice-versa)
             modelBuilder.Entity<TemplateExercise>()
                 .HasKey(te => new { te.TemplateId, te.ExerciseId });
 
+            // MealLogItem (Uma refeição tem muitos alimentos)
             modelBuilder.Entity<MealLogItem>()
                 .HasKey(mli => new { mli.MealLogId, mli.FoodId });
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Exercises) 
-                .WithOne(e => e.User)
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<User>()
-            .HasMany(u => u.FoodItems) // Assumindo ICollection<FoodItem> FoodItems no Model User
-            .WithOne(f => f.User)
-            .HasForeignKey(f => f.UserId)
-            .OnDelete(DeleteBehavior.NoAction);
+            // --- 2. CONFIGURAÇÃO DE CASCATA (EVITAR LOOPS) ---
 
-            // --- 2. CORREÇÃO DO CAMINHO EM CASCATA ---
-            // (Este é o código da etapa anterior, para garantir que continue correto)
+            // PostReaction: Se apagar o POST, apaga as reações (Cascade)
+            // Se apagar o USUÁRIO, apaga as reações SEM cascata automática (NoAction) para evitar ciclo
             modelBuilder.Entity<PostReaction>()
                 .HasOne(pr => pr.CommunityPost)
                 .WithMany(p => p.PostReactions)
                 .HasForeignKey(pr => pr.PostId)
-                .OnDelete(DeleteBehavior.Cascade); // Deletar reações se o post for deletado
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PostReaction>()
                 .HasOne(pr => pr.User)
                 .WithMany(u => u.PostReactions)
                 .HasForeignKey(pr => pr.UserId)
-                .OnDelete(DeleteBehavior.NoAction); // <-- A correção da cascata
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // --- 3. RELAÇÃO 1:1 (USER/PET) ---
-            // (Esta relação também deve estar aqui)
+
+            // --- 3. RELACIONAMENTOS 1:N COM USUÁRIO ---
+
+            // Usuário -> Exercícios Customizados
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Exercises)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.NoAction); // Evita ciclo ao deletar usuário
+
+            // Usuário -> Alimentos Customizados
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.FoodItems)
+                .WithOne(f => f.User)
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.NoAction); // Evita ciclo
+
+
+            // --- 4. RELAÇÃO 1:1 (USER/PET) ---
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Pet)
                 .WithOne(p => p.User)
                 .HasForeignKey<Pet>(p => p.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+        }
+
+        // Implementação do método da interface (se não herdar de DbContext já)
+        // Como herdamos de DbContext, o SaveChangesAsync já existe, mas podemos explicitar se precisar.
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }
