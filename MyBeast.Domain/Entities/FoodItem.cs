@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic; // Para ICollection
+using System.Text.Json.Serialization; // Opcional
 
 namespace MyBeast.Domain.Entities
 {
@@ -12,26 +12,21 @@ namespace MyBeast.Domain.Entities
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; } = null!; // Corrigido
+        public string Name { get; set; } = null!;
 
-        public int Calories { get; set; }
-
-        public int Protein { get; set; }
-
-        public int Carbs { get; set; }
-
-        public int Fat { get; set; }
+        // --- MUDANÇA: De int para decimal (para bater com o SQL Server) ---
+        public decimal Calories { get; set; }
+        public decimal Protein { get; set; }
+        public decimal Carbs { get; set; }
+        public decimal Fat { get; set; }
 
         public bool IsCustom { get; set; }
 
-        // --- NOVO: Associação com Usuário ---
-        public int? UserId { get; set; } // Anulável: Nulo para templates, preenchido para customizados
+        public int? UserId { get; set; }
         [ForeignKey("UserId")]
-        public virtual User? User { get; set; } // Propriedade de navegação
-        // --- FIM DA ADIÇÃO ---
+        public virtual User? User { get; set; }
 
-
-        // --- Propriedades de Navegação (Já existentes) ---
-        public virtual ICollection<MealLogItem> MealLogItems { get; set; } = new List<MealLogItem>(); // Inicializado
+        [JsonIgnore] // Evita ciclos ao serializar se necessário
+        public virtual ICollection<MealLogItem> MealLogItems { get; set; } = new List<MealLogItem>();
     }
 }

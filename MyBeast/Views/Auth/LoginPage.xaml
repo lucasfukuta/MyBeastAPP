@@ -14,7 +14,7 @@
                 BackgroundColor="Transparent" 
                 StrokeShape="RoundRectangle 10" 
                 Padding="10,0">
-            <Entry Placeholder="Email ou Usuário" 
+            <Entry Placeholder="Email" 
                    PlaceholderColor="LightGray"
                    TextColor="White"
                    Text="{Binding Username}" />

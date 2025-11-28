@@ -3,17 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MyBeast.Views.SettingsPage"
              Title="Settings"
-             BackgroundColor="#1C1C1E">
+             
+             
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Voltar" Clicked="OnBackButtonClicked" />
     </ContentPage.ToolbarItems>
+
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="0,0,0,20">
 
-            <!-- Seção do Cabeçalho das Configurações -->
-            <Frame BackgroundColor="#5A2E8B" CornerRadius="0" HasShadow="False" Padding="20,30,20,20">
+            <Frame BackgroundColor="#5A2E8B" CornerRadius="0" HasShadow="False" Padding="20,30,20,20" BorderColor="Transparent">
                 <Grid ColumnDefinitions="Auto, *">
-                    <Image Grid.Column="0" Source="monster_avatar.png" HeightRequest="80" WidthRequest="80" Aspect="AspectFill" VerticalOptions="Center" />
+                    <Image Grid.Column="0" Source="avatar_bear.png" HeightRequest="80" WidthRequest="80" Aspect="AspectFill" VerticalOptions="Center" />
                     <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
                         <Label Text="Settings" TextColor="White" FontSize="24" FontAttributes="Bold" />
                         <HorizontalStackLayout Spacing="5">
@@ -25,93 +27,100 @@
                 </Grid>
             </Frame>
 
-            <!-- Seção App Preferences -->
-            <Label Text="App Preferences" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,0" />
+            <Label Text="App Preferences" 
+                   TextColor="{AppThemeBinding Light=Black, Dark=White}" 
+                   FontSize="20" FontAttributes="Bold" Margin="20,0" />
+
             <VerticalStackLayout Spacing="10" Margin="20,0">
-                <!-- Dark Mode -->
-                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+
+                <Frame BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" 
+                       CornerRadius="10" Padding="15" HeightRequest="70" BorderColor="Transparent">
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="moon_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="moon_regular.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
-                            <Label Text="Dark Mode" TextColor="White" FontSize="16" FontAttributes="Bold" />
-                            <Label Text="Switch between light and dark theme" TextColor="LightGray" FontSize="12" />
+                            <Label Text="Ligth/Dark Mode" 
+                                   TextColor="{AppThemeBinding Light=Black, Dark=White}" 
+                                   FontSize="16" FontAttributes="Bold" />
+                            <Label Text="Switch between light and dark theme" TextColor="Gray" FontSize="12" />
                         </VerticalStackLayout>
-                        <Switch Grid.Column="2" IsToggled="True" OnColor="#8A2BE2" HorizontalOptions="End" VerticalOptions="Center" />
+
+                        <Switch Grid.Column="2" 
+                                x:Name="ThemeSwitch" 
+                                IsToggled="True" 
+                                OnColor="#8A2BE2" 
+                                HorizontalOptions="End" 
+                                VerticalOptions="Center" 
+                                Toggled="OnThemeSwitchToggled" />
                     </Grid>
                 </Frame>
-                <!-- Language -->
-                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+
+                <Frame BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" CornerRadius="10" Padding="15" HeightRequest="70" BorderColor="Transparent">
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="globe_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="globe_solid.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
-                            <Label Text="Language" TextColor="White" FontSize="16" FontAttributes="Bold" />
-                            <Label Text="Português (Brasil)" TextColor="LightGray" FontSize="12" />
+                            <Label Text="Language" TextColor="{AppThemeBinding Light=Black, Dark=White}" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="Português (Brasil)" TextColor="Gray" FontSize="12" />
                         </VerticalStackLayout>
-                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
                     </Grid>
                 </Frame>
-                <!-- Privacy & Security -->
-                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+
+                <Frame BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" CornerRadius="10" Padding="15" HeightRequest="70" BorderColor="Transparent">
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="lock_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="shield_halved_solid.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
-                            <Label Text="Privacy &amp; Security" TextColor="White" FontSize="16" FontAttributes="Bold" />
-                            <Label Text="Manage your privacy settings" TextColor="LightGray" FontSize="12" />
+                            <Label Text="Privacy &amp; Security" TextColor="{AppThemeBinding Light=Black, Dark=White}" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="Manage your privacy settings" TextColor="Gray" FontSize="12" />
                         </VerticalStackLayout>
-                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
                     </Grid>
                 </Frame>
-                <!-- App Version -->
-                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15" HeightRequest="70">
+
+                <Frame BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" CornerRadius="10" Padding="15" HeightRequest="70" BorderColor="Transparent">
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="info_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="mobile_screen_solid.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0" VerticalOptions="Center">
-                            <Label Text="App Version" TextColor="White" FontSize="16" FontAttributes="Bold" />
-                            <Label Text="v1.0.0" TextColor="LightGray" FontSize="12" />
+                            <Label Text="App Version" TextColor="{AppThemeBinding Light=Black, Dark=White}" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="v1.0.0" TextColor="Gray" FontSize="12" />
                         </VerticalStackLayout>
                     </Grid>
                 </Frame>
             </VerticalStackLayout>
 
-            <!-- Seção Edit Profile -->
-            <Label Text="Edit Profile" TextColor="White" FontSize="20" FontAttributes="Bold" Margin="20,0" />
+            <Label Text="Edit Profile" TextColor="{AppThemeBinding Light=Black, Dark=White}" FontSize="20" FontAttributes="Bold" Margin="20,0" />
+
             <VerticalStackLayout Spacing="10" Margin="20,0">
-                <!-- Name -->
-                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+                <Frame BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" CornerRadius="10" Padding="15" BorderColor="Transparent">
                     <Grid ColumnDefinitions="Auto, *">
-                        <Image Grid.Column="0" Source="person_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="user_regular.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0">
-                            <Label Text="Name" TextColor="LightGray" FontSize="12" />
-                            <Entry Text="Beast Fitness" TextColor="White" FontSize="16" PlaceholderColor="DarkGray" BackgroundColor="Transparent" Keyboard="Text" Margin="0,-5,0,0" />
+                            <Label Text="Name" TextColor="Gray" FontSize="12" />
+                            <Entry Text="Beast Fitness" TextColor="{AppThemeBinding Light=Black, Dark=White}" FontSize="16" PlaceholderColor="Gray" BackgroundColor="Transparent" Keyboard="Text" Margin="0,-5,0,0" />
                         </VerticalStackLayout>
                     </Grid>
                 </Frame>
-                <!-- Email -->
-                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+
+                <Frame BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" CornerRadius="10" Padding="15" BorderColor="Transparent">
                     <Grid ColumnDefinitions="Auto, *">
-                        <Image Grid.Column="0" Source="mail_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="envelope_regular.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0">
-                            <Label Text="Email" TextColor="LightGray" FontSize="12" />
-                            <Entry Text="Profile@gmail.com" TextColor="White" FontSize="16" PlaceholderColor="DarkGray" BackgroundColor="Transparent" Keyboard="Email" Margin="0,-5,0,0" />
+                            <Label Text="Email" TextColor="Gray" FontSize="12" />
+                            <Entry Text="Profile@gmail.com" TextColor="{AppThemeBinding Light=Black, Dark=White}" FontSize="16" PlaceholderColor="Gray" BackgroundColor="Transparent" Keyboard="Email" Margin="0,-5,0,0" />
                         </VerticalStackLayout>
                     </Grid>
                 </Frame>
-                <!-- Password -->
-                <Frame BackgroundColor="#2C2C2E" CornerRadius="10" Padding="15">
+
+                <Frame BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2C2C2E}" CornerRadius="10" Padding="15" BorderColor="Transparent">
                     <Grid ColumnDefinitions="Auto, *">
-                        <Image Grid.Column="0" Source="key_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="key_solid.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <VerticalStackLayout Grid.Column="1" Margin="15,0,0,0">
-                            <Label Text="Password" TextColor="LightGray" FontSize="12" />
-                            <Entry Text="" Placeholder="Leave blank to keep current password" IsPassword="True" TextColor="White" FontSize="16" PlaceholderColor="DarkGray" BackgroundColor="Transparent" Keyboard="Text" Margin="0,-5,0,0" />
+                            <Label Text="Password" TextColor="Gray" FontSize="12" />
+                            <Entry Text="" Placeholder="Leave blank to keep current password" IsPassword="True" TextColor="{AppThemeBinding Light=Black, Dark=White}" FontSize="16" PlaceholderColor="Gray" BackgroundColor="Transparent" Keyboard="Text" Margin="0,-5,0,0" />
                         </VerticalStackLayout>
                     </Grid>
                 </Frame>
             </VerticalStackLayout>
 
-            <!-- Botão Save Changes -->
             <Button Text="Save Changes" BackgroundColor="#FF4500" TextColor="White" FontSize="18" CornerRadius="25" HeightRequest="50" Margin="20,20,20,0" />
 
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

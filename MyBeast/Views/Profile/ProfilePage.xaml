@@ -13,11 +13,11 @@
             <!-- Seção do Cabeçalho do Perfil -->
             <Frame BackgroundColor="#5A2E8B" CornerRadius="0" HasShadow="False" Padding="20,30,20,20">
                 <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
-                    <Image Source="profile_placeholder.png" HeightRequest="100" WidthRequest="100" Aspect="AspectFill" />
+                    <Image Source="avatar_bear.png" HeightRequest="100" WidthRequest="100" Aspect="AspectFill" />
                     <Label Text="Profile" TextColor="White" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" />
                     <Label Text="Profile@gmail.com" TextColor="LightGray" FontSize="16" HorizontalTextAlignment="Center" />
                     <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
-                        <Image Source="crown_icon.png" HeightRequest="18" WidthRequest="18" VerticalOptions="Center" />
+                        <Image Source="crown_solid_full.png" HeightRequest="18" WidthRequest="18" VerticalOptions="Center" />
                         <Label Text="Premium Member" TextColor="Gold" FontSize="14" VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
@@ -31,9 +31,8 @@
                         <TapGestureRecognizer Tapped="OnNotificationsTapped" NumberOfTapsRequired="1" />
                     </Frame.GestureRecognizers>
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="notification_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="bell_solid_full.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="Notificações" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
-                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
                     </Grid>
                 </Frame>
                 <!-- Configurações -->
@@ -42,9 +41,8 @@
                         <TapGestureRecognizer Tapped="OnSettingsTapped" NumberOfTapsRequired="1" />
                     </Frame.GestureRecognizers>
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="settings_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="gear_solid_full.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="Settings" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
-                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
                     </Grid>
                 </Frame>
                 <!-- Ajuda e Suporte -->
@@ -53,9 +51,8 @@
                         <TapGestureRecognizer Tapped="OnHelpSupportTapped" NumberOfTapsRequired="1" />
                     </Frame.GestureRecognizers>
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="help_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="circle_info_solid_full.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="Help &amp; Support" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
-                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
                     </Grid>
                 </Frame>
                 <!-- Sair -->
@@ -64,9 +61,8 @@
                         <TapGestureRecognizer Tapped="OnLogOutTapped" NumberOfTapsRequired="1" />
                     </Frame.GestureRecognizers>
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Image Grid.Column="0" Source="logout_icon.png" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
+                        <Image Grid.Column="0" Source="arrow_right_from_bracket_solid_full.svg" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" />
                         <Label Grid.Column="1" Text="Log Out" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="15,0,0,0" />
-                        <Image Grid.Column="2" Source="arrow_right_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="End" />
                     </Grid>
                 </Frame>
             </VerticalStackLayout>

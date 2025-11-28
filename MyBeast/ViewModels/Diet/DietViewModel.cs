@@ -4,142 +4,169 @@ using CommunityToolkit.Mvvm.Messaging;
 using MyBeast.Messages;
 using MyBeast.Models;
 using MyBeast.Services;
+using MyBeast.Domain.DTOs.MealLog.Input; // DTOs para API
 using System.Collections.ObjectModel;
 
 namespace MyBeast.ViewModels.Diet
 {
     public partial class DietViewModel : ObservableObject
     {
-        [ObservableProperty]
-        private ObservableCollection<Meal> meals;
+        private readonly IApiService _apiService;
 
-        [ObservableProperty]
-        private int currentCalories;
+        [ObservableProperty] private ObservableCollection<Meal> meals;
+        [ObservableProperty] private int currentCalories;
+        [ObservableProperty] private int targetCalories = 2200;
 
-        [ObservableProperty]
-        private int targetCalories = 2200;
-
-        [ObservableProperty]
-        private int proteinConsumed;
-        [ObservableProperty]
-        private int proteinTarget = 150;
-
-        [ObservableProperty]
-        private int carbsConsumed;
-        [ObservableProperty]
-        private int carbsTarget = 250;
-
-        [ObservableProperty]
-        private int fatConsumed;
-        [ObservableProperty]
-        private int fatTarget = 70;
-
-        [ObservableProperty]
-        private int caloriesBurned;
+        [ObservableProperty] private int proteinConsumed;
+        [ObservableProperty] private int proteinTarget = 150;
+        [ObservableProperty] private int carbsConsumed;
+        [ObservableProperty] private int carbsTarget = 250;
+        [ObservableProperty] private int fatConsumed;
+        [ObservableProperty] private int fatTarget = 70;
+        [ObservableProperty] private int caloriesBurned;
 
         public int NetCalories => TargetCalories - CurrentCalories + CaloriesBurned;
         public string FormattedProteinConsumed => $"{ProteinConsumed}/{ProteinTarget}g";
         public string FormattedCarbsConsumed => $"{CarbsConsumed}/{CarbsTarget}g";
         public string FormattedFatConsumed => $"{FatConsumed}/{FatTarget}g";
 
-        public DietViewModel()
+        public DietViewModel(IApiService apiService)
         {
+            _apiService = apiService;
             Meals = new ObservableCollection<Meal>();
-            LoadSampleMeals();
-            UpdateMacros();
 
-            // Escuta quando um treino é finalizado
+            // Carrega dados REAIS do banco ao iniciar
+            LoadMealsFromApi();
+
+            // ESCUTA: Treino Finalizado
             WeakReferenceMessenger.Default.Register<WorkoutFinishedMessage>(this, (r, m) =>
             {
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    // Soma as calorias do treino que acabou de finalizar
                     CaloriesBurned += m.Value.Calories;
-
-                    // Se quiser salvar isso num banco de dados, faria aqui.
+                    OnPropertyChanged(nameof(NetCalories));
                 });
             });
-            // Escuta quando uma refeição é salva na tela de edição
-            WeakReferenceMessenger.Default.Register<MealSavedMessage>(this, (r, m) =>
+
+            // ESCUTA: Refeição Salva na Tela de Edição
+            WeakReferenceMessenger.Default.Register<MealSavedMessage>(this, async (r, m) =>
             {
+                var savedMeal = m.Value;
+
+                // 1. Adiciona visualmente na hora
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    var savedMeal = m.Value;
-
-                    // Verifica se estamos editando (busca por nome e hora iguais)
-                    var existing = Meals.FirstOrDefault(x => x.Name == savedMeal.Name && x.Time == savedMeal.Time);
-
-                    if (existing != null)
-                    {
-                        int index = Meals.IndexOf(existing);
-                        Meals[index] = savedMeal; // Atualiza a existente
-                    }
-                    else
-                    {
-                        Meals.Add(savedMeal); // Adiciona nova
-                    }
+                    Meals.Add(savedMeal);
                     UpdateMacros();
                 });
+
+                // 2. Salva no Banco (API)
+                await SaveMealToApi(savedMeal);
             });
         }
 
-        // --- COMANDO EDITAR ---
-        [RelayCommand]
-        private async Task EditMeal(Meal meal)
+        // --- CARREGAR DO BANCO ---
+        private async void LoadMealsFromApi()
         {
-            if (meal == null) return;
-
-            var navParam = new Dictionary<string, object>
+            try
             {
-                { "MealToEdit", meal }
-            };
+                var apiMeals = await _apiService.GetMealsByDateAsync(DateTime.Now);
 
-            // Vai para a tela de edição passando a refeição
-            await Shell.Current.GoToAsync(nameof(Views.Diet.MealEditorPage), navParam);
-        }
-
-        // --- COMANDO EXCLUIR ---
-        [RelayCommand]
-        private async Task DeleteMeal(Meal meal)
-        {
-            if (meal == null) return;
-
-            bool confirm = await Shell.Current.DisplayAlert("Excluir", $"Remover {meal.Name}?", "Sim", "Não");
-            if (confirm)
-            {
-                Meals.Remove(meal);
+                Meals.Clear();
+                foreach (var apiMeal in apiMeals)
+                {
+                    Meals.Add(new Meal
+                    {
+                        // Id = apiMeal.MealLogId, // Se tiver ID no model Meal
+                        Name = apiMeal.MealType,
+                        Time = apiMeal.Date.TimeOfDay,
+                        Icon = "apple_icon.png",
+                        Kcal = 0, // Precisa vir da API ou calcular
+                        ItemsCount = apiMeal.Items?.Count ?? 0,
+                        // FoodItems = ... mapear se a API retornar detalhes
+                        IsConsumed = true // Se veio do histórico, assume que comeu? Ou a API deve retornar o status
+                    });
+                }
                 UpdateMacros();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao carregar: {ex.Message}");
             }
         }
 
-        // --- COMANDO ADICIONAR (Navega para tela vazia) ---
+        // --- SALVAR NO BANCO ---
+        private async Task SaveMealToApi(Meal meal)
+        {
+            // Converte Model -> DTO
+            var dto = new LogMealDto
+            {
+                Date = DateTime.Today.Add(meal.Time),
+                MealType = meal.Name,
+                Items = meal.FoodItems.Select(f => new MealItemDto
+                {
+                    FoodId = f.FoodId, // ATENÇÃO: FoodItem precisa ter ID válido!
+                    Quantity = 1
+                }).ToList()
+            };
+
+            bool sucesso = await _apiService.LogMealAsync(dto);
+
+            if (!sucesso)
+            {
+                // Opcional: Mostrar aviso discreto ou tentar novamente depois
+                Console.WriteLine("Falha ao salvar refeição na nuvem.");
+            }
+        }
+
+        // --- AÇÕES DA TELA ---
+
         [RelayCommand]
         private async Task AddMeal()
         {
             await Shell.Current.GoToAsync(nameof(Views.Diet.MealEditorPage));
         }
 
-        // --- COMANDO CONSUMIR (Gamification) ---
+        [RelayCommand]
+        private async Task EditMeal(Meal meal)
+        {
+            if (meal == null) return;
+            var navParam = new Dictionary<string, object> { { "MealToEdit", meal } };
+            await Shell.Current.GoToAsync(nameof(Views.Diet.MealEditorPage), navParam);
+        }
+
+        [RelayCommand]
+        private async Task DeleteMeal(Meal meal)
+        {
+            if (meal == null) return;
+            bool confirm = await Shell.Current.DisplayAlert("Excluir", $"Remover {meal.Name}?", "Sim", "Não");
+
+            if (confirm)
+            {
+                Meals.Remove(meal);
+                UpdateMacros();
+
+                // TODO: Chamar API para deletar (se tiver ID)
+                // await _apiService.DeleteMealLogAsync(meal.Id);
+            }
+        }
+
+        // --- LÓGICA DE CONSUMO (Gamification + Stats) ---
         [RelayCommand]
         private async Task ConsumeMeal(Meal meal)
         {
             if (meal == null) return;
 
-            // 1. Alterna o estado (Marcado/Desmarcado)
             meal.IsConsumed = !meal.IsConsumed;
-
-            // 2. Atualiza os totais na tela de dieta
             UpdateMacros();
 
-            // Calcula o valor para mandar pro gráfico.
-            // Se marcou (true) -> Manda positivo (soma no gráfico).
-            // Se desmarcou (false) -> Manda negativo (subtrai do gráfico).
+            // Calcula valor para o gráfico (+ ou -)
             int caloriesToSend = meal.IsConsumed ? meal.Kcal : -meal.Kcal;
 
-            // Envia para a StatsPage atualizar a linha laranja
+            // Envia para StatsPage (Gráfico)
             WeakReferenceMessenger.Default.Send(new DietConsumedMessage(caloriesToSend));
 
-            // 3. Gamification (Pet) - Só ganha ponto se marcou como feito
+            // Envia para Pet (Gamification) - Só se marcou
             if (meal.IsConsumed)
             {
                 WeakReferenceMessenger.Default.Send(new PetUpdateMessage(PetActionType.MealFinished));
@@ -150,83 +177,17 @@ namespace MyBeast.ViewModels.Diet
         {
             if (Meals == null) return;
 
+            // Só soma o que foi marcado como consumido
             var consumedMeals = Meals.Where(m => m.IsConsumed).ToList();
 
             CurrentCalories = consumedMeals.Sum(m => m.Kcal);
-
-            // Usa navegação segura (?. e ??) para evitar erros se FoodItems for nulo
-            ProteinConsumed = Meals.Sum(m => m.FoodItems?.Sum(fi => fi.Protein) ?? 0);
-            CarbsConsumed = Meals.Sum(m => m.FoodItems?.Sum(fi => fi.Carbs) ?? 0);
-            FatConsumed = Meals.Sum(m => m.FoodItems?.Sum(fi => fi.Fat) ?? 0);
+            ProteinConsumed = consumedMeals.Sum(m => m.FoodItems?.Sum(fi => fi.Protein) ?? 0);
+            CarbsConsumed = consumedMeals.Sum(m => m.FoodItems?.Sum(fi => fi.Carbs) ?? 0);
+            FatConsumed = consumedMeals.Sum(m => m.FoodItems?.Sum(fi => fi.Fat) ?? 0);
 
             OnPropertyChanged(nameof(FormattedProteinConsumed));
             OnPropertyChanged(nameof(FormattedCarbsConsumed));
             OnPropertyChanged(nameof(FormattedFatConsumed));
-        }
-
-        private void LoadSampleMeals()
-        {
-            Meals.Clear();
-
-            // Café da Manhã
-            Meals.Add(new Meal
-            {
-                Name = "Café da Manhã",
-                Time = new TimeSpan(8, 0, 0),
-                Icon = "apple_icon.png",
-                FoodItems = new List<FoodItem>
-                {
-                    new FoodItem { Name = "Ovos Mexidos", Kcal = 155, Protein = 13, Carbs = 1, Fat = 11 },
-                    new FoodItem { Name = "Pão Integral", Kcal = 80, Protein = 4, Carbs = 14, Fat = 1 },
-                    new FoodItem { Name = "Café", Kcal = 0, Protein = 0, Carbs = 0, Fat = 0 }
-                },
-                Kcal = 235,
-                ItemsCount = 3
-            });
-
-            // Almoço
-            Meals.Add(new Meal
-            {
-                Name = "Almoço",
-                Time = new TimeSpan(13, 0, 0),
-                Icon = "apple_icon.png",
-                FoodItems = new List<FoodItem>
-                {
-                    new FoodItem { Name = "Frango Grelhado", Kcal = 165, Protein = 31, Carbs = 0, Fat = 3 },
-                    new FoodItem { Name = "Arroz Branco", Kcal = 130, Protein = 3, Carbs = 28, Fat = 0 },
-                    new FoodItem { Name = "Brócolis Cozido", Kcal = 55, Protein = 4, Carbs = 11, Fat = 1 }
-                },
-                Kcal = 350,
-                ItemsCount = 3
-            });
-
-            // Lanche
-            Meals.Add(new Meal
-            {
-                Name = "Lanche",
-                Time = new TimeSpan(16, 0, 0),
-                Icon = "apple_icon.png",
-                FoodItems = new List<FoodItem>
-                {
-                    new FoodItem { Name = "Iogurte Natural", Kcal = 100, Protein = 10, Carbs = 10, Fat = 3 },
-                    new FoodItem { Name = "Banana", Kcal = 90, Protein = 1, Carbs = 23, Fat = 0 }
-                },
-                Kcal = 190,
-                ItemsCount = 2
-            });
-
-            // Jantar
-            Meals.Add(new Meal
-            {
-                Name = "Jantar",
-                Time = new TimeSpan(19, 0, 0),
-                Icon = "apple_icon.png",
-                FoodItems = new List<FoodItem>(),
-                Kcal = 0,
-                ItemsCount = 0
-            });
-
-            UpdateMacros();
         }
     }
 }

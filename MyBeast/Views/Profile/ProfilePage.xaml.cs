@@ -29,6 +29,6 @@ public partial class ProfilePage : ContentPage
 
 	private async void OnBackButtonClicked(object sender, EventArgs e)
 	{
-		await Shell.Current.GoToAsync("//MainPage");
+		await Shell.Current.GoToAsync("//HomePage");
 	}
 }

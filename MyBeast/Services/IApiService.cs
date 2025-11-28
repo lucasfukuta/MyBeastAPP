@@ -2,6 +2,8 @@
 using MyBeast.Domain.DTOs.WorkoutTemplate.Output; 
 using MyBeast.Domain.DTOs.WorkoutTemplate.Input;
 using MyBeast.Domain.DTOs.FoodItem.Output;
+using MyBeast.Domain.DTOs.MealLog.Input;
+using MyBeast.Domain.DTOs.MealLog.Output;
 
 namespace MyBeast.Services
 {
@@ -22,5 +24,7 @@ namespace MyBeast.Services
 
         // --- MÉTODOS DE ALIMENTAÇÃO (Novos) ---
         Task<List<FoodItemDto>> GetFoodTemplatesAsync();
+        Task<List<MealLogDto>> GetMealsByDateAsync(DateTime date);
+        Task<bool> LogMealAsync(LogMealDto logDto);
     }
 }

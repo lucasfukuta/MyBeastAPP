@@ -64,7 +64,7 @@
             </Button>
 
             <Button Grid.Column="1"
-                    ImageSource="chart_column_solid.png" 
+                    ImageSource="chart_column_solid.svg" 
                     BackgroundColor="#1C1C1E"
                     HeightRequest="50"
                     WidthRequest="50"
@@ -111,11 +111,11 @@
 
                             <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="15">
                                 <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                    <Image Source="clock_icon.png" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
+                                    <Image Source="clock_regular.svg" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
                                     <Label Text="{Binding Duration, StringFormat='{0} min'}" TextColor="#9DA3B4" FontSize="13"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                                    <Image Source="fire_icon.png" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
+                                    <Image Source="fire_solid.svg" HeightRequest="14" WidthRequest="14" Aspect="AspectFit"/>
                                     <Label Text="{Binding Calories, StringFormat='{0} kcal'}" TextColor="#9DA3B4" FontSize="13"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>

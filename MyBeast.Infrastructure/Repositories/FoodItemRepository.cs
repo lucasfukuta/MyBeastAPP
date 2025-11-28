@@ -47,9 +47,25 @@ namespace MyBeast.Infrastructure.Repositories
 
         public async Task<IEnumerable<FoodItem>> GetAllAccessibleAsync(int userId)
         {
-            return await _context.FoodItems
+            // Traz do banco e converte se necessário
+            var items = await _context.FoodItems
                 .Where(f => f.UserId == userId || f.UserId == null || f.IsCustom == false)
+                // O Select força a conversão caso o banco esteja retornando decimal
+                .Select(f => new FoodItem
+                {
+                    FoodId = f.FoodId,
+                    Name = f.Name,
+                    // O erro diz que vem Decimal e queremos Int. O cast (int) resolve.
+                    Calories = (int)f.Calories,
+                    Protein = (int)f.Protein,
+                    Carbs = (int)f.Carbs,
+                    Fat = (int)f.Fat,
+                    IsCustom = f.IsCustom,
+                    UserId = f.UserId
+                })
                 .ToListAsync();
+
+            return items;
         }
 
         public async Task<FoodItem?> GetByNameAndUserIdAsync(string name, int? userId)

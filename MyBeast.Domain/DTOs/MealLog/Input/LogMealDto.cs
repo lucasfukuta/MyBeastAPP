@@ -7,10 +7,6 @@ namespace MyBeast.Domain.DTOs.MealLog.Input
 {
     public class LogMealDto
     {
-        // UserId FOI REMOVIDO. O servidor pegará do token.
-        // [Required]
-        // public int UserId { get; set; }
-
         public DateTime Date { get; set; } = DateTime.UtcNow;
 
         [Required]

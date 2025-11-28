@@ -5,94 +5,154 @@
              xmlns:models="clr-namespace:MyBeast.Models"
              x:Class="MyBeast.Views.Diet.MealEditorPage"
              Title="{Binding PageTitle}"
-             BackgroundColor="#1C1C1E">
+             BackgroundColor="#121212">
+    <Grid RowDefinitions="Auto, *, Auto">
 
-    <Grid RowDefinitions="Auto, *, Auto, Auto">
+        <VerticalStackLayout Grid.Row="0" Spacing="15" Padding="20,20,20,10" BackgroundColor="#1E1E1E">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="20">
-            <Label Text="Nome e Horário" TextColor="Gray" FontSize="12"/>
-            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
-                <Entry Grid.Column="0" Text="{Binding Name}" TextColor="White" BackgroundColor="#2C2C2E" Placeholder="Ex: Almoço" />
-                <TimePicker Grid.Column="1" Time="{Binding Time}" TextColor="White" BackgroundColor="#2C2C2E"/>
+            <Label Text="DETALHES DA REFEIÇÃO" TextColor="#A0A0A0" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
+
+            <Grid ColumnDefinitions="*, 120" ColumnSpacing="15">
+                <Border Grid.Column="0" StrokeThickness="0" BackgroundColor="#2C2C2E" StrokeShape="RoundRectangle 10" Padding="15,0">
+                    <Entry Text="{Binding Name}" 
+                           Placeholder="Nome (ex: Almoço)" 
+                           PlaceholderColor="#666"
+                           TextColor="White" 
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center"/>
+                </Border>
+
+                <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#2C2C2E" StrokeShape="RoundRectangle 10" Padding="5,0">
+                    <TimePicker Time="{Binding Time}" TextColor="#FF8A65" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
             </Grid>
-            <BoxView HeightRequest="1" Color="#333" Margin="0,5"/>
         </VerticalStackLayout>
 
-        <CollectionView Grid.Row="1" ItemsSource="{Binding FoodItems}" Margin="20,0">
-            <CollectionView.Header>
-                <Label Text="Itens do Prato" TextColor="Gray" FontSize="12" Margin="0,0,0,5"/>
-            </CollectionView.Header>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:FoodItem">
-                    <Grid ColumnDefinitions="*, 80, 40" Margin="0,0,0,10">
-                        <Border Grid.Column="0" BackgroundColor="#2C2C2E" StrokeShape="RoundRectangle 8" Padding="10,0" Margin="0,0,5,0">
-                            <Entry Text="{Binding Name}" TextColor="White" BackgroundColor="Transparent"/>
-                        </Border>
-                        <Border Grid.Column="1" BackgroundColor="#2C2C2E" StrokeShape="RoundRectangle 8" Padding="5,0" Margin="0,0,5,0">
-                            <Entry Text="{Binding Kcal}" Keyboard="Numeric" TextColor="#FFA500" BackgroundColor="Transparent" HorizontalTextAlignment="Center"/>
-                        </Border>
-                        <Button Grid.Column="2" Text="-" BackgroundColor="#FF453A" TextColor="White" Padding="0" CornerRadius="8"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MealEditorViewModel}}, Path=RemoveItemCommand}"
-                                CommandParameter="{Binding .}"/>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="20">
 
-        <VerticalStackLayout Grid.Row="2" Padding="20,10" BackgroundColor="#252525" Spacing="10">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="ITENS ADICIONADOS" TextColor="#A0A0A0" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
 
-            <Label Text="Adicionar Alimento" TextColor="Gray" FontSize="12"/>
+                    <CollectionView ItemsSource="{Binding FoodItems}">
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout Spacing="10" Padding="30" HorizontalOptions="Center">
+                                <Image Source="dinner.png" HeightRequest="60" Opacity="0.3" Aspect="AspectFit"/>
+                                <Label Text="Seu prato está vazio" TextColor="#666" HorizontalOptions="Center"/>
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:FoodItem">
+                                <Border StrokeThickness="0" BackgroundColor="#252525" StrokeShape="RoundRectangle 12" Padding="15" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="*, 80, 40" ColumnSpacing="10">
+                                        <Entry Grid.Column="0" Text="{Binding Name}" TextColor="White" Placeholder="Nome do item" BackgroundColor="Transparent" VerticalOptions="Center"/>
 
-            <Border BackgroundColor="#2C2C2E" StrokeShape="RoundRectangle 20" Padding="10,0">
-                <Grid ColumnDefinitions="30, *">
-                    <Image Source="search_icon.png" HeightRequest="20" VerticalOptions="Center" Opacity="0.5"/>
-                    <Entry Grid.Column="1" 
-                   Placeholder="Busque (ex: Banana) ou digite..." 
-                   Text="{Binding SearchText}" 
-                   TextColor="White"
-                   BackgroundColor="Transparent"
-                   ClearButtonVisibility="WhileEditing"/>
-                </Grid>
-            </Border>
+                                        <Border Grid.Column="1" BackgroundColor="#333" StrokeShape="RoundRectangle 8" Padding="0" HeightRequest="45" VerticalOptions="Center">
+                                            <Entry Text="{Binding Kcal}" Keyboard="Numeric" TextColor="#FFA500" HorizontalTextAlignment="Center" BackgroundColor="Transparent" FontAttributes="Bold"/>
+                                        </Border>
 
-            <CollectionView ItemsSource="{Binding SearchResults}" 
-                    HeightRequest="150"
-                    IsVisible="{Binding SearchResults.Count, Converter={StaticResource IntToBoolConverter}}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:FoodItem">
-                        <Frame BackgroundColor="#3A3A3C" Padding="10" Margin="0,0,0,5" CornerRadius="5" BorderColor="Gray">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MealEditorViewModel}}, Path=SelectFoodCommand}"
-                                              CommandParameter="{Binding .}"/>
-                            </Frame.GestureRecognizers>
-                            <Grid ColumnDefinitions="*, Auto">
-                                <Label Text="{Binding Name}" TextColor="White" FontAttributes="Bold" VerticalOptions="Center"/>
-                                <Label Text="{Binding Kcal, StringFormat='{0} kcal'}" TextColor="#FFA500" VerticalOptions="Center"/>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                        <ImageButton Grid.Column="2" Source="trash_icon.png" HeightRequest="20" WidthRequest="20" 
+                                                     BackgroundColor="Transparent"
+                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MealEditorViewModel}}, Path=RemoveItemCommand}"
+                                                     CommandParameter="{Binding .}"
+                                                     Opacity="0.7"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
 
-            <Button Text="+ Não achei, adicionar manualmente"
-            Command="{Binding AddNewItemCommand}"
-            BackgroundColor="Transparent"
-            TextColor="#FF4081"
-            FontSize="12"
-            HeightRequest="40"
-            HorizontalOptions="Start"/>
+                <BoxView HeightRequest="1" Color="#333" Margin="0,10"/>
 
-        </VerticalStackLayout>
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="ADICIONAR ALIMENTO" TextColor="#A0A0A0" FontSize="11" FontAttributes="Bold" CharacterSpacing="1"/>
 
-        <VerticalStackLayout Grid.Row="3" Padding="20" Spacing="15" BackgroundColor="#1C1C1E">
-            <Border BackgroundColor="#5A2E8B" StrokeShape="RoundRectangle 10" Padding="15">
+                    <Border StrokeThickness="1" Stroke="#444" BackgroundColor="#1E1E1E" StrokeShape="RoundRectangle 25" Padding="15,0" HeightRequest="50">
+                        <Grid ColumnDefinitions="30, *">
+                            <Image Source="search_icon.png" HeightRequest="18" Opacity="0.5" VerticalOptions="Center"/>
+                            <Entry Grid.Column="1" 
+                                   Placeholder="Busque na base de dados..." 
+                                   PlaceholderColor="#555"
+                                   Text="{Binding SearchText}" 
+                                   TextColor="White"
+                                   BackgroundColor="Transparent"
+                                   ClearButtonVisibility="WhileEditing"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <CollectionView ItemsSource="{Binding SearchResults}" 
+                                    HeightRequest="180"
+                                    MaximumHeightRequest="250"
+                                    IsVisible="{Binding SearchResults.Count, Converter={StaticResource IntToBoolConverter}}">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="8"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:FoodItem">
+                                <Border StrokeThickness="0" BackgroundColor="#2C2C2E" Padding="15" StrokeShape="RoundRectangle 10">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MealEditorViewModel}}, Path=SelectFoodCommand}"
+                                                              CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <Label Text="{Binding Name}" TextColor="White" FontSize="14" VerticalOptions="Center" LineBreakMode="TailTruncation"/>
+                                        <Label Grid.Column="1" Text="{Binding Kcal, StringFormat='{0} kcal'}" TextColor="#FFA500" FontSize="12" FontAttributes="Bold" VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Text="+ Adicionar item manualmente" 
+                            Command="{Binding AddNewItemCommand}" 
+                            BackgroundColor="Transparent" 
+                            TextColor="#FF4081" 
+                            FontSize="13" 
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#1E1E1E" Padding="20,15,20,30" StrokeShape="RoundRectangle 20,20,0,0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,-5" Radius="10" Opacity="0.3"/>
+            </Border.Shadow>
+
+            <VerticalStackLayout Spacing="15">
                 <Grid ColumnDefinitions="*, Auto">
-                    <Label Text="TOTAL" TextColor="White" FontAttributes="Bold" VerticalOptions="Center"/>
-                    <Label Grid.Column="1" Text="{Binding TotalCalories, StringFormat='{0} kcal'}" TextColor="White" FontSize="20" FontAttributes="Bold"/>
+                    <VerticalStackLayout>
+                        <Label Text="TOTAL CALORIAS" TextColor="#888" FontSize="10" FontAttributes="Bold"/>
+                        <Label Text="consumo estimado" TextColor="#555" FontSize="10"/>
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="{Binding TotalCalories, StringFormat='{0}'}" TextColor="White" FontSize="28" FontAttributes="Bold" VerticalOptions="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding TotalCalories}" FontSize="28" FontAttributes="Bold" TextColor="White"/>
+                                <Span Text=" kcal" FontSize="14" TextColor="#888"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
                 </Grid>
-            </Border>
-            <Button Text="SALVAR" Command="{Binding SaveCommand}" BackgroundColor="#FF4081" TextColor="White" FontAttributes="Bold" CornerRadius="25" HeightRequest="50"/>
-        </VerticalStackLayout>
+
+                <Button Text="SALVAR REFEIÇÃO" 
+                        Command="{Binding SaveCommand}" 
+                        BackgroundColor="#FF4081" 
+                        TextColor="White" 
+                        FontAttributes="Bold" 
+                        CornerRadius="25" 
+                        HeightRequest="50"
+                        FontSize="14">
+                    <Button.Shadow>
+                        <Shadow Brush="#FF4081" Offset="0,4" Radius="10" Opacity="0.4"/>
+                    </Button.Shadow>
+                </Button>
+            </VerticalStackLayout>
+        </Border>
 
     </Grid>
 </ContentPage>

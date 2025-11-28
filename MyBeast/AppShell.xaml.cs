@@ -9,7 +9,7 @@ namespace MyBeast
         public AppShell()
         {
             InitializeComponent();
-            
+
             Routing.RegisterRoute(nameof(Views.Workout.WorkoutDetailPage), typeof(Views.Workout.WorkoutDetailPage));
             Routing.RegisterRoute(nameof(Views.Workout.ActiveWorkoutPage), typeof(Views.Workout.ActiveWorkoutPage));
             Routing.RegisterRoute(nameof(Views.Diet.MealEditorPage), typeof(Views.Diet.MealEditorPage));

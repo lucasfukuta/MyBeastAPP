@@ -87,7 +87,7 @@ namespace MyBeast.ViewModels
                 await Shell.Current.GoToAsync(nameof(Views.Workout.ActiveWorkoutPage), navParams);
             }, () => SelectedWorkout != null);
 
-            ProfileTappedCommand = new Command(async () => await Shell.Current.DisplayAlert("Perfil", "Acessar perfil...", "OK"));
+            ProfileTappedCommand = new Command(async () => await Shell.Current.GoToAsync("//ProfilePage"));
 
             // Comando temporário para você testar a dieta na tela inicial se quiser
             EatCommand = new Command(() =>

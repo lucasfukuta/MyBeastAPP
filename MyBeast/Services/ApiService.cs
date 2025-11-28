@@ -2,7 +2,9 @@
 using MyBeast.Domain.Entities; // <--- CORREÇÃO 1: Importando a Entidade Achievement
 using MyBeast.Domain.DTOs.WorkoutTemplate.Output; // DTOs de Saída
 using MyBeast.Domain.DTOs.WorkoutTemplate.Input;
-using MyBeast.Domain.DTOs.FoodItem.Output;  // DTOs de Entrada
+using MyBeast.Domain.DTOs.FoodItem.Output;
+using MyBeast.Domain.DTOs.MealLog.Output;
+using MyBeast.Domain.DTOs.MealLog.Input;  // DTOs de Entrada
 
 namespace MyBeast.Services
 {
@@ -176,6 +178,64 @@ namespace MyBeast.Services
             {
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+
+        // ==========================================
+        // ÁREA DE REFEIÇÕES (MEAL LOGS)
+        // ==========================================
+
+        // 1. Busca as refeições do usuário para uma data específica
+        public async Task<List<MealLogDto>> GetMealsByDateAsync(DateTime date)
+        {
+            try
+            {
+                await SetAuthorizationHeader();
+
+                // Formato esperado pelo seu controller: yyyy-MM-dd
+                string dateStr = date.ToString("yyyy-MM-dd");
+
+                var response = await _httpClient.GetAsync($"api/MealLogs/me/date/{dateStr}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<List<MealLogDto>>() ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao buscar refeições: {ex.Message}");
+            }
+            return new List<MealLogDto>();
+        }
+
+        // 2. Salva uma nova refeição (LogMeal)
+        public async Task<bool> LogMealAsync(LogMealDto logDto)
+        {
+            try
+            {
+                await SetAuthorizationHeader();
+                var response = await _httpClient.PostAsJsonAsync("api/MealLogs", logDto);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        // 3. Deleta uma refeição
+        public async Task<bool> DeleteMealLogAsync(int mealLogId)
+        {
+            try
+            {
+                await SetAuthorizationHeader();
+                var response = await _httpClient.DeleteAsync($"api/MealLogs/{mealLogId}");
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

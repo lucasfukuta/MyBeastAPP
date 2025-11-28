@@ -21,7 +21,7 @@
                     <Label Text="Comunidade" TextColor="White" FontSize="24" FontAttributes="Bold" />
                     <Label Text="Inspire-se com outros atletas" TextColor="LightGray" FontSize="16" Margin="0,5,0,0" />
                 </VerticalStackLayout>
-                <Image Grid.Column="1" Source="profile_placeholder.png" HeightRequest="50" WidthRequest="50" Aspect="AspectFill" VerticalOptions="Center" />
+                <Image Grid.Column="1" Source="avatar_bear.png" HeightRequest="50" WidthRequest="50" Aspect="AspectFill" VerticalOptions="Center" />
             </Grid>
 
             <!-- Área de Criação de Postagem -->
@@ -69,17 +69,27 @@
                                         <HorizontalStackLayout.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityFeedViewModel}}, Path=LikePostCommand}" CommandParameter="{Binding .}" />
                                         </HorizontalStackLayout.GestureRecognizers>
-                                        <Image Source="{Binding IsLiked, Converter={StaticResource BoolToHeartIconConverter}}" HeightRequest="20" WidthRequest="20" />
+                                        <Image HeightRequest="20" WidthRequest="20">
+                                            <Image.Triggers>
+                                                <DataTrigger TargetType="Image" Binding="{Binding IsLiked}" Value="False">
+                                                    <Setter Property="Source" Value="heart_regular_full.png" />
+                                                </DataTrigger>
+
+                                                <DataTrigger TargetType="Image" Binding="{Binding IsLiked}" Value="True">
+                                                    <Setter Property="Source" Value="heart_solid_full.png" />
+                                                </DataTrigger>
+                                            </Image.Triggers>
+                                        </Image>
                                         <Label Text="{Binding Likes}" TextColor="LightGray" FontSize="14" VerticalOptions="Center" />
                                     </HorizontalStackLayout>
                                     <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center" Margin="15,0,0,0">
                                         <HorizontalStackLayout.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityFeedViewModel}}, Path=CommentPostCommand}" CommandParameter="{Binding .}" />
                                         </HorizontalStackLayout.GestureRecognizers>
-                                        <Image Source="comment_icon.png" HeightRequest="20" WidthRequest="20" />
+                                        <Image Source="comment_regular.svg" HeightRequest="20" WidthRequest="20" />
                                         <Label Text="{Binding Comments}" TextColor="LightGray" FontSize="14" VerticalOptions="Center" />
                                     </HorizontalStackLayout>
-                                    <Image Grid.Column="3" Source="share_icon.png" HeightRequest="20" WidthRequest="20" HorizontalOptions="End" VerticalOptions="Center" />
+                                    <Image Grid.Column="3" Source="share_nodes_solid.svg" HeightRequest="20" WidthRequest="20" HorizontalOptions="End" VerticalOptions="Center" />
                                 </Grid>
 
                                 <!-- Seção de Comentários -->
