@@ -20,15 +20,6 @@
     <MauiXaml Update="Views\Controls\WorkoutCardView.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
-    <MauiXaml Update="Views\Diet\MealEditorPage.xaml">
-      <SubType>Designer</SubType>
-    </MauiXaml>
-    <MauiXaml Update="Views\HelpSupport\HelpSupportPage.xaml">
-      <SubType>Designer</SubType>
-    </MauiXaml>
-    <MauiXaml Update="Views\Notifications\NotificationsPage.xaml">
-      <SubType>Designer</SubType>
-    </MauiXaml>
     <MauiXaml Update="Views\PopupsAI\AIAssistantPopup.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
