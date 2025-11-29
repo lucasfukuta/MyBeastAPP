@@ -22,7 +22,7 @@ namespace MyBeast.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MyBeast.Domain.Models.AISuggestion", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.AISuggestion", b =>
                 {
                     b.Property<int>("SuggestionId")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("AISuggestion");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.Achievement", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.Achievement", b =>
                 {
                     b.Property<int>("AchievementId")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("Achievement");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.CommunityPost", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.CommunityPost", b =>
                 {
                     b.Property<int>("PostId")
                         .ValueGeneratedOnAdd()
@@ -118,7 +118,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("CommunityPost");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.Exercise", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.Exercise", b =>
                 {
                     b.Property<int>("ExerciseId")
                         .ValueGeneratedOnAdd()
@@ -152,7 +152,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("Exercise");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.FoodItem", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.FoodItem", b =>
                 {
                     b.Property<int>("FoodId")
                         .ValueGeneratedOnAdd()
@@ -161,13 +161,13 @@ namespace MyBeast.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FoodId"));
 
                     b.Property<decimal>("Calories")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Carbs")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Fat")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsCustom")
                         .HasColumnType("bit");
@@ -178,7 +178,7 @@ namespace MyBeast.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Protein")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -190,7 +190,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("FoodItem");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.MealLog", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.MealLog", b =>
                 {
                     b.Property<int>("MealLogId")
                         .ValueGeneratedOnAdd()
@@ -216,7 +216,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("MealLog");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.MealLogItem", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.MealLogItem", b =>
                 {
                     b.Property<int>("MealLogId")
                         .HasColumnType("int");
@@ -234,7 +234,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("MealLogItem");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.Pet", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.Pet", b =>
                 {
                     b.Property<int>("PetId")
                         .ValueGeneratedOnAdd()
@@ -281,7 +281,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("Pets");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.PostReaction", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.PostReaction", b =>
                 {
                     b.Property<int>("PostId")
                         .HasColumnType("int");
@@ -301,7 +301,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("PostReaction");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.SetLog", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.SetLog", b =>
                 {
                     b.Property<int>("SetLogId")
                         .ValueGeneratedOnAdd()
@@ -336,7 +336,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("SetLog");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.TemplateExercise", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.TemplateExercise", b =>
                 {
                     b.Property<int>("TemplateId")
                         .HasColumnType("int");
@@ -354,7 +354,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("TemplateExercise");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.User", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -393,7 +393,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.WorkoutSession", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.WorkoutSession", b =>
                 {
                     b.Property<int>("SessionId")
                         .ValueGeneratedOnAdd()
@@ -420,7 +420,7 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("WorkoutSession");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.WorkoutTemplate", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.WorkoutTemplate", b =>
                 {
                     b.Property<int>("TemplateId")
                         .ValueGeneratedOnAdd()
@@ -451,9 +451,9 @@ namespace MyBeast.Infrastructure.Migrations
                     b.ToTable("WorkoutTemplate");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.AISuggestion", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.AISuggestion", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("AISuggestions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -462,9 +462,9 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.Achievement", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.Achievement", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("Achievements")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -473,9 +473,9 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.CommunityPost", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.CommunityPost", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("CommunityPosts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -484,9 +484,9 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.Exercise", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.Exercise", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("Exercises")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -494,9 +494,9 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.FoodItem", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.FoodItem", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("FoodItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -504,9 +504,9 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.MealLog", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.MealLog", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("MealLogs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -515,15 +515,15 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.MealLogItem", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.MealLogItem", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.FoodItem", "FoodItem")
+                    b.HasOne("MyBeast.Domain.Entities.FoodItem", "FoodItem")
                         .WithMany("MealLogItems")
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyBeast.Domain.Models.MealLog", "MealLog")
+                    b.HasOne("MyBeast.Domain.Entities.MealLog", "MealLog")
                         .WithMany("MealLogItems")
                         .HasForeignKey("MealLogId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -534,26 +534,26 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("MealLog");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.Pet", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.Pet", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithOne("Pet")
-                        .HasForeignKey("MyBeast.Domain.Models.Pet", "UserId")
+                        .HasForeignKey("MyBeast.Domain.Entities.Pet", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.PostReaction", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.PostReaction", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.CommunityPost", "CommunityPost")
+                    b.HasOne("MyBeast.Domain.Entities.CommunityPost", "CommunityPost")
                         .WithMany("PostReactions")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("PostReactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -564,15 +564,15 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.SetLog", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.SetLog", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.Exercise", "Exercise")
+                    b.HasOne("MyBeast.Domain.Entities.Exercise", "Exercise")
                         .WithMany("SetLogs")
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyBeast.Domain.Models.WorkoutSession", "WorkoutSession")
+                    b.HasOne("MyBeast.Domain.Entities.WorkoutSession", "WorkoutSession")
                         .WithMany("SetLogs")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -583,15 +583,15 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("WorkoutSession");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.TemplateExercise", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.TemplateExercise", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.Exercise", "Exercise")
+                    b.HasOne("MyBeast.Domain.Entities.Exercise", "Exercise")
                         .WithMany("TemplateExercises")
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyBeast.Domain.Models.WorkoutTemplate", "WorkoutTemplate")
+                    b.HasOne("MyBeast.Domain.Entities.WorkoutTemplate", "WorkoutTemplate")
                         .WithMany("TemplateExercises")
                         .HasForeignKey("TemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -602,9 +602,9 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("WorkoutTemplate");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.WorkoutSession", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.WorkoutSession", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("WorkoutSessions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -613,38 +613,38 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.WorkoutTemplate", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.WorkoutTemplate", b =>
                 {
-                    b.HasOne("MyBeast.Domain.Models.User", "User")
+                    b.HasOne("MyBeast.Domain.Entities.User", "User")
                         .WithMany("WorkoutTemplates")
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.CommunityPost", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.CommunityPost", b =>
                 {
                     b.Navigation("PostReactions");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.Exercise", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.Exercise", b =>
                 {
                     b.Navigation("SetLogs");
 
                     b.Navigation("TemplateExercises");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.FoodItem", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.FoodItem", b =>
                 {
                     b.Navigation("MealLogItems");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.MealLog", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.MealLog", b =>
                 {
                     b.Navigation("MealLogItems");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.User", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.User", b =>
                 {
                     b.Navigation("AISuggestions");
 
@@ -668,12 +668,12 @@ namespace MyBeast.Infrastructure.Migrations
                     b.Navigation("WorkoutTemplates");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.WorkoutSession", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.WorkoutSession", b =>
                 {
                     b.Navigation("SetLogs");
                 });
 
-            modelBuilder.Entity("MyBeast.Domain.Models.WorkoutTemplate", b =>
+            modelBuilder.Entity("MyBeast.Domain.Entities.WorkoutTemplate", b =>
                 {
                     b.Navigation("TemplateExercises");
                 });

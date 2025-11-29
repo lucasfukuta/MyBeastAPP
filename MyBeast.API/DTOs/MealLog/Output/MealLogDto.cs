@@ -14,7 +14,7 @@ namespace MyBeast.API.DTOs.MealLog.Output
         public List<MealItemResponseDto> Items { get; set; } = new List<MealItemResponseDto>(); // Lista de itens detalhados
 
         // Adicionar totais calculados (opcional)?
-        // public decimal TotalCalories { get; set; }
+         public decimal? TotalCalories { get; set; }
         // public decimal TotalProtein { get; set; }
         // public decimal TotalCarbs { get; set; }
         // public decimal TotalFat { get; set; }

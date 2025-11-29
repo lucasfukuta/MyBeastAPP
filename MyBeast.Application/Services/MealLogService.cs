@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq; // Para Any()
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace MyBeast.Application.Services
 {
@@ -60,13 +62,32 @@ namespace MyBeast.Application.Services
             // Validar dados básicos
             if (string.IsNullOrWhiteSpace(mealType)) throw new ArgumentException("Tipo de refeição é obrigatório.");
             if (items == null || !items.Any()) throw new ArgumentException("Pelo menos um item alimentar é necessário.");
-
+            
             // Verificar se todos os FoodIds existem (opcional, mas bom para integridade)
             foreach (var item in items)
             {
+
                 var foodExists = await _foodItemRepository.GetByIdAsync(item.FoodId);
-                if (foodExists == null) throw new Exception($"Alimento com ID {item.FoodId} não encontrado.");
+                //nao existe, entao crie
+                if (foodExists == null)
+                {
+                    var newFoodItem = new FoodItem
+                    {
+                        UserId = userId,
+                        Name = mealType,
+                        Calories = item.Quantity,
+                        Fat = 1,
+                        Carbs= 1,
+                        IsCustom = true,
+                        Protein = 1
+                    };
+                var SaveFood = await _foodItemRepository.AddAsync(newFoodItem);
+                item.FoodId = newFoodItem.FoodId;
+                item.FoodItem = newFoodItem;
+                if (SaveFood.FoodId == null) throw new Exception($"Alimento com ID {item.FoodId} não encontrado.");
                 if (item.Quantity <= 0) throw new ArgumentException($"Quantidade inválida para o alimento ID {item.FoodId}.");
+
+                }
             }
 
             // Criar o MealLog principal
